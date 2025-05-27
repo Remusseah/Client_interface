@@ -572,7 +572,11 @@ def signup():
             return render_template("signup.html", error="Email already in use or invalid.")
 
     return render_template("signup.html")
-
+@app.route("/test_email")
+def test_email():
+    msg = Message("Test", recipients=["your-email@gmail.com"], body="This is a test")
+    mail.send(msg)
+    return "Email sent!"
 @app.route("/verify/<token>")
 def verify_email(token):
     cur = conn.cursor()
