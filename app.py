@@ -574,7 +574,7 @@ def signup():
     return render_template("signup.html")
 @app.route("/test_email")
 def test_email():
-    msg = Message("Test", recipients=["your-email@gmail.com"], body="This is a test")
+    msg = Message("Test", recipients=["Latias1463@gmail.com"], body="This is a test")
     mail.send(msg)
     return "Email sent!"
 @app.route("/verify/<token>")
