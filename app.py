@@ -21,13 +21,17 @@ def home():
 
 mail = Mail(app)
 # Connect to PostgreSQL
+import os
+
 conn = psycopg2.connect(
     dbname="client_data",
-    user="postgres",
-    password="password",
-    host="localhost",
-    port="5432"
+    user="client_data_user",
+    password=os.environ.get("5GLR5lrRH1Sa2zHLLMlp9dNrwO6WP0D4"),
+    host="dpg-d0qhgfbipnbc73ecqat0-a.singapore-postgres.render.com",
+    port="5432",
+    sslmode="require"
 )
+
 
 # Route to render the frontend HTML
 @app.route('/')
@@ -590,7 +594,7 @@ def verify_email(token):
         cur.close()
         return "❌ Invalid or expired verification link."
 def send_verification_email(email, token):
-    verify_link = f"http://localhost:5000/verify/{token}"  # use full domain in production
+    verify_link = f"https://client-data.onrender.com/verify/{token}" # use full domain in production
     subject = "Verify Your Email"
     body = f"Hello,\n\nPlease verify your email by clicking the link below:\n{verify_link}\n\nThanks!"
 
