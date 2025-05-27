@@ -24,13 +24,14 @@ mail = Mail(app)
 import os
 
 conn = psycopg2.connect(
-    dbname="client_data",
-    user="client_data_user",
-    password=os.environ.get("5GLR5lrRH1Sa2zHLLMlp9dNrwO6WP0D4"),
-    host="dpg-d0qhgfbipnbc73ecqat0-a.singapore-postgres.render.com",
-    port="5432",
+    database=os.environ.get("DB_NAME"),
+    user=os.environ.get("DB_USER"),
+    password=os.environ.get("DB_PASSWORD"),
+    host=os.environ.get("DB_HOST"),
+    port=os.environ.get("DB_PORT", 5432),
     sslmode="require"
 )
+
 
 
 # Route to render the frontend HTML
