@@ -594,10 +594,11 @@ def verify_email(token):
         """, (token,))
         conn.commit()
         cur.close()
-        return "✅ Email verified successfully. You may now log in."
+        return "<h3>✅ Email verified successfully. You may now <a href='/login'>log in</a>.</h3>"
     else:
         cur.close()
-        return "❌ Invalid or expired verification link."
+        return "<h3>❌ Invalid or expired verification link.</h3>"
+
 def send_verification_email(email, token):
     verify_link = f"https://client-data.onrender.com/verify/{token}" # use full domain in production
     subject = "Verify Your Email"
