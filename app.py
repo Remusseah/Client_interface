@@ -35,9 +35,9 @@ conn = psycopg2.connect(
 
 
 # Route to render the frontend HTML
-@app.route('/')
-def index():
-    return render_template('index.html')
+#@app.route('/')
+#def index():
+#    return render_template('index.html')
 def log_action(action, client_id, details=""):
     cur = conn.cursor()
     cur.execute("""
@@ -581,12 +581,15 @@ from flask import Response
 
 @app.route("/verify/<token>")
 def verify_email(token):
+    print("🔍 Received token:", token)
+
     cur = conn.cursor()
     cur.execute("""
         SELECT email FROM users
         WHERE verification_token = %s AND is_verified = FALSE
     """, (token,))
     result = cur.fetchone()
+    print("✅ DB result:", result)
 
     if result:
         cur.execute("""
