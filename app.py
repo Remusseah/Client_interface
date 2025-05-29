@@ -601,12 +601,25 @@ def verify_email(token):
         cur.close()
         return Response("<h3>❌ Invalid or expired verification link.</h3>", mimetype='text/html')
 
-def send_verification_email(email, token):
-    verify_link = f"https://client-data.onrender.com/verify/{token}" # use full domain in production
-    subject = "Verify Your Email"
-    body = f"Hello,\n\nPlease verify your email by clicking the link below:\n{verify_link}\n\nThanks!"
+from flask_mail import Message
 
-    msg = Message(subject=subject, recipients=[email], body=body)
+def send_verification_email(email, token):
+    verify_link = f"https://client-data.onrender.com/verify/{token}"
+    subject = "Verify Your Email"
+    html = f"""
+    <html>
+    <body>
+        <p>Hello,</p>
+        <p>Please verify your email by clicking the button below:</p>
+        <p><a href="{verify_link}" style="padding:10px 15px;background-color:#4CAF50;color:white;text-decoration:none;">Verify Email</a></p>
+        <p>If the button doesn't work, copy this link into your browser:</p>
+        <p>{verify_link}</p>
+        <p>Thanks!</p>
+    </body>
+    </html>
+    """
+
+    msg = Message(subject=subject, recipients=[email], html=html)
     mail.send(msg)
 
 from werkzeug.security import check_password_hash
