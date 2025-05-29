@@ -578,7 +578,6 @@ def test_email():
     mail.send(msg)
     return "Email sent!"
 from flask import Response
-
 @app.route("/verify/<token>")
 def verify_email(token):
     print("🔍 Received token:", token)
