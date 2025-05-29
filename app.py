@@ -606,7 +606,7 @@ def verify_email(token):
 from flask_mail import Message
 
 def send_verification_email(email, token):
-    verify_link = f"https://client-data.onrender.com/verify/{token}"
+    verify_link = f"https://testing-client-data.onrender.com/verify/{token}"
     subject = "Verify Your Email"
 
     html = f"""
