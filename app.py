@@ -606,6 +606,7 @@ from flask_mail import Message
 def send_verification_email(email, token):
     verify_link = f"https://client-data.onrender.com/verify/{token}"
     subject = "Verify Your Email"
+
     html = f"""
     <html>
     <body>
@@ -619,8 +620,10 @@ def send_verification_email(email, token):
     </html>
     """
 
+    # ✅ Send only the HTML version
     msg = Message(subject=subject, recipients=[email], html=html)
     mail.send(msg)
+
 
 from werkzeug.security import check_password_hash
 
