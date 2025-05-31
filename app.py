@@ -652,7 +652,7 @@ def login():
         else:
             return render_template("login.html", error="Email not found.")
     
-    return render_template("login.html")
+    return render_template("index.html")
 
 
 
