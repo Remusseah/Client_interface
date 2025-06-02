@@ -654,6 +654,11 @@ def login():
     
     return render_template("index.html")
 
+@app.context_processor
+def inject_user():
+    email = session.get("user_email")
+    username = email.split("@")[0] if email else None
+    return dict(logged_in_user=username)
 
 
 if __name__ == '__main__':
