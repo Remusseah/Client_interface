@@ -35,9 +35,9 @@ conn = psycopg2.connect(
 
 
 # Route to render the frontend HTML
-#@app.route('/')
-#def index():
-#    return render_template('index.html')
+@app.route('/main_page')
+def index():
+    return render_template('index.html')
 def log_action(action, client_id, details=""):
     cur = conn.cursor()
     cur.execute("""
