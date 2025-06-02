@@ -4,6 +4,8 @@ import psycopg2
 from fpdf import FPDF
 import io
 app = Flask(__name__)
+app.secret_key = "your-secret-key"  # ✅ Set it immediately after app = Flask(__name__)
+
 from flask import request, redirect, render_template, flash
 from werkzeug.security import generate_password_hash
 import secrets
@@ -646,13 +648,13 @@ def login():
                 return render_template("login.html", error="Please verify your email first.")
             if check_password_hash(password_hash, password):
                 session["user_id"] = user_id
-                return redirect("/")
+                return redirect("/main_page")
             else:
                 return render_template("login.html", error="Incorrect password.")
         else:
             return render_template("login.html", error="Email not found.")
     
-    return render_template("index.html")
+    return render_template("login.html")
 
 @app.context_processor
 def inject_user():
