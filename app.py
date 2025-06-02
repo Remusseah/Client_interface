@@ -649,6 +649,7 @@ def login():
                 return render_template("login.html", error="Please verify your email first.")
             if check_password_hash(password_hash, password):
                 session["user_id"] = user_id
+                session["user_email"] = email  # ✅ Add this line
                 return redirect("/main_page")
             else:
                 return render_template("login.html", error="Incorrect password.")
