@@ -12,6 +12,7 @@ from werkzeug.security import generate_password_hash
 import secrets
 from flask_mail import Mail, Message
 from flask import session, redirect, url_for
+from werkzeug.utils import secure_filename
 
 @app.route("/")
 def home():
@@ -78,26 +79,21 @@ def get_client_data(client_id):
         return jsonify(dict(zip(colnames, result)))
     else:
         return jsonify({"error": "Client not found"}), 404
+from werkzeug.utils import secure_filename
+
 @app.route("/add-client", methods=["POST"])
 def add_client():
-    data = request.get_json()
-    print("Received data:", data)  # Debug print
-
-    if not data:
-        return jsonify({"error": "No JSON data received"}), 400
-
     try:
-        # --- Required Client Data ---
-        name = data["Name"]
-        nationality = data["Nationality"]
-        residency_address = data["Residency_address"]
-        contact_number = data["Contact_number"]
-        date_of_birth = data["Date_of_birth"]
-        ic_number = data["IC_number"]
-        age = int(data["Age"])
-        client_profile = data["Client_profile"]
-        employment_status = data["Employment_status"]
-        email_address = data["Email_address"]
+        name = request.form["Name"]
+        nationality = request.form["Nationality"]
+        residency_address = request.form["Residency_address"]
+        contact_number = request.form["Contact_number"]
+        date_of_birth = request.form["Date_of_birth"]
+        ic_number = request.form["IC_number"]
+        age = int(request.form["Age"])
+        client_profile = request.form["Client_profile"]
+        employment_status = request.form["Employment_status"]
+        email_address = request.form["Email_address"]
 
         cursor = conn.cursor()
 
@@ -114,21 +110,21 @@ def add_client():
             date_of_birth, ic_number, age, client_profile,
             employment_status, email_address
         ))
-
         client_id = cursor.fetchone()[0]
 
-        # --- Optional Compliance Data ---
-        compliance_fields = [
-            "Onboarded_date", "Last_periodic_risk_assessment",
-            "Next_periodic_risk_assessment", "Risk_rating",
-            "Relationship_Manager", "Service_type",
-            "Client_type", "Pep"
-        ]
+        # Optional Compliance Data
+        compliance_data = {
+            "Onboarded_date": request.form.get("onboarded_date"),
+            "Last_periodic_risk_assessment": request.form.get("last_assessment"),
+            "Next_periodic_risk_assessment": request.form.get("next_assessment"),
+            "Risk_rating": request.form.get("risk_rating"),
+            "Relationship_Manager": request.form.get("relationship_manager"),
+            "Service_type": request.form.get("service_type"),
+            "Client_type": request.form.get("client_type"),
+            "Pep": request.form.get("pep")
+        }
 
-        compliance_data = {field: data.get(field) for field in compliance_fields}
-        has_compliance_data = any(value for value in compliance_data.values())
-
-        if has_compliance_data:
+        if any(compliance_data.values()):
             cursor.execute("""
                 INSERT INTO client_compliance (
                     "Client_id", "Onboarded_date", "Last_periodic_risk_assessment",
@@ -147,17 +143,91 @@ def add_client():
                 compliance_data["Pep"]
             ))
 
+        # Handle uploaded files
+        for file in request.files.getlist("client_files"):
+            if file.filename:
+                filename = secure_filename(file.filename)
+                file_data = file.read()
+                ext = filename.split('.')[-1].lower()
+
+                # Get or create file type
+                cursor.execute("SELECT file_type_id FROM file_types WHERE LOWER(extension) = %s", (ext,))
+                file_type_result = cursor.fetchone()
+
+                if file_type_result:
+                    file_type_id = file_type_result[0]
+                else:
+                    cursor.execute("""
+                        INSERT INTO file_types (extension, description)
+                        VALUES (%s, %s) RETURNING file_type_id
+                    """, (ext, f"Auto-added type for .{ext.upper()}"))
+                    file_type_id = cursor.fetchone()[0]
+
+                cursor.execute("""
+                    INSERT INTO client_files (client_id, file_type_id, file_name, file_data)
+                    VALUES (%s, %s, %s, %s)
+                """, (client_id, file_type_id, filename, psycopg2.Binary(file_data)))
+
         conn.commit()
         cursor.close()
 
         log_action("Add", client_id, f"Added new client: {name}")
         return jsonify({"message": "Client added successfully"}), 200
 
-    except KeyError as ke:
-        return jsonify({"error": f"Missing field: {str(ke)}"}), 400
     except Exception as e:
         conn.rollback()
         print("Error adding client:", e)
+        return jsonify({"error": str(e)}), 500
+    
+@app.route("/submit-pending", methods=["POST"])
+def submit_pending():
+    data = request.get_json()
+    print("Received pending data:", data)
+
+    if not data:
+        return jsonify({"error": "No JSON data received"}), 400
+
+    try:
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            INSERT INTO pending (
+                Name, Nationality, Residency_address, Contact_number, Date_of_birth,
+                IC_number, Age, Client_profile, Employment_status, Email_address,
+                Onboarded_date, Last_periodic_risk_assessment, Next_periodic_risk_assessment,
+                Risk_rating, Relationship_Manager, Service_type, Client_type, Pep,
+                submitted_by
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            data.get("Name"),
+            data.get("Nationality"),
+            data.get("Residency_address"),
+            data.get("Contact_number"),
+            data.get("Date_of_birth"),
+            data.get("IC_number"),
+            int(data.get("Age")) if data.get("Age") else None,
+            data.get("Client_profile"),
+            data.get("Employment_status"),
+            data.get("Email_address"),
+            data.get("Onboarded_date"),
+            data.get("Last_periodic_risk_assessment"),
+            data.get("Next_periodic_risk_assessment"),
+            data.get("Risk_rating"),
+            data.get("Relationship_Manager"),
+            data.get("Service_type"),
+            data.get("Client_type"),
+            data.get("Pep"),
+            session.get("user_id")  # assumes user is logged in
+        ))
+
+        conn.commit()
+        cursor.close()
+
+        return jsonify({"message": "Client submitted for approval"}), 200
+
+    except Exception as e:
+        conn.rollback()
+        print("Error submitting pending client:", e)
         return jsonify({"error": str(e)}), 500
 
 
