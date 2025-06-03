@@ -178,18 +178,20 @@ def add_client():
         conn.rollback()
         print("Error adding client:", e)
         return jsonify({"error": str(e)}), 500
-    
+
+from werkzeug.utils import secure_filename
+import psycopg2
+
 @app.route("/submit-pending", methods=["POST"])
 def submit_pending():
-    data = request.get_json()
-    print("Received pending data:", data)
-
-    if not data:
-        return jsonify({"error": "No JSON data received"}), 400
-
     try:
+        # Extract form fields
+        data = request.form
+        files = request.files.getlist("client_files")  # 🔁 Multiple files
+
         cursor = conn.cursor()
 
+        # Insert into pending
         cursor.execute("""
             INSERT INTO pending (
                 Name, Nationality, Residency_address, Contact_number, Date_of_birth,
@@ -198,6 +200,7 @@ def submit_pending():
                 Risk_rating, Relationship_Manager, Service_type, Client_type, Pep,
                 submitted_by
             ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING pending_id
         """, (
             data.get("Name"),
             data.get("Nationality"),
@@ -217,19 +220,37 @@ def submit_pending():
             data.get("Service_type"),
             data.get("Client_type"),
             data.get("Pep"),
-            session.get("user_id")  # assumes user is logged in
         ))
+
+        pending_id = cursor.fetchone()[0]  # Get the generated ID
+
+        # Save files (if any)
+        for file in files:
+            if file.filename:
+                filename = secure_filename(file.filename)
+                file_data = file.read()
+                file_ext = filename.split('.')[-1].upper()
+
+                # Get file_type_id from file_types table
+                cursor.execute("SELECT file_type_id FROM file_types WHERE UPPER(type_name) = %s", (file_ext,))
+                result = cursor.fetchone()
+                file_type_id = result[0] if result else None
+
+                # Insert into pending_files
+                cursor.execute("""
+                    INSERT INTO pending_files (pending_id, file_type_id, file_name, file_data)
+                    VALUES (%s, %s, %s, %s)
+                """, (pending_id, file_type_id, filename, psycopg2.Binary(file_data)))
 
         conn.commit()
         cursor.close()
 
-        return jsonify({"message": "Client submitted for approval"}), 200
+        return jsonify({"message": "Client submitted for approval with files."}), 200
 
     except Exception as e:
         conn.rollback()
         print("Error submitting pending client:", e)
         return jsonify({"error": str(e)}), 500
-
 
 @app.route('/add')
 def add_page():
