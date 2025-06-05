@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const fullFormData = new FormData(addClientForm);
 
 
-        fetch("/add-client", {
+        fetch("/submit_pending", {
             method: "POST",
             body: fullFormData
         })
