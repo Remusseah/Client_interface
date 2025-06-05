@@ -181,45 +181,46 @@ def add_client():
 
 from werkzeug.utils import secure_filename
 import psycopg2
-
 @app.route("/submit-pending", methods=["POST"])
 def submit_pending():
     try:
         # Extract form fields
         data = request.form
         files = request.files.getlist("client_files")  # 🔁 Multiple files
+        submitted_by = session.get("user_email") 
 
         cursor = conn.cursor()
 
-        # Insert into pending
+        # Insert into pending with upload_time set to current timestamp
         cursor.execute("""
             INSERT INTO pending (
-                Name, Nationality, Residency_address, Contact_number, Date_of_birth,
-                IC_number, Age, Client_profile, Employment_status, Email_address,
-                Onboarded_date, Last_periodic_risk_assessment, Next_periodic_risk_assessment,
-                Risk_rating, Relationship_Manager, Service_type, Client_type, Pep,
-                submitted_by
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                name, nationality, residency_address, contact_number, date_of_birth,
+                ic_number, age, client_profile, employment_status, email_address,
+                onboarded_date, last_periodic_risk_assessment, next_periodic_risk_assessment,
+                risk_rating, relationship_manager, service_type, client_type, pep,
+                submitted_by, upload_time, 
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
             RETURNING pending_id
         """, (
-            data.get("Name"),
-            data.get("Nationality"),
-            data.get("Residency_address"),
-            data.get("Contact_number"),
-            data.get("Date_of_birth"),
-            data.get("IC_number"),
-            int(data.get("Age")) if data.get("Age") else None,
-            data.get("Client_profile"),
-            data.get("Employment_status"),
-            data.get("Email_address"),
-            data.get("Onboarded_date"),
-            data.get("Last_periodic_risk_assessment"),
-            data.get("Next_periodic_risk_assessment"),
-            data.get("Risk_rating"),
-            data.get("Relationship_Manager"),
-            data.get("Service_type"),
-            data.get("Client_type"),
-            data.get("Pep"),
+            data.get("name"),
+            data.get("nationality"),
+            data.get("residency_address"),
+            data.get("contact_number"),
+            data.get("date_of_birth"),
+            data.get("ic_number"),
+            int(data.get("age")) if data.get("age") else None,
+            data.get("client_profile"),
+            data.get("employment_status"),
+            data.get("email_address"),
+            data.get("onboarded_date"),
+            data.get("last_periodic_risk_assessment"),
+            data.get("next_periodic_risk_assessment"),
+            data.get("risk_rating"),
+            data.get("relationship_manager"),
+            data.get("service_type"),
+            data.get("client_type"),
+            data.get("pep"),
+            data.get("submitted_by"),
         ))
 
         pending_id = cursor.fetchone()[0]  # Get the generated ID
@@ -251,7 +252,6 @@ def submit_pending():
         conn.rollback()
         print("Error submitting pending client:", e)
         return jsonify({"error": str(e)}), 500
-
 @app.route('/add')
 def add_page():
     return render_template('add.html') 
