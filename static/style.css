@@ -106,3 +106,16 @@ tbody tr:hover {
     width: 100%;
     margin-top: 20px;
 }
+.pending-box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+.pending-details {
+    display: none;
+    margin-top: 10px;
+}
+.action-buttons {
+    margin-top: 10px;
+        }

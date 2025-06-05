@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pending Approvals</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        
+</head>
+<body>
+    {% if logged_in_user %}
+        <div class="user-greeting" style="position: absolute; top: 10px; right: 20px;">
+            Logged in as <strong>{{ logged_in_user }}</strong>
+        </div>
+    {% endif %}
+
+    <a href="/main_page" style="text-decoration: none;">
+        <button type="button">Go back</button>
+    </a>
+
+    <h1>Pending Client Approvals</h1>
+
+    {% for entry in pending_entries %}
+    <div class="pending-box" onclick="toggleDetails('details-{{ entry.pending_id }}')">
+        <strong>{{ entry.name }}</strong> - {{ entry.nationality }}
+        <div id="details-{{ entry.pending_id }}" class="pending-details">
+            <p><strong>Email:</strong> {{ entry.email }}</p>
+            <p><strong>Contact No:</strong> {{ entry.contact_no }}</p>
+            <p><strong>Employment:</strong> {{ entry.employment_status }}</p>
+            <p><strong>Risk Rating:</strong> {{ entry.risk_rating }}</p>
+            <p><strong>Submitted:</strong> {{ entry.submitted_at }}</p>
+
+            <div class="action-buttons">
+                <form method="POST" action="/approve/{{ entry.pending_id }}" style="display: inline;">
+                    <button type="submit">✅ Approve</button>
+                </form>
+                <form method="POST" action="/reject/{{ entry.pending_id }}" style="display: inline;">
+                    <input type="text" name="comment" placeholder="Comment (optional)" />
+                    <button type="submit">❌ Reject</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</body>
+</html>

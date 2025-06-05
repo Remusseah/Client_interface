@@ -104,28 +104,28 @@ document.addEventListener("DOMContentLoaded", function () {
             
             
                 
-            
+        const fullFormData = new FormData(addClientForm);
 
-            fetch("/add-client", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert("Client added successfully!");
-                // Optionally redirect or reset the form
-                addClientForm.reset();
-            })
-            .catch(error => {
-                console.error("Error adding client:", error);
-                alert("Failed to add client.");
-            });
+
+        fetch("/add-client", {
+            method: "POST",
+            body: fullFormData
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Server error");
+            return response.json();
+        })
+        .then(data => {
+            alert("Client added successfully!");
+            addClientForm.reset();
+        })
+        .catch(error => {
+            console.error("Error adding client:", error);
+            alert("Failed to add client.");
         });
+
     
-    }
+        })
     const updateClientIdInput = document.getElementById("client_id");
     if (updateClientIdInput) {
         updateClientIdInput.addEventListener("change", function () {
@@ -286,7 +286,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
     loadTasks();
-});
+}});
 function deleteTask(id) {
     if (!confirm("Delete this task?")) return;
 
