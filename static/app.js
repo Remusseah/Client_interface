@@ -76,31 +76,6 @@ document.addEventListener("DOMContentLoaded", function () {
         addClientForm.addEventListener("submit", function(event) {
             event.preventDefault();
             
-            const formData = new FormData(event.target);
-            const data = {
-                // Client Data
-                Name: formData.get("name"),
-                Date_of_birth: formData.get("date_of_birth"),
-                Contact_number: formData.get("contact_number"),
-                Email_address: formData.get("email_address"),
-                Nationality: formData.get("nationality"),
-                Residency_address: formData.get("residency_address"),
-                Employment_status: formData.get("employment_status"),
-                Age: formData.get("age"),
-                IC_number: formData.get("ic_number"),
-                Client_profile: formData.get("client_profile"),
-            
-                // Compliance Data (optional)
-                Onboarded_date: formData.get("onboarded_date"),    
-                Last_periodic_risk_assessment: formData.get("last_assessment"),
-                Next_periodic_risk_assessment: formData.get("next_assessment"),
-                Risk_rating: formData.get("risk_rating"),
-                Relationship_Manager: formData.get("relationship_manager"),
-                Service_type: formData.get("service_type"),
-                Client_type: formData.get("client_type"),
-                Pep: formData.get("pep")
-            };
-            
             
             
                 
