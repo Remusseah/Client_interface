@@ -180,7 +180,8 @@ def add_client():
         return jsonify({"error": str(e)}), 500
 
 from werkzeug.utils import secure_filename
-import psycopg2@app.route("/submit-pending", methods=["POST"])
+import psycopg2
+@app.route("/submit-pending", methods=["POST"])
 def submit_pending():
     try:
         # 🔍 Debug: Print all incoming form fields
