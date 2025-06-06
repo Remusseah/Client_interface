@@ -246,7 +246,7 @@ def submit_pending():
                 file_data = file.read()
                 file_ext = filename.split('.')[-1].upper()
 
-                cursor.execute("SELECT file_type_id FROM file_types WHERE UPPER(type_name) = %s", (file_ext,))
+                cursor.execute("SELECT file_type_id FROM file_types WHERE UPPER(type) = %s", (file_ext,))
                 result = cursor.fetchone()
                 file_type_id = result[0] if result else None
 
