@@ -188,6 +188,7 @@ def submit_pending():
         print("🔎 Incoming form data:")
         for key in request.form:
             print(f"  {key}: {request.form[key]}")
+        
 
         # 🔍 Debug: Print file info
         print("\n📁 Incoming files:")
@@ -257,9 +258,12 @@ def submit_pending():
 
         return jsonify({"message": "Client submitted for approval with files."}), 200
 
+    import traceback
+
     except Exception as e:
         conn.rollback()
-        print("❌ Error submitting pending client:", e)
+        print("❌ Error submitting pending client:")
+        traceback.print_exc()  # ⬅️ full error trace
         return jsonify({"error": str(e)}), 500
 
 @app.route('/add')
