@@ -181,6 +181,8 @@ def add_client():
 
 from werkzeug.utils import secure_filename
 import psycopg2
+import traceback
+
 @app.route("/submit-pending", methods=["POST"])
 def submit_pending():
     try:
@@ -258,7 +260,6 @@ def submit_pending():
 
         return jsonify({"message": "Client submitted for approval with files."}), 200
 
-    import traceback
 
     except Exception as e:
         conn.rollback()
