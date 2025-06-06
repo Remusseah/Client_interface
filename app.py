@@ -220,7 +220,7 @@ def submit_pending():
             data.get("service_type"),
             data.get("client_type"),
             data.get("pep"),
-            data.get("submitted_by"),
+            session.get("user_id"),
         ))
 
         pending_id = cursor.fetchone()[0]  # Get the generated ID
