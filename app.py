@@ -151,7 +151,7 @@ def add_client():
                 ext = filename.split('.')[-1].lower()
 
                 # Get or create file type
-                cursor.execute("SELECT file_type_id FROM file_types WHERE LOWER(extension) = %s", (ext,))
+                cursor.execute("SELECT file_type_id FROM file_types WHERE LOWER(type) = %s", (ext,))
                 file_type_result = cursor.fetchone()
 
                 if file_type_result:
