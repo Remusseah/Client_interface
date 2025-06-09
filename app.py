@@ -284,6 +284,9 @@ def view_page():
 @app.route("/statistics_page")
 def statistics_page():
     return render_template("statistics.html")
+@app.route("/pending_page")
+def pending_page():
+    return render_template("pending.html")
 @app.route("/login_page")
 def login_page():
     return render_template("login.html")
