@@ -770,7 +770,7 @@ def login():
 def inject_user():
     email = session.get("user_email")
     username = email.split("@")[0] if email else None
-    return dict(logged_in_user=username)
+    return dict(logged_in_user=username, user_email=email)
 
 
 if __name__ == '__main__':
