@@ -11,7 +11,11 @@
             Logged in as <strong>{{ logged_in_user }}</strong>
         </div>
     {% endif %}
-
+    {% if logged_in_user in ["boss@example.com", "remuseah@gmail.com", "rm_lead@example.com"] %}
+    <a href="/pending_approval" style="text-decoration: none;">
+        <button type="button">Pending Approvals</button>
+    </a>
+    {% endif %}
     <a href="/add" style="text-decoration: none;">
         <button type="button">Add new data</button>
     </a>    
