@@ -280,3 +280,10 @@ function deleteTask(id) {
         console.error("Delete error:", err);
     });
 }
+// 🔁 This function should be globally accessible
+function toggleDetails(id) {
+    const details = document.getElementById(id);
+    if (details) {
+        details.style.display = (details.style.display === "none" || details.style.display === "") ? "block" : "none";
+    }
+}

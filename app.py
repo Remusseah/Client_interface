@@ -286,7 +286,25 @@ def statistics_page():
     return render_template("statistics.html")
 @app.route("/pending_page")
 def pending_page():
-    return render_template("pending.html")
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT pending_id, name, nationality, residency_address, contact_number, date_of_birth,
+               ic_number, age, client_profile, employment_status, email_address,
+               onboarded_date, last_periodic_risk_assessment, next_periodic_risk_assessment,
+               risk_rating, relationship_manager, service_type, client_type, pep,
+               submitted_by, upload_time, approval_status, comments
+        FROM pending
+        ORDER BY upload_time DESC
+    """)
+    pending_entries = cursor.fetchall()
+    columns = [desc[0] for desc in cursor.description]
+    cursor.close()
+
+    # Convert each row to a dictionary
+    pending_clients = [dict(zip(columns, row)) for row in pending_entries]
+
+    return render_template("pending.html", pending_entries=pending_clients)
+
 @app.route("/login_page")
 def login_page():
     return render_template("login.html")

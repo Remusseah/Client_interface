@@ -108,14 +108,32 @@ tbody tr:hover {
 }
 .pending-box {
     border: 1px solid #ccc;
-    padding: 10px;
-    margin-bottom: 15px;
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #f9f9f9;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
+
+.pending-box:hover {
+    background-color: #f1f1f1;
+}
+
 .pending-details {
     display: none;
     margin-top: 10px;
 }
+
 .action-buttons {
     margin-top: 10px;
-        }
+}
+
+.action-buttons form {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.action-buttons input[type="text"] {
+    padding: 4px;
+    width: 200px;
+}
