@@ -286,7 +286,7 @@ def pending_page():
                ic_number, age, client_profile, employment_status, email_address,
                onboarded_date, last_periodic_risk_assessment, next_periodic_risk_assessment,
                risk_rating, relationship_manager, service_type, client_type, pep,
-               submitted_by, upload_time, approval_status, comments
+               submitted_by, submitted_at, approval_status, comments
         FROM pending
         ORDER BY upload_time DESC
     """)
