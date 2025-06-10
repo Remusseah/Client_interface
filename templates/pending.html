@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Pending Approvals</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">    
-        
 </head>
 <body>
     {% if logged_in_user %}
@@ -23,11 +22,27 @@
     <div class="pending-box" onclick="toggleDetails('details-{{ entry.pending_id }}')">
         <strong>{{ entry.name }}</strong> - {{ entry.nationality }}
         <div id="details-{{ entry.pending_id }}" class="pending-details">
-            <p><strong>Email:</strong> {{ entry.email }}</p>
-            <p><strong>Contact No:</strong> {{ entry.contact_no }}</p>
-            <p><strong>Employment:</strong> {{ entry.employment_status }}</p>
+            <p><strong>Residency Address:</strong> {{ entry.residency_address }}</p>
+            <p><strong>Contact Number:</strong> {{ entry.contact_number }}</p>
+            <p><strong>Date of Birth:</strong> {{ entry.date_of_birth }}</p>
+            <p><strong>IC Number:</strong> {{ entry.ic_number }}</p>
+            <p><strong>Age:</strong> {{ entry.age }}</p>
+            <p><strong>Client Profile:</strong> {{ entry.client_profile }}</p>
+            <p><strong>Employment Status:</strong> {{ entry.employment_status }}</p>
+            <p><strong>Email Address:</strong> {{ entry.email_address }}</p>
+            <p><strong>Onboarded Date:</strong> {{ entry.onboarded_date }}</p>
+            <p><strong>Service Type:</strong> {{ entry.service_type }}</p>
+            <p><strong>Client Type:</strong> {{ entry.client_type }}</p>
+            <p><strong>PEP:</strong> {{ entry.pep }}</p>
             <p><strong>Risk Rating:</strong> {{ entry.risk_rating }}</p>
-            <p><strong>Submitted:</strong> {{ entry.submitted_at }}</p>
+            <p><strong>Last Periodic Risk Assessment:</strong> {{ entry.last_periodic_risk_assessment }}</p>
+            <p><strong>Next Periodic Risk Assessment:</strong> {{ entry.next_periodic_risk_assessment }}</p>
+            <p><strong>Relationship Manager:</strong> {{ entry.relationship_manager }}</p>
+            <p><strong>Submitted By:</strong> {{ entry.submitted_by }}</p>
+            <p><strong>Submitted At:</strong> {{ entry.submitted_at }}</p>
+            <p><strong>Approval Status:</strong> {{ entry.approval_status }}</p>
+            <p><strong>Comments:</strong> {{ entry.comments }}</p>
+            <p><strong>Upload Time:</strong> {{ entry.upload_time }}</p>
 
             <div class="action-buttons">
                 <form method="POST" action="/approve/{{ entry.pending_id }}" style="display: inline;">
@@ -41,7 +56,7 @@
         </div>
     </div>
     {% endfor %}
-    <script src="{{ url_for('static', filename='app.js') }}"></script>
 
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>
