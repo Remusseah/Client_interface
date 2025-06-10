@@ -229,6 +229,7 @@ def submit_pending():
             data.get("relationship_manager"),
             data.get("service_type"),
             data.get("client_type"),
+            data.get("submitted_by")
             data.get("pep"),
             session.get("user_id")
         ))
