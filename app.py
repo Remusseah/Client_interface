@@ -81,52 +81,48 @@ def get_client_data(client_id):
         return jsonify(dict(zip(colnames, result)))
     else:
         return jsonify({"error": "Client not found"}), 404
+
+from flask import request, redirect, url_for
 from werkzeug.utils import secure_filename
-
-@app.route("/add-client", methods=["POST"])
-def add_client():
+import psycopg2
+import traceback
+@app.route("/approve/<int:pending_id>", methods=["POST"])
+def approve_pending_client(pending_id):
     try:
-        name = request.form["Name"]
-        nationality = request.form["Nationality"]
-        residency_address = request.form["Residency_address"]
-        contact_number = request.form["Contact_number"]
-        date_of_birth = request.form["Date_of_birth"]
-        ic_number = request.form["IC_number"]
-        age = int(request.form["Age"])
-        client_profile = request.form["Client_profile"]
-        employment_status = request.form["Employment_status"]
-        email_address = request.form["Email_address"]
-
         cursor = conn.cursor()
 
-        # Insert into client_data
+        # 1. Fetch pending client info
+        cursor.execute("SELECT * FROM pending WHERE pending_id = %s", (pending_id,))
+        pending = cursor.fetchone()
+        if not pending:
+            return "Pending entry not found", 404
+
+        columns = [desc[0] for desc in cursor.description]
+        pending_data = dict(zip(columns, pending))
+
+        # 2. Insert into client_data
         cursor.execute("""
             INSERT INTO client_data (
                 "Name", "Nationality", "Residency_address", "Contact_number",
                 "Date_of_birth", "Ic_number", "Age", "Client_profile",
                 "Employment_status", "Email_address"
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING "Client_id"
         """, (
-            name, nationality, residency_address, contact_number,
-            date_of_birth, ic_number, age, client_profile,
-            employment_status, email_address
+            pending_data["name"], pending_data["nationality"], pending_data["residency_address"],
+            pending_data["contact_number"], pending_data["date_of_birth"], pending_data["ic_number"],
+            pending_data["age"], pending_data["client_profile"], pending_data["employment_status"],
+            pending_data["email_address"]
         ))
         client_id = cursor.fetchone()[0]
 
-        # Optional Compliance Data
-        compliance_data = {
-            "Onboarded_date": request.form.get("onboarded_date"),
-            "Last_periodic_risk_assessment": request.form.get("last_assessment"),
-            "Next_periodic_risk_assessment": request.form.get("next_assessment"),
-            "Risk_rating": request.form.get("risk_rating"),
-            "Relationship_Manager": request.form.get("relationship_manager"),
-            "Service_type": request.form.get("service_type"),
-            "Client_type": request.form.get("client_type"),
-            "Pep": request.form.get("pep")
-        }
-
-        if any(compliance_data.values()):
+        # 3. Insert into client_compliance (if there’s anything)
+        if any([
+            pending_data.get("onboarded_date"), pending_data.get("last_periodic_risk_assessment"),
+            pending_data.get("next_periodic_risk_assessment"), pending_data.get("risk_rating"),
+            pending_data.get("relationship_manager"), pending_data.get("service_type"),
+            pending_data.get("client_type"), pending_data.get("pep")
+        ]):
             cursor.execute("""
                 INSERT INTO client_compliance (
                     "Client_id", "Onboarded_date", "Last_periodic_risk_assessment",
@@ -135,55 +131,53 @@ def add_client():
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (
                 client_id,
-                compliance_data["Onboarded_date"],
-                compliance_data["Last_periodic_risk_assessment"],
-                compliance_data["Next_periodic_risk_assessment"],
-                compliance_data["Risk_rating"],
-                compliance_data["Relationship_Manager"],
-                compliance_data["Service_type"],
-                compliance_data["Client_type"],
-                compliance_data["Pep"]
+                pending_data.get("onboarded_date"),
+                pending_data.get("last_periodic_risk_assessment"),
+                pending_data.get("next_periodic_risk_assessment"),
+                pending_data.get("risk_rating"),
+                pending_data.get("relationship_manager"),
+                pending_data.get("service_type"),
+                pending_data.get("client_type"),
+                pending_data.get("pep")
             ))
 
-        # Handle uploaded files
-        for file in request.files.getlist("client_files"):
-            if file.filename:
-                filename = secure_filename(file.filename)
-                file_data = file.read()
-                ext = filename.split('.')[-1].lower()
+        # 4. Transfer associated files
+        cursor.execute("SELECT * FROM pending_files WHERE pending_id = %s", (pending_id,))
+        files = cursor.fetchall()
+        file_cols = [desc[0] for desc in cursor.description]
 
-                # Get or create file type
-                cursor.execute("SELECT file_type_id FROM file_types WHERE LOWER(type) = %s", (ext,))
-                file_type_result = cursor.fetchone()
+        for row in files:
+            file_record = dict(zip(file_cols, row))
+            cursor.execute("""
+                INSERT INTO client_files (client_id, file_type_id, file_name, file_data)
+                VALUES (%s, %s, %s, %s)
+            """, (
+                client_id,
+                file_record["file_type_id"],
+                file_record["file_name"],
+                file_record["file_data"]
+            ))
 
-                if file_type_result:
-                    file_type_id = file_type_result[0]
-                else:
-                    cursor.execute("""
-                        INSERT INTO file_types (extension, description)
-                        VALUES (%s, %s) RETURNING file_type_id
-                    """, (ext, f"Auto-added type for .{ext.upper()}"))
-                    file_type_id = cursor.fetchone()[0]
+        # 5. Update approval status
+        cursor.execute("""
+            UPDATE pending SET approval_status = 'Approved' WHERE pending_id = %s
+        """, (pending_id,))
 
-                cursor.execute("""
-                    INSERT INTO client_files (client_id, file_type_id, file_name, file_data)
-                    VALUES (%s, %s, %s, %s)
-                """, (client_id, file_type_id, filename, psycopg2.Binary(file_data)))
+        # Optional: Clean up pending_files (not required, but tidy)
+        # cursor.execute("DELETE FROM pending_files WHERE pending_id = %s", (pending_id,))
+        # cursor.execute("DELETE FROM pending WHERE pending_id = %s", (pending_id,))
 
         conn.commit()
         cursor.close()
 
-        log_action("Add", client_id, f"Added new client: {name}")
-        return jsonify({"message": "Client added successfully"}), 200
+        return redirect(url_for("pending_page"))
 
     except Exception as e:
         conn.rollback()
-        print("Error adding client:", e)
-        return jsonify({"error": str(e)}), 500
+        print("❌ Error approving client:", e)
+        return f"Error approving client: {e}", 500
 
-from werkzeug.utils import secure_filename
-import psycopg2
-import traceback
+
 
 @app.route("/submit-pending", methods=["POST"])
 def submit_pending():
