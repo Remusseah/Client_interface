@@ -35,6 +35,9 @@
     <a href="/statistics_page" style="text-decoration: none;">
         <button type="button">Statistics</button>
     </a>
+    <a href="/logout" style="text-decoration: none;">
+        <button type="button">logout</button>
+    </a>
     <h1>Client Lookup</h1>
     <form id="lookupForm">
         <label for="clientId">Enter Client ID:</label>
@@ -68,10 +71,6 @@
     <button id="deleteClientBtn">
         Delete Client
     </button>
-    <br>
-    <form action="/logout" method="POST" style="display: inline;">
-    <button type="submit">🚪 Logout</button>
-    </form>
 
     <!-- Link to the external JavaScript file -->
     <script src="{{ url_for('static', filename='app.js') }}"></script>
