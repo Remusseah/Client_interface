@@ -190,6 +190,8 @@ def submit_pending():
 
         # ✅ Extract form data
         data = request.form
+        print("Last assessment:", data.get("last_periodic_risk_assessment"))
+        print("Next assessment:", data.get("next_periodic_risk_assessment"))
         submitted_by = session.get("user_email") 
 
         cursor = conn.cursor()
