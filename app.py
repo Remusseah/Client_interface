@@ -197,7 +197,7 @@ def submit_pending():
 
         # ✅ Extract form data
         data = request.form
-        submitted_by = session.get("user_email")  # Optional debug
+        submitted_by = session.get("user_email") 
 
         cursor = conn.cursor()
 
@@ -282,11 +282,34 @@ def statistics_page():
 def pending_page():
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT pending_id, name, nationality, residency_address, contact_number, date_of_birth,
-               ic_number, age, client_profile, employment_status, email_address,
-               onboarded_date, last_periodic_risk_assessment, next_periodic_risk_assessment,
-               risk_rating, relationship_manager, service_type, client_type, pep,
-               submitted_by, upload_time, approval_status, comments
+        SELECT 
+            pending_id,                 -- No.
+            onboarded_date,             -- Onboarded Date
+            service_type,               -- Service Type
+            name,                       -- Name
+            nationality,                -- Nationality
+            residency_address,          -- Residency Address
+            contact_number,             -- Contact No.
+            email_address,              -- Email Address
+            ic_number,                  -- ID Number
+            expiry_date,                -- Expiry Date
+            client_type,                -- Client Type
+            pep,                        -- PEP (Yes/No)
+            risk_rating,                -- Risk Rating
+            irpq_rating,                -- IRPQ Rating
+            last_periodic_risk_assessment,  -- Last Periodic Risk Assessment
+            next_periodic_risk_assessment,  -- Next Periodic Risk Assessment
+            relationship_manager,       -- Relationship Manager
+            remarks,                    -- Remarks
+            client_profile,             -- Client Profile
+            employment_status,          -- Employed/Self-Employed
+            date_of_birth,              -- Date of Birth
+            age,                        -- Age
+            submitted_by,
+            submitted_at,
+            approval_status,
+            comments,
+            upload_time
         FROM pending
         ORDER BY upload_time DESC
     """)
@@ -297,7 +320,9 @@ def pending_page():
     # Convert each row to a dictionary
     pending_clients = [dict(zip(columns, row)) for row in pending_entries]
 
-    return render_template("pending.html", pending_entries=pending_clients)
+    return render_template("pending.html", pending_entries=pending_clients,
+    logged_in_user=session.get("user_email"))
+
 
 @app.route("/login_page")
 def login_page():
