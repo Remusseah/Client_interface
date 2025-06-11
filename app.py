@@ -116,30 +116,23 @@ def approve_pending_client(pending_id):
         ))
         client_id = cursor.fetchone()[0]
 
-        # 3. Insert into client_compliance (if there’s anything)
-        if any([
-            pending_data.get("onboarded_date"), pending_data.get("last_periodic_risk_assessment"),
-            pending_data.get("next_periodic_risk_assessment"), pending_data.get("risk_rating"),
-            pending_data.get("relationship_manager"), pending_data.get("service_type"),
-            pending_data.get("client_type"), pending_data.get("pep")
-        ]):
-            cursor.execute("""
-                INSERT INTO client_compliance (
-                    "Client_id", "Onboarded_date", "Last_periodic_risk_assessment",
-                    "Next_periodic_risk_assessment", "Risk_rating", "Relationship_Manager",
-                    "Service_type", "Client_type", "Pep"
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """, (
-                client_id,
-                pending_data.get("onboarded_date"),
-                pending_data.get("last_periodic_risk_assessment"),
-                pending_data.get("next_periodic_risk_assessment"),
-                pending_data.get("risk_rating"),
-                pending_data.get("relationship_manager"),
-                pending_data.get("service_type"),
-                pending_data.get("client_type"),
-                pending_data.get("pep")
-            ))
+        cursor.execute("""
+            INSERT INTO client_compliance (
+                "Client_id", "Onboarded_date", "Last_periodic_risk_assessment",
+                "Next_periodic_risk_assessment", "Risk_rating", "Relationship_Manager",
+                "Service_type", "Client_type", "Pep"
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            client_id,
+            pending_data.get("onboarded_date"),
+            pending_data.get("last_periodic_risk_assessment"),
+            pending_data.get("next_periodic_risk_assessment"),
+            pending_data.get("risk_rating"),
+            pending_data.get("relationship_manager"),
+            pending_data.get("service_type"),
+            pending_data.get("client_type"),
+            pending_data.get("pep")
+        ))
 
         # 4. Transfer associated files
         cursor.execute("SELECT * FROM pending_files WHERE pending_id = %s", (pending_id,))
