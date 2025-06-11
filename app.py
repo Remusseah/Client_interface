@@ -106,7 +106,7 @@ def approve_pending_client(pending_id):
                 "Name", "Nationality", "Residency_address", "Contact_number",
                 "Date_of_birth", "Ic_number", "Age", "Client_profile",
                 "Employment_status", "Email_address"
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING "Client_id"
         """, (
             pending_data["name"], pending_data["nationality"], pending_data["residency_address"],
