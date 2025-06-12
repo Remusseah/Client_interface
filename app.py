@@ -201,8 +201,8 @@ def submit_pending():
                 ic_number, age, client_profile, employment_status, email_address,
                 onboarded_date, last_periodic_risk_assessment, next_periodic_risk_assessment,
                 risk_rating, relationship_manager, service_type, client_type, pep,
-                submitted_by, upload_time
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+                submitted_by,
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
             RETURNING pending_id
         """, (
             data.get("name"),
@@ -303,7 +303,7 @@ def pending_page():
             approval_status,
             comments,
         FROM pending
-        ORDER BY upload_time DESC
+        ORDER BY submitted_at DESC
     """)
     pending_entries = cursor.fetchall()
     columns = [desc[0] for desc in cursor.description]
