@@ -272,6 +272,7 @@ def view_page():
 def statistics_page():
     return render_template("statistics.html")
 @app.route('/to_do')
+def to_do():
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM tasks ORDER BY id DESC")
     rows = cursor.fetchall()
