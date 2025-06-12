@@ -279,7 +279,7 @@ def to_do():
     columns = [desc[0] for desc in cursor.description]
     tasks = [dict(zip(columns, row)) for row in rows]
     cursor.close()
-    return render_template("todo.html", tasks=tasks, logged_in_user=session.get("user_email"))
+    return render_template("to_do.html", tasks=tasks, logged_in_user=session.get("user_email"))
 @app.route('/add_task')
 def add_task_page():
     return render_template('add_task.html') 
