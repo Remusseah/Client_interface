@@ -233,34 +233,35 @@ document.addEventListener("DOMContentLoaded", function () {
                 const doneColumn = document.getElementById("done-column");
                 todoColumn.innerHTML = "";
                 doneColumn.innerHTML = "";
-    
+
                 data.forEach(task => {
-                    const div = document.createElement("div");
-                    div.className = "task";
-                    div.setAttribute("draggable", "true");
-                    div.setAttribute("data-id", task.id);
-                    div.innerHTML = `
-                        <strong>${task.client_name}</strong><br>
-                        RM: ${task.rm}<br>
-                        Docs: ${task.documents.join(", ")}<br>
-                        Doc Link: ${task.doc_link}<br>
-                        EMA/IMA: ${task.ema_ima}<br>
-                        Assigned To: ${task.assigned_to}<br>
-                        <button class="delete-task" onclick="deleteTask(${task.id})">×</button>
+                    const taskBox = document.createElement("div");
+                    taskBox.className = "pending-box"; // reuse pending box styling
+                    taskBox.onclick = () => toggleDetails(`task-${task.id}`);
+                    taskBox.innerHTML = `
+                        <strong>${task.client_name}</strong> (RM: ${task.rm})
+                        <div id="task-${task.id}" class="pending-details">
+                            <p><strong>Documents:</strong> ${task.documents.join(", ")}</p>
+                            <p><strong>Doc Link:</strong> <a href="${task.doc_link}" target="_blank">${task.doc_link}</a></p>
+                            <p><strong>EMA/IMA:</strong> <a href="${task.ema_ima}" target="_blank">${task.ema_ima}</a></p>
+                            <p><strong>Assigned From:</strong> ${task.assigned_from}</p>
+                            <p><strong>Assigned To:</strong> ${task.assigned_to}</p>
+                            <p><strong>Status:</strong> ${task.completion_status}</p>
+                            <button class="delete-task" onclick="event.stopPropagation(); deleteTask(${task.id})">×</button>
+                        </div>
                     `;
-    
-                    if (task.done) {
-                        doneColumn.appendChild(div);
+
+                    if (task.completion_status === "Done") {
+                        doneColumn.appendChild(taskBox);
                     } else {
-                        todoColumn.appendChild(div);
+                        todoColumn.appendChild(taskBox);
                     }
                 });
-            })
-            .catch(err => {
-                console.error("Failed to load tasks:", err);
-            });
-    }
-    loadTasks();
+        })
+        .catch(err => {
+            console.error("Failed to load tasks:", err);
+        });
+}
 }});
 function deleteTask(id) {
     if (!confirm("Delete this task?")) return;

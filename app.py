@@ -272,8 +272,13 @@ def view_page():
 def statistics_page():
     return render_template("statistics.html")
 @app.route('/to_do')
-def to_do_page():
-    return render_template('to_do.html') 
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM tasks ORDER BY id DESC")
+    rows = cursor.fetchall()
+    columns = [desc[0] for desc in cursor.description]
+    tasks = [dict(zip(columns, row)) for row in rows]
+    cursor.close()
+    return render_template("todo.html", tasks=tasks, logged_in_user=session.get("user_email"))
 @app.route('/add_task')
 def add_task_page():
     return render_template('add_task.html') 
@@ -623,16 +628,7 @@ def submit_task():
     except Exception as e:
         print("❌ Error inserting task:", e)
         return "Error inserting task", 500
-@app.route("/todo")
-def todo_page():
-    cur = conn.cursor()
-    cur.execute("SELECT id, client_name, rm, documents, doc_link, ema_ima, assignee, status FROM tasks")
-    rows = cur.fetchall()
-    colnames = [desc[0] for desc in cur.description]
-    cur.close()
 
-    tasks = [dict(zip(colnames, row)) for row in rows]
-    return render_template("todo.html")
 @app.route("/api/stats_by/<field>")
 def stats_by_field(field):
     cur = conn.cursor()

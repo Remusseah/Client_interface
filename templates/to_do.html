@@ -58,13 +58,14 @@
   </a>
 
   <div class="container">
-    <div class="list" id="todo" ondragover="allowDrop(event)" ondrop="drop(event, 'todo')">
-      <h3>To Do</h3>
-    </div>
-    <div class="list" id="done" ondragover="allowDrop(event)" ondrop="drop(event, 'done')">
-      <h3>Done</h3>
-    </div>
+  <div class="list" id="todo-column">
+    <h3>To Do</h3>
   </div>
+  <div class="list" id="done-column">
+    <h3>Done</h3>
+  </div>
+</div>
+
 
   <script>
     function allowDrop(ev) {
@@ -87,38 +88,13 @@
       if (task) task.remove();
     }
   
-    function renderTasks(tasks) {
-      tasks.forEach(task => {
-        const container = task.status === "done" ? "done" : "todo";
-        const taskEl = document.createElement("div");
-        const taskId = "task-" + task.id;
-  
-        taskEl.className = "task";
-        taskEl.id = taskId;
-        taskEl.draggable = true;
-        taskEl.ondragstart = drag;
-  
-        const span = document.createElement("span");
-        span.textContent = `${task.client_name} (RM: ${task.rm})`;
-  
-        const delBtn = document.createElement("button");
-        delBtn.className = "delete-btn";
-        delBtn.textContent = "×";
-        delBtn.onclick = function () { deleteTask(this); };
-  
-        taskEl.appendChild(span);
-        taskEl.appendChild(delBtn);
-  
-        document.getElementById(container).appendChild(taskEl);
-      });
-    }
   
     // Injected from Flask
     //const tasks ={ tasks | tojson };
   
     // Render after DOM is ready
     document.addEventListener("DOMContentLoaded", function () {
-      renderTasks();
+      loadTasks();
     });
   </script>
   
