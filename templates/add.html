@@ -233,54 +233,48 @@
     <br></br>
 
     
-    <!-- Toggle Button -->
-<button type="button" id="toggleComplianceBtn">Add Compliance Info</button>
+    <h3>Client Compliance Information</h3>
 
-    <!-- Compliance Fields (Initially Hidden) -->
-    <div id="complianceSection" style="display: none; margin-top: 20px;">
-        <h3>Client Compliance Information</h3>
+    <label for="onboarded_date">Onboarded Date:</label>
+    <input type="date" name="onboarded_date"><br>
 
-        <label for="onboarded_date">Onboarded Date:</label>
-        <input type="date" name="onboarded_date"><br>
+    <label for="last_periodic_risk_assessment">Last Periodic Risk Assessment:</label>
+    <input type="date" name="last_periodic_risk_assessment"><br>
 
-        <label for="last_periodic_risk_assessment">Last Periodic Risk Assessment:</label>
-        <input type="date" name="last_periodic_risk_assessment"><br>
+    <label for="next_periodic_risk_assessment">Next Periodic Risk Assessment:</label>
+    <input type="date" name="next_periodic_risk_assessment"><br>
 
-        <label for="next_periodic_risk_assessment">Next Periodic Risk Assessment:</label>
-        <input type="date" name="next_periodic_risk_assessment"><br>
+    <label for="risk_rating">Risk Rating:</label>
+    <select name="risk_rating">
+        <option value="">-- Select --</option>
+        <option value="Low">Low</option>
+        <option value="Medium">Medium</option>
+        <option value="High">High</option>
+    </select>
 
-        <label for="risk_rating">Risk Rating:</label>
-        <select name="risk_rating">
-            <option value="">-- Select --</option>
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-        </select>
+    <label for="relationship_manager">Relationship Manager:</label>
+    <input type="text" name="relationship_manager"><br>
 
-        <label for="relationship_manager">Relationship Manager:</label>
-        <input type="text" name="relationship_manager"><br>
+    <label for="service_type">Service Type:</label>
+    <select name="service_type">
+        <option value="">-- Select --</option>
+        <option value="Direct Fund">Direct Fund</option>
+        <option value="EAM">EAM</option>
+    </select>
+    <label for="client_type">Client Type:</label>
+    <input type="text" name="client_type"><br>
 
-        <label for="service_type">Service Type:</label>
-        <select name="service_type">
-            <option value="">-- Select --</option>
-            <option value="Direct Fund">Direct Fund</option>
-            <option value="EAM">EAM</option>
-        </select>
-        <label for="client_type">Client Type:</label>
-        <input type="text" name="client_type"><br>
+    <label for="pep">PEP (Politically Exposed Person):</label>
+    <select name="pep">
+        <option value="">-- Select --</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+    </select><br>
 
-        <label for="pep">PEP (Politically Exposed Person):</label>
-        <select name="pep">
-            <option value="">-- Select --</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-        </select><br>
+    <label for="client_files">Upload Files:</label>
+    <input type="file" id="client_files" name="client_files" multiple />
+    <br><br>
 
-        <label for="client_files">Upload Files:</label>
-        <input type="file" id="client_files" name="client_files" multiple />
-        <br><br>
-
-    </div>
     <button type="submit">Add Client</button>
     </form>
 

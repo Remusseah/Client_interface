@@ -151,14 +151,12 @@ def approve_pending_client(pending_id):
                 file_record["file_data"]
             ))
 
-        # 5. Update approval status
-        cursor.execute("""
-            UPDATE pending SET approval_status = 'Approved' WHERE pending_id = %s
-        """, (pending_id,))
+
+
 
         # Optional: Clean up pending_files (not required, but tidy)
-        # cursor.execute("DELETE FROM pending_files WHERE pending_id = %s", (pending_id,))
-        # cursor.execute("DELETE FROM pending WHERE pending_id = %s", (pending_id,))
+        cursor.execute("DELETE FROM pending_files WHERE pending_id = %s", (pending_id,))
+        cursor.execute("DELETE FROM pending WHERE pending_id = %s", (pending_id,))
 
         conn.commit()
         cursor.close()
