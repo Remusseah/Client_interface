@@ -778,10 +778,15 @@ def login():
         email = request.form["email"]
         password = request.form["password"]
 
-        cur = conn.cursor()
-        cur.execute("SELECT id, password_hash, is_verified FROM users WHERE email = %s", (email,))
-        result = cur.fetchone()
-        cur.close()
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT id, password_hash, is_verified FROM users WHERE email = %s", (email,))
+            result = cur.fetchone()
+            cur.close()
+        except Exception as e:
+            conn.rollback()  # 🛠️ This clears the failed transaction state
+            print("❌ Login DB error:", e)
+            return render_template("login.html", error="Database error. Please try again.")
 
         if result:
             user_id, password_hash, is_verified = result
@@ -789,7 +794,7 @@ def login():
                 return render_template("login.html", error="Please verify your email first.")
             if check_password_hash(password_hash, password):
                 session["user_id"] = user_id
-                session["user_email"] = email  # ✅ Add this line
+                session["user_email"] = email
                 return redirect("/main_page")
             else:
                 return render_template("login.html", error="Incorrect password.")
@@ -797,6 +802,7 @@ def login():
             return render_template("login.html", error="Email not found.")
     
     return render_template("login.html")
+
 
 @app.context_processor
 def inject_user():
