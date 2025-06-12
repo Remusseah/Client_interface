@@ -274,6 +274,9 @@ def statistics_page():
 @app.route('/to_do')
 def to_do_page():
     return render_template('to_do.html') 
+@app.route('/add_task')
+def add_task_page():
+    return render_template('add_task.html') 
 @app.route("/pending_page")
 def pending_page():
     cursor = conn.cursor()
