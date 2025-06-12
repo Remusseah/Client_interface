@@ -301,7 +301,7 @@ def pending_page():
             submitted_by,
             submitted_at,
             approval_status,
-            comments,
+            comments
         FROM pending
         ORDER BY submitted_at DESC
     """)
