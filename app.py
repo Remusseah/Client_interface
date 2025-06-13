@@ -620,6 +620,10 @@ def submit_task():
         documents = request.form.getlist("documents[]")
 
         cur = conn.cursor()
+        cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'tasks'")
+        print("🔍 Columns in 'tasks':")
+        for col in cur.fetchall():
+            print(col)
         cur.execute("""
             INSERT INTO tasks (
                 client_name, rm, documents, doc_link, ema_ima,assigned_to, assigned_from 
