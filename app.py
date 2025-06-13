@@ -605,24 +605,29 @@ def view_log():
 @app.route("/submit_task", methods=["POST"]) 
 def submit_task():
     try:
+        print("📨 Form data received:")
+        for k, v in request.form.items():
+            print(f"{k}: {v}")
+        print("📎 Documents:", request.form.getlist("documents[]"))
+
         client_name = request.form.get("client_name")
         rm = request.form.get("rm")
         doc_link = request.form.get("doc_link")
         ema_ima = request.form.get("ema_ima")
         assigned_to = request.form.get("assigned_to")
-        assigned_from = session.get("user_email")  # Assuming the current user is the assigner
-        completion_status = request.form.get("completion_status", "Incomplete")
+        assigned_from = session.get("user_email")  # or however you're identifying the assigner
+
         documents = request.form.getlist("documents[]")
 
-        # Insert into DB
         cur = conn.cursor()
         cur.execute("""
-            INSERT INTO tasks (client_name, rm, documents, doc_link, ema_ima,
-                               assigned_to, assigned_from, completion_status)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO tasks (
+                client_name, rm, documents, doc_link, ema_ima, 
+                assigned_to, assigned_from
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s)
         """, (
             client_name, rm, documents, doc_link, ema_ima,
-            assigned_to, assigned_from, completion_status
+            assigned_to, assigned_from
         ))
 
         conn.commit()
@@ -630,8 +635,8 @@ def submit_task():
         return redirect("/todo")
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
+        print("❌ Error inserting task:")
+        traceback.print_exc()  # shows detailed error line
         return "Error inserting task", 500
 
 @app.route("/api/stats_by/<field>")
