@@ -622,8 +622,7 @@ def submit_task():
         cur = conn.cursor()
         cur.execute("""
             INSERT INTO tasks (
-                client_name, rm, documents, doc_link, ema_ima, 
-                assigned_to, assigned_from 
+                client_name, rm, documents, doc_link, ema_ima,assigned_to, assigned_from 
             ) VALUES (%s, %s, %s, %s, %s, %s, %s)
         """, (
             client_name, rm, documents, doc_link, ema_ima,
