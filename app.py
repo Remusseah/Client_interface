@@ -602,32 +602,36 @@ def view_log():
     print("DEBUG - rows:", logs[:1])  # Show first row
 
     return render_template("log.html", rows=logs, columns=colnames)
-@app.route("/submit_task", methods=["POST"])
+@app.route("/submit_task", methods=["POST"]) 
 def submit_task():
     try:
         client_name = request.form.get("client_name")
         rm = request.form.get("rm")
         doc_link = request.form.get("doc_link")
         ema_ima = request.form.get("ema_ima")
-        assignee = request.form.get("assignee")
-        status = request.form.get("status", "todo")  # default to "todo"
-
-        # Get documents[] as a list
+        assigned_to = request.form.get("assigned_to")
+        assigned_from = session.get("user_email")  # Assuming the current user is the assigner
+        completion_status = request.form.get("completion_status", "Incomplete")
         documents = request.form.getlist("documents[]")
 
         # Insert into DB
         cur = conn.cursor()
         cur.execute("""
-            INSERT INTO tasks (client_name, rm, documents, doc_link, ema_ima, assignee, status)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (client_name, rm, documents, doc_link, ema_ima, assignee, status))
+            INSERT INTO tasks (client_name, rm, documents, doc_link, ema_ima,
+                               assigned_to, assigned_from, completion_status)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            client_name, rm, documents, doc_link, ema_ima,
+            assigned_to, assigned_from, completion_status
+        ))
 
         conn.commit()
         cur.close()
-        return redirect("/todo")  # or render a success page
+        return redirect("/todo")
 
     except Exception as e:
-        print("❌ Error inserting task:", e)
+        import traceback
+        traceback.print_exc()
         return "Error inserting task", 500
 
 @app.route("/api/stats_by/<field>")
