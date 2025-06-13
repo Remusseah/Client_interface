@@ -609,7 +609,11 @@ def submit_task():
         for k, v in request.form.items():
             print(f"{k}: {v}")
         print("📎 Documents:", request.form.getlist("documents[]"))
-
+        
+        cur = conn.cursor()
+        cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'tasks'")
+        db_columns = [row[0] for row in cur.fetchall()]
+        print("📋 Columns in 'tasks' table:", db_columns)
         client_name = request.form.get("client_name")
         rm = request.form.get("rm")
         doc_link = request.form.get("doc_link")
