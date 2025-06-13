@@ -623,7 +623,7 @@ def submit_task():
         cur.execute("""
             INSERT INTO tasks (
                 client_name, rm, documents, doc_link, ema_ima, 
-                assigned_to, assigned_from # or just let the DB use its default by removing this
+                assigned_to, assigned_from 
             ) VALUES (%s, %s, %s, %s, %s, %s, %s)
         """, (
             client_name, rm, documents, doc_link, ema_ima,
