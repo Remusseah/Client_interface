@@ -602,50 +602,64 @@ def view_log():
     print("DEBUG - rows:", logs[:1])  # Show first row
 
     return render_template("log.html", rows=logs, columns=colnames)
-@app.route("/submit_task", methods=["POST"]) 
+@app.route("/submit_task", methods=["POST"])
 def submit_task():
     try:
-        print("📨 Form data received:")
-        for k, v in request.form.items():
-            print(f"{k}: {v}")
-        print("📎 Documents:", request.form.getlist("documents[]"))
-        
         cur = conn.cursor()
-        cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'tasks'")
-        db_columns = [row[0] for row in cur.fetchall()]
-        print("📋 Columns in 'tasks' table:", db_columns)
+        
+        # Test the exact query that's failing
+        print("🧪 Testing the exact INSERT query...")
+        
+        # First, let's see what happens with a simple SELECT
+        cur.execute("SELECT assigned_to FROM tasks LIMIT 1")
+        print("✅ SELECT assigned_to works fine")
+        
+        # Now test the INSERT with dummy data
+        cur.execute("""
+            INSERT INTO tasks (
+                client_name, rm, documents, doc_link, ema_ima, assigned_to, assigned_from
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (
+            'test', 'test', ['test'], 'test', 'test', 'test', 'test'
+        ))
+        print("✅ INSERT with assigned_to works!")
+        
+        # If we get here, rollback the test insert
+        conn.rollback()
+        
+        # Your actual form data...
         client_name = request.form.get("client_name")
         rm = request.form.get("rm")
         doc_link = request.form.get("doc_link")
         ema_ima = request.form.get("ema_ima")
         assigned_to = request.form.get("assigned_to")
-        assigned_from = session.get("user_email")  # or however you're identifying the assigner
-
+        assigned_from = session.get("user_email")
         documents = request.form.getlist("documents[]")
-
-        cur = conn.cursor()
-        cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'tasks'")
-        print("🔍 Columns in 'tasks':")
-        for col in cur.fetchall():
-            print(col)
+        
+        # Print the actual values
+        print(f"📝 Form values:")
+        print(f"  assigned_to: {assigned_to} (type: {type(assigned_to)})")
+        print(f"  assigned_from: {assigned_from} (type: {type(assigned_from)})")
+        
+        # Now try the real insert
         cur.execute("""
             INSERT INTO tasks (
-                client_name, rm, documents, doc_link, ema_ima,assigned_to, assigned_from 
+                client_name, rm, documents, doc_link, ema_ima, assigned_to, assigned_from
             ) VALUES (%s, %s, %s, %s, %s, %s, %s)
         """, (
             client_name, rm, documents, doc_link, ema_ima,
             assigned_to, assigned_from
         ))
-
+        
         conn.commit()
         cur.close()
         return redirect("/todo")
-
+        
     except Exception as e:
-        print("❌ Error inserting task:")
-        traceback.print_exc()  # shows detailed error line
+        print(f"❌ Error at line: {e}")
+        import traceback
+        traceback.print_exc()
         return "Error inserting task", 500
-
 @app.route("/api/stats_by/<field>")
 def stats_by_field(field):
     cur = conn.cursor()
