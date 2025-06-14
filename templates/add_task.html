@@ -5,55 +5,59 @@
   <title>To-Do Task Manager</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
-    .user-greeting {
-      position: absolute;
-      top: 10px;
-      right: 20px;
-    }
+  .user-greeting {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+  }
 
-    .header-buttons {
-      margin-bottom: 20px;
-    }
+  .header-buttons {
+    margin-bottom: 20px;
+  }
 
-    .task-section {
-      display: flex;
-      justify-content: space-between;
-      gap: 30px;
-      padding: 0 20px;
-    }
+  .task-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 0 20px;
+    flex-wrap: nowrap; /* <-- Ensure side-by-side layout */
+  }
 
-    .task-column {
-      width: 50%;
-    }
+  .task-column {
+    flex: 1;             /* <-- Replace fixed width */
+    min-width: 0;        /* <-- Prevent overflow */
+    box-sizing: border-box;
+  }
 
-    .task-column h3 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
+  .task-column h3 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
 
-    .pending-box {
-      border: 1px solid #aaa;
-      background-color: #fdfdfd;
-      padding: 10px;
-      margin-bottom: 10px;
-      cursor: pointer;
-    }
+  .pending-box {
+    border: 1px solid #aaa;
+    background-color: #fdfdfd;
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
 
-    .pending-details {
-      display: none;
-      padding-top: 10px;
-    }
+  .pending-details {
+    display: none;
+    padding-top: 10px;
+  }
 
-    .delete-task {
-      background: red;
-      color: white;
-      border: none;
-      padding: 2px 6px;
-      font-weight: bold;
-      float: right;
-      cursor: pointer;
-    }
+  .delete-task {
+    background: red;
+    color: white;
+    border: none;
+    padding: 2px 6px;
+    font-weight: bold;
+    float: right;
+    cursor: pointer;
+  }
   </style>
+
 </head>
 <body>
   {% if logged_in_user %}
