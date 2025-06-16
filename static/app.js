@@ -288,3 +288,35 @@ function toggleDetails(id) {
         details.style.display = (details.style.display === "none" || details.style.display === "") ? "block" : "none";
     }
 }
+function drop(ev, targetId) {
+  ev.preventDefault();
+  const data = ev.dataTransfer.getData("text");
+  const item = document.getElementById(data);
+  const taskId = data.replace("task-", "");
+
+  if (item && document.getElementById(targetId)) {
+    document.getElementById(targetId).appendChild(item);
+
+    // Determine the new status based on where it was dropped
+    const newStatus = (targetId === "done") ? "Complete" : "Incomplete";
+
+    // Send update to backend
+    fetch(`/update_task_status/${taskId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ status: newStatus })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (!data.success) {
+        alert("Failed to update task status.");
+        console.error(data.error);
+      }
+    })
+    .catch(err => {
+      console.error("Error updating task status:", err);
+    });
+  }
+}

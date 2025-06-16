@@ -821,6 +821,23 @@ def login():
             return render_template("login.html", error="Email not found.")
     
     return render_template("login.html")
+@app.route("/update_task_status/<int:task_id>", methods=["POST"])
+def update_task_status(task_id):
+    try:
+        new_status = request.json.get("status")  # "Complete" or "Incomplete"
+        if new_status not in ["Complete", "Incomplete"]:
+            return {"error": "Invalid status"}, 400
+
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE tasks SET completion_status = %s WHERE id = %s
+        """, (new_status, task_id))
+        conn.commit()
+        cursor.close()
+        return {"success": True}, 200
+    except Exception as e:
+        print("❌ Error updating task status:", e)
+        return {"error": str(e)}, 500
 
 
 @app.context_processor
