@@ -203,7 +203,7 @@ def submit_pending():
                 onboarded_date, last_periodic_risk_assessment, next_periodic_risk_assessment,
                 risk_rating, relationship_manager, service_type, client_type, pep,
                 submitted_by,submitted_at
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s,%s)
             RETURNING pending_id
         """, (
             data.get("name"),
