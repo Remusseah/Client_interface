@@ -2,101 +2,103 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>To-Do Task Manager</title>
+  <title>Add New Task</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
-  .user-greeting {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-  }
-
-  .header-buttons {
-    margin-bottom: 20px;
-  }
-
-  .task-section {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 0 20px;
-    flex-wrap: nowrap; /* <-- Ensure side-by-side layout */
-  }
-
-  .task-column {
-    flex: 1;             /* <-- Replace fixed width */
-    min-width: 0;        /* <-- Prevent overflow */
-    box-sizing: border-box;
-  }
-
-  .task-column h3 {
-    text-align: center;
-    margin-bottom: 10px;
-  }
-
-  .pending-box {
-    border: 1px solid #aaa;
-    background-color: #fdfdfd;
-    padding: 10px;
-    margin-bottom: 10px;
-    cursor: pointer;
-  }
-
-  .pending-details {
-    display: none;
-    padding-top: 10px;
-  }
-
-  .delete-task {
-    background: red;
-    color: white;
-    border: none;
-    padding: 2px 6px;
-    font-weight: bold;
-    float: right;
-    cursor: pointer;
-  }
+    .form-container {
+      max-width: 600px;
+      margin: auto;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: bold;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    #docs-container .form-group {
+      display: flex;
+      gap: 10px;
+    }
+    .remove-doc {
+      background: red;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
   </style>
-
 </head>
 <body>
   {% if logged_in_user %}
-    <div class="user-greeting">
-      Logged in as <strong>{{ logged_in_user }}</strong>
+    <div class="user-greeting" style="position: absolute; top: 10px; right: 20px;">
+        Logged in as <strong>{{ logged_in_user }}</strong>
     </div>
   {% endif %}
-
-  <a href="/" style="text-decoration: none;">
-    <button type="button">Go back</button>
+  <a href="/to_do" style="text-decoration: none;">
+    <button type="button">Back to Tasks</button>
   </a>
 
-  <div class="header-buttons">
-    <h2>To-Do Task Manager</h2>
-    <a href="/add_task" style="text-decoration: none;">
-      <button type="button">Add New Task</button>
-    </a>
+  <div class="form-container">
+    <h2>Add New Task</h2>
+    <form method="POST" action="/submit_task">
+      <div class="form-group">
+        <label for="client_name">Client Name:</label>
+        <input type="text" name="client_name" id="client_name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="rm">Relationship Manager (RM):</label>
+        <input type="text" name="rm" id="rm" required>
+      </div>
+
+      <div class="form-group">
+        <label for="assignee">Assignee:</label>
+        <input type="text" name="assigned_to" id="assigned_to" required>
+      </div>
+
+      <div class="form-group">
+        <label>Attached Documents:</label>
+        <div id="docs-container">
+          <div class="form-group">
+            <input type="text" name="documents[]">
+            <button type="button" class="remove-doc" onclick="removeDoc(this)">×</button>
+          </div>
+        </div>
+        <button type="button" onclick="addDocField()">Add Document</button>
+      </div>
+
+      <div class="form-group">
+        <label for="doc_link">Doc Link:</label>
+        <input type="text" name="doc_link" id="doc_link">
+      </div>
+
+      <div class="form-group">
+        <label for="ema_ima">EMA IMA:</label>
+        <input type="text" name="ema_ima" id="ema_ima">
+      </div>
+
+      <button type="submit">Submit Task</button>
+    </form>
   </div>
 
-  <div class="task-section">
-    <!-- Incomplete Tasks -->
-    <div class="task-column" id="todo-column">
-      <h3>To Do</h3>
-      <!-- Filled by JS -->
-    </div>
-
-    <!-- Completed Tasks -->
-    <div class="task-column" id="done-column">
-      <h3>Done</h3>
-      <!-- Filled by JS -->
-    </div>
-  </div>
-
-  <!-- Scripts -->
-  <script src="{{ url_for('static', filename='app.js') }}"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      loadTasks(); // from app.js
-    });
+    function addDocField() {
+      const container = document.getElementById("docs-container");
+      const div = document.createElement("div");
+      div.className = "form-group";
+      div.innerHTML = '<input type="text" name="documents[]"> <button type="button" class="remove-doc" onclick="removeDoc(this)">×</button>';
+      container.appendChild(div);
+    }
+
+    function removeDoc(btn) {
+      const group = btn.closest(".form-group");
+      if (group) group.remove();
+    }
   </script>
 </body>
 </html>

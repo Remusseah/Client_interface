@@ -5,30 +5,54 @@
   <title>To-Do Tracker</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
-    .container {
+    body {
+      max-width: none; /* Allow full width */
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .user-greeting {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+    }
+
+    h2 {
+      margin-left: 20px;
+    }
+
+    .task-section {
       display: flex;
       justify-content: space-between;
-      margin-top: 20px;
+      gap: 20px;
+      padding: 20px;
     }
+
     .list {
       flex: 1;
-      margin: 0 10px;
       padding: 10px;
       border: 1px solid #ccc;
       min-height: 300px;
       background-color: #f9f9f9;
+      word-break: break-word;
+      overflow-wrap: anywhere;
     }
+
     .list h3 {
       text-align: center;
+      margin-bottom: 10px;
     }
+
     .task {
-      padding: 8px;
-      margin: 5px 0;
+      padding: 10px;
+      margin: 10px 0;
       background-color: #fff;
       border: 1px solid #aaa;
       cursor: move;
       position: relative;
     }
+
     .delete-btn {
       position: absolute;
       right: 8px;
@@ -39,85 +63,79 @@
       font-weight: bold;
       cursor: pointer;
     }
+
+    button {
+      margin: 10px 20px;
+    }
   </style>
 </head>
 <body>
   {% if logged_in_user %}
-    <div class="user-greeting" style="position: absolute; top: 10px; right: 20px;">
-        Logged in as <strong>{{ logged_in_user }}</strong>
+    <div class="user-greeting">
+      Logged in as <strong>{{ logged_in_user }}</strong>
     </div>
   {% endif %}
+
   <a href="/" style="text-decoration: none;">
     <button type="button">Go back</button>
   </a>
+
   <h2>To-Do Task Manager</h2>
 
-  <!-- Insertion (can wire up with backend later) -->
   <a href="/add_task" style="text-decoration: none;">
     <button type="button">Add New Task</button>
   </a>
-<!-- To Do -->
-<div class="list" id="todo" ondragover="allowDrop(event)" ondrop="drop(event, 'todo')">
-  <h3>To Do</h3>
-  {% for task in tasks %}
-    {% if task.completion_status == 'Incomplete' %}
-      <div class="task" draggable="true" ondragstart="drag(event)" id="task-{{ task.id }}">
-        <strong>{{ task.client_name }}</strong> (RM: {{ task.rm }})<br>
-        Assigned to: {{ task.assigned_to }}<br>
-        <a href="{{ task.doc_link }}" target="_blank">📎 Doc Link</a><br>
-        <a href="{{ task.ema_ima }}" target="_blank">📄 EMA/IMA</a>
-      </div>
-    {% endif %}
-  {% endfor %}
-</div>
 
-<!-- Done -->
-<div class="list" id="done" ondragover="allowDrop(event)" ondrop="drop(event, 'done')">
-  <h3>Done</h3>
-  {% for task in tasks %}
-    {% if task.completion_status == 'Complete' %}
-      <div class="task" draggable="true" ondragstart="drag(event)" id="task-{{ task.id }}">
-        <strong>{{ task.client_name }}</strong> (RM: {{ task.rm }})<br>
-        Assigned to: {{ task.assigned_to }}<br>
-        <a href="{{ task.doc_link }}" target="_blank">📎 Doc Link</a><br>
-        <a href="{{ task.ema_ima }}" target="_blank">📄 EMA/IMA</a>
-      </div>
-      {% endif %}
-    {% endfor %}
+  <div class="task-section">
+    <!-- To Do -->
+    <div class="list" id="todo" ondragover="allowDrop(event)" ondrop="drop(event, 'todo')">
+      <h3>To Do</h3>
+      {% for task in tasks %}
+        {% if task.completion_status == 'Incomplete' %}
+          <div class="task" draggable="true" ondragstart="drag(event)" id="task-{{ task.id }}">
+            <strong>{{ task.client_name }}</strong> (RM: {{ task.rm }})<br>
+            Assigned to: {{ task.assigned_to }}<br>
+            <a href="{{ task.doc_link }}" target="_blank">📎 Doc Link</a><br>
+            <a href="{{ task.ema_ima }}" target="_blank">📄 EMA/IMA</a>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <!-- Done -->
+    <div class="list" id="done" ondragover="allowDrop(event)" ondrop="drop(event, 'done')">
+      <h3>Done</h3>
+      {% for task in tasks %}
+        {% if task.completion_status == 'Complete' %}
+          <div class="task" draggable="true" ondragstart="drag(event)" id="task-{{ task.id }}">
+            <strong>{{ task.client_name }}</strong> (RM: {{ task.rm }})<br>
+            Assigned to: {{ task.assigned_to }}<br>
+            <a href="{{ task.doc_link }}" target="_blank">📎 Doc Link</a><br>
+            <a href="{{ task.ema_ima }}" target="_blank">📄 EMA/IMA</a>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
   </div>
 
-
-
+  <!-- Optional JS if you're doing drag and drop -->
   <script>
     function allowDrop(ev) {
       ev.preventDefault();
     }
-  
+
     function drag(ev) {
       ev.dataTransfer.setData("text", ev.target.id);
     }
-  
+
     function drop(ev, targetId) {
       ev.preventDefault();
       const data = ev.dataTransfer.getData("text");
       const item = document.getElementById(data);
-      document.getElementById(targetId).appendChild(item);
+      if (item && document.getElementById(targetId)) {
+        document.getElementById(targetId).appendChild(item);
+      }
     }
-  
-    function deleteTask(btn) {
-      const task = btn.closest(".task");
-      if (task) task.remove();
-    }
-  
-  
-    // Injected from Flask
-    //const tasks ={ tasks | tojson };
-  
-    // Render after DOM is ready
-    document.addEventListener("DOMContentLoaded", function () {
-      loadTasks();
-    });
   </script>
-  
 </body>
 </html>

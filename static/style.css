@@ -172,6 +172,8 @@ tbody tr:hover {
     padding: 10px;
     margin-bottom: 10px;
     cursor: pointer;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
   }
 
   .pending-details {
