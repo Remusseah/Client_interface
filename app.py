@@ -602,6 +602,7 @@ def view_log():
     print("DEBUG - rows:", logs[:1])  # Show first row
 
     return render_template("log.html", rows=logs, columns=colnames)
+import re
 @app.route("/submit_task", methods=["POST"]) 
 def submit_task():
     try:
@@ -619,7 +620,10 @@ def submit_task():
         doc_link = request.form.get("doc_link")
         ema_ima = request.form.get("ema_ima")
         assigned_to = request.form.get("assigned_to")
-        assigned_from = session.get("user_email")  # or however you're identifying the assigner
+        email = session.get("user_email", "")
+        username = email.split("@")[0]  # take part before @
+        username = re.sub(r'\W+', '', username)  # remove all non-alphanumeric characters
+        assigned_from = username  # or however you're identifying the assigner
 
         documents = request.form.getlist("documents[]")
 
