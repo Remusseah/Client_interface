@@ -223,7 +223,7 @@ def submit_pending():
             data.get("service_type"),
             data.get("client_type"),
             data.get("pep"),
-            session.get("user_email")
+            session.get("user_email"),
             datetime.now()
         ))
 
