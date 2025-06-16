@@ -202,8 +202,8 @@ def submit_pending():
                 ic_number, age, client_profile, employment_status, email_address,
                 onboarded_date, last_periodic_risk_assessment, next_periodic_risk_assessment,
                 risk_rating, relationship_manager, service_type, client_type, pep,
-                submitted_by
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,)
+                submitted_by,submitted_at
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s)
             RETURNING pending_id
         """, (
             data.get("name"),
