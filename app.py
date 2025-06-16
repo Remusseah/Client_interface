@@ -202,7 +202,7 @@ def submit_pending():
                 onboarded_date, last_periodic_risk_assessment, next_periodic_risk_assessment,
                 risk_rating, relationship_manager, service_type, client_type, pep,
                 submitted_by
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,)
             RETURNING pending_id
         """, (
             data.get("name"),
@@ -224,6 +224,7 @@ def submit_pending():
             data.get("client_type"),
             data.get("pep"),
             session.get("user_email")
+            datetime.now()
         ))
 
         pending_id = cursor.fetchone()[0]
