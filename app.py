@@ -623,7 +623,7 @@ def submit_task():
         email = session.get("user_email", "")
         username = email.split("@")[0]  # take part before @
         username = re.sub(r'\W+', '', username)  # remove all non-alphanumeric characters
-        assigned_from = username  # or however you're identifying the assigner
+        assigned_from = username 
 
         documents = request.form.getlist("documents[]")
 
