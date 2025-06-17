@@ -261,8 +261,31 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(err => {
             console.error("Failed to load tasks:", err);
         });
+        
 }
-}});
+}
+    const inputs = document.querySelectorAll(".pending-details input");
+
+  inputs.forEach(input => {
+    input.addEventListener("click", function (e) {
+      e.stopPropagation();
+    });
+  });
+
+  const buttons = document.querySelectorAll(".pending-details button");
+  buttons.forEach(button => {
+    button.addEventListener("click", function (e) {
+      e.stopPropagation();
+    });
+  });
+
+  const forms = document.querySelectorAll(".pending-details form");
+  forms.forEach(form => {
+    form.addEventListener("click", function (e) {
+      e.stopPropagation();
+    });
+  });
+});
 function deleteTask(id) {
     if (!confirm("Delete this task?")) return;
 

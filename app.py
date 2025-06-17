@@ -169,7 +169,27 @@ def approve_pending_client(pending_id):
         print("❌ Error approving client:", e)
         return f"Error approving client: {e}", 500
 
+@app.route("/reject/<int:pending_id>", methods=["POST"])
+def reject_pending_client(pending_id):
+    try:
+        comment = request.form.get("comment", "").strip()
 
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE pending
+            SET approval_status = %s,
+                comments = %s
+            WHERE pending_id = %s
+        """, ("Rejected", comment, pending_id))
+
+        conn.commit()
+        cursor.close()
+        return redirect(url_for("pending_page"))
+
+    except Exception as e:
+        conn.rollback()
+        print("❌ Error rejecting client:", e)
+        return f"Error rejecting client: {e}", 500
 
 @app.route("/submit-pending", methods=["POST"])
 def submit_pending():
