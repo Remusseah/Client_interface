@@ -93,14 +93,22 @@
     <h3>To Do</h3>
     {% for task in tasks %}
       {% if task.completion_status == 'Incomplete' %}
-        <div class="task" id="task-{{ task.id }}"
-             draggable="true"
-             ondragstart="event.dataTransfer.setData('text/plain', this.id)">
-          <strong>{{ task.client_name }}</strong> (RM: {{ task.rm }})<br>
-          Assigned to: {{ task.assigned_to }}<br>
-          <a href="{{ task.doc_link }}" target="_blank">📎 Doc Link</a><br>
-          <a href="{{ task.ema_ima }}" target="_blank">📄 EMA/IMA</a>
+        <div class="task" id="task-{{ task.id }}">
+          <div class="drag-handle"
+              draggable="true"
+              ondragstart="event.dataTransfer.setData('text/plain', this.parentElement.id)">
+            ⇅
+          </div>
+          <div class="task-header" onclick="toggleDetails('details-{{ task.id }}')">
+            <strong>{{ task.client_name }}</strong> (RM: {{ task.rm }})
+          </div>
+          <div class="task-details" id="details-{{ task.id }}">
+            Assigned to: {{ task.assigned_to }}<br>
+            <a href="{{ task.doc_link }}" target="_blank">📎 Doc Link</a><br>
+            <a href="{{ task.ema_ima }}" target="_blank">📄 EMA/IMA</a>
+          </div>
         </div>
+
       {% endif %}
     {% endfor %}
   </div>
@@ -112,14 +120,22 @@
     <h3>Done</h3>
     {% for task in tasks %}
       {% if task.completion_status == 'Complete' %}
-        <div class="task" id="task-{{ task.id }}"
-             draggable="true"
-             ondragstart="event.dataTransfer.setData('text/plain', this.id)">
-          <strong>{{ task.client_name }}</strong> (RM: {{ task.rm }})<br>
-          Assigned to: {{ task.assigned_to }}<br>
-          <a href="{{ task.doc_link }}" target="_blank">📎 Doc Link</a><br>
-          <a href="{{ task.ema_ima }}" target="_blank">📄 EMA/IMA</a>
+        <div class="task" id="task-{{ task.id }}">
+          <div class="drag-handle"
+              draggable="true"
+              ondragstart="event.dataTransfer.setData('text/plain', this.parentElement.id)">
+            ⇅
+          </div>
+          <div class="task-header" onclick="toggleDetails('details-{{ task.id }}')">
+            <strong>{{ task.client_name }}</strong> (RM: {{ task.rm }})
+          </div>
+          <div class="task-details" id="details-{{ task.id }}">
+            Assigned to: {{ task.assigned_to }}<br>
+            <a href="{{ task.doc_link }}" target="_blank">📎 Doc Link</a><br>
+            <a href="{{ task.ema_ima }}" target="_blank">📄 EMA/IMA</a>
+          </div>
         </div>
+
      {% endif %}
   {% endfor %}
 
