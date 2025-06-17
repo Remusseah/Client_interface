@@ -85,9 +85,8 @@
   <a href="/add_task" style="text-decoration: none;">
     <button type="button">Add New Task</button>
   </a>
-
-  <div class="task-section">
-  <!-- To Do -->
+<div class="task-section">
+  <!-- To Do Column -->
   <div class="list" id="todo"
        ondragover="event.preventDefault()"
        ondrop="drop(event, 'todo')">
@@ -106,7 +105,7 @@
     {% endfor %}
   </div>
 
-  <!-- Done -->
+  <!-- Done Column -->
   <div class="list" id="done"
        ondragover="event.preventDefault()"
        ondrop="drop(event, 'done')">
@@ -121,9 +120,8 @@
           <a href="{{ task.doc_link }}" target="_blank">📎 Doc Link</a><br>
           <a href="{{ task.ema_ima }}" target="_blank">📄 EMA/IMA</a>
         </div>
-        {% endif %}
-      {% endfor %}
-    </div>
+     
+
   </div>
 
 
