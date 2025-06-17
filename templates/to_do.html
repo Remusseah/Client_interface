@@ -136,14 +136,6 @@
       ev.dataTransfer.setData("text", ev.target.id);
     }
 
-    function drop(ev, targetId) {
-      ev.preventDefault();
-      const data = ev.dataTransfer.getData("text");
-      const item = document.getElementById(data);
-      if (item && document.getElementById(targetId)) {
-        document.getElementById(targetId).appendChild(item);
-      }
-    }
   </script>
 </body>
 </html>
