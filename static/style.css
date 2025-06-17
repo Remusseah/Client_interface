@@ -190,3 +190,39 @@ tbody tr:hover {
     float: right;
     cursor: pointer;
 }
+.task {
+  position: relative;
+  border: 1px solid #aaa;
+  background-color: #fff;
+  margin: 10px 0;
+  padding: 10px 35px 10px 10px; /* space for drag handle on right */
+  cursor: default;
+}
+
+.drag-handle {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  width: 16px;
+  height: 30px;
+  cursor: grab;
+  user-select: none;
+}
+
+.drag-handle .dots {
+  display: inline-block;
+  font-size: 12px;
+  line-height: 12px;
+  text-align: center;
+  color: #666;
+}
+
+.task-header {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.task-details {
+  margin-top: 8px;
+  display: none;
+}

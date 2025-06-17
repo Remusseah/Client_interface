@@ -320,3 +320,9 @@ function drop(ev, targetId) {
     });
   }
 }
+function toggleDetails(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.style.display = (el.style.display === "block") ? "none" : "block";
+  }
+}

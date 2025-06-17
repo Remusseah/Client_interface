@@ -97,8 +97,9 @@
           <div class="drag-handle"
               draggable="true"
               ondragstart="event.dataTransfer.setData('text/plain', this.parentElement.id)">
-            ⇅
+            <span class="dots">⋮⋮<br>⋮⋮</span>
           </div>
+
           <div class="task-header" onclick="toggleDetails('details-{{ task.id }}')">
             <strong>{{ task.client_name }}</strong> (RM: {{ task.rm }})
           </div>
@@ -124,7 +125,7 @@
           <div class="drag-handle"
               draggable="true"
               ondragstart="event.dataTransfer.setData('text/plain', this.parentElement.id)">
-            ⇅
+            <span class="dots">⋮⋮<br>⋮⋮</span>
           </div>
           <div class="task-header" onclick="toggleDetails('details-{{ task.id }}')">
             <strong>{{ task.client_name }}</strong> (RM: {{ task.rm }})
