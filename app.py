@@ -622,6 +622,7 @@ def submit_task():
         doc_link = request.form.get("doc_link")
         ema_ima = request.form.get("ema_ima")
         assigned_to = request.form.get("assigned_to")
+        comments = request.form.get("comments")
         email = session.get("user_email", "")
         username = email.split("@")[0]  # take part before @
         username = re.sub(r'\W+', '', username)  # remove all non-alphanumeric characters
