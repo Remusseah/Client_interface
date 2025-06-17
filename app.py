@@ -831,6 +831,7 @@ def login():
 def update_task_status(task_id):
     try:
         new_status = request.json.get("status")  # "Complete" or "Incomplete"
+        print(f"🔁 Updating task {task_id} to {new_status}")  # 🔍
         if new_status not in ["Complete", "Incomplete"]:
             return {"error": "Invalid status"}, 400
 

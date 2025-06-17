@@ -293,7 +293,7 @@ function drop(ev, targetId) {
   const data = ev.dataTransfer.getData("text");
   const item = document.getElementById(data);
   const taskId = data.replace("task-", "");
-
+  console.log(`📦 Dropped task ${taskId} into ${targetId}`); // 🔍 log
   if (item && document.getElementById(targetId)) {
     document.getElementById(targetId).appendChild(item);
 
