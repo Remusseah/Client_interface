@@ -103,10 +103,15 @@
           <div class="task-header" onclick="toggleDetails('details-{{ task.id }}')">
             <strong>{{ task.client_name }}</strong> (RM: {{ task.rm }})
           </div>
-          <div class="task-details" id="details-{{ task.id }}">
-            Assigned to: {{ task.assigned_to }}<br>
-            <a href="{{ task.doc_link }}" target="_blank">📎 Doc Link</a><br>
-            <a href="{{ task.ema_ima }}" target="_blank">📄 EMA/IMA</a>
+          <div class="task-details" id="details-{{ task.id }}" style="display: none;">
+            <p><strong>Client Name:</strong> {{ task.client_name }}</p>
+            <p><strong>RM:</strong> {{ task.rm }}</p>
+            <p><strong>Assigned To:</strong> {{ task.assigned_to }}</p>
+            <p><strong>Assigned From:</strong> {{ task.assigned_from }}</p>
+            <p><strong>Documents:</strong> {{ task.documents | join(', ') }}</p>
+            <p><strong>Doc Link:</strong> <a href="{{ task.doc_link }}" target="_blank">{{ task.doc_link }}</a></p>
+            <p><strong>EMA/IMA:</strong> <a href="{{ task.ema_ima }}" target="_blank">{{ task.ema_ima }}</a></p>
+            <p><strong>Status:</strong> {{ task.completion_status }}</p>
           </div>
         </div>
 
@@ -130,11 +135,17 @@
           <div class="task-header" onclick="toggleDetails('details-{{ task.id }}')">
             <strong>{{ task.client_name }}</strong> (RM: {{ task.rm }})
           </div>
-          <div class="task-details" id="details-{{ task.id }}">
-            Assigned to: {{ task.assigned_to }}<br>
-            <a href="{{ task.doc_link }}" target="_blank">📎 Doc Link</a><br>
-            <a href="{{ task.ema_ima }}" target="_blank">📄 EMA/IMA</a>
+          <div class="task-details" id="details-{{ task.id }}" style="display: none;">
+            <p><strong>Client Name:</strong> {{ task.client_name }}</p>
+            <p><strong>RM:</strong> {{ task.rm }}</p>
+            <p><strong>Assigned To:</strong> {{ task.assigned_to }}</p>
+            <p><strong>Assigned From:</strong> {{ task.assigned_from }}</p>
+            <p><strong>Documents:</strong> {{ task.documents | join(', ') }}</p>
+            <p><strong>Doc Link:</strong> <a href="{{ task.doc_link }}" target="_blank">{{ task.doc_link }}</a></p>
+            <p><strong>EMA/IMA:</strong> <a href="{{ task.ema_ima }}" target="_blank">{{ task.ema_ima }}</a></p>
+            <p><strong>Status:</strong> {{ task.completion_status }}</p>
           </div>
+
         </div>
 
      {% endif %}
