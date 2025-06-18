@@ -50,7 +50,7 @@
                     <button type="submit">✅ Approve</button>
                 </form>
                 <form method="POST" action="/reject/{{ entry.pending_id }}" style="display: inline;">
-                    <input type="text" name="comment" placeholder="Comment (optional)" />
+                    <input type="text" name="comment" placeholder="Comment (optional)" onclick="event.stopPropagation()" />
                     <button type="submit">❌ Reject</button>
                 </form>
             </div>
