@@ -277,7 +277,6 @@ def submit_pending():
         print("❌ Error submitting pending client:")
         traceback.print_exc()  # ⬅️ full error trace
         return jsonify({"error": str(e)}), 500
-
 @app.route('/add')
 def add_page():
     return render_template('add.html') 
