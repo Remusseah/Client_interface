@@ -147,13 +147,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     console.error("Error fetching client data:", error);
                     alert("Something went wrong.");
                 });
-        });
+        });}
     
-
-    }
     else{
         console.log("❌ client_id input not found");
     }
+    
+    
     const updateClientForm = document.getElementById("updateClientForm");
     if (updateClientForm) {
         updateClientForm.addEventListener("submit", function (event) {
