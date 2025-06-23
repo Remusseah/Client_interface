@@ -7,6 +7,7 @@ function formatDate(dateStr) {
 
 
 
+
 document.addEventListener("DOMContentLoaded", function () {
     const lookupForm = document.getElementById("lookupForm");
     if (lookupForm) {
@@ -104,6 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const updateClientIdInput = document.getElementById("client_id");
     if (updateClientIdInput) {
         updateClientIdInput.addEventListener("change", function () {
+            console.log("✅ JS loaded");
             const clientId = updateClientIdInput.value;
             if (!clientId) return;
 
