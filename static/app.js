@@ -110,6 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
             fetch(`/client/${clientId}`)
                 .then(response => response.json())
                 .then(data => {
+                    console.log("its working")
                     if (data.error) {
                         alert("Client not found.");
                         return;
