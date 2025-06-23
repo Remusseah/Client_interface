@@ -148,6 +148,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     alert("Something went wrong.");
                 });
         });
+    
+
+    }
+    else{
+        console.log("❌ client_id input not found");
     }
     const updateClientForm = document.getElementById("updateClientForm");
     if (updateClientForm) {
