@@ -113,13 +113,13 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!clientId) return;
 
             fetch(`/client/${clientId}`)
-                .then(response => response.json())
+                .then(response => {
+                    console.log("🔄 Response status:", response.status);
+                    return response.json();
+                })
                 .then(data => {
-                    console.log("its working")
-                    if (data.error) {
-                        alert("Client not found.");
-                        return;
-                    }
+                    console.log("📦 Fetched data:", data);
+
 
                     // Fill client fields
                     document.getElementById("name").value = data.Name || '';
