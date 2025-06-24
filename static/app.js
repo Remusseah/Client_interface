@@ -10,7 +10,8 @@ function formatDate(dateStr) {
 
 document.addEventListener("DOMContentLoaded", function () {
     console.log("✅ DOM ready");
-
+    const input = document.getElementById("client_id");
+    console.log("🔍 client_id input:", input);
     const lookupForm = document.getElementById("lookupForm");
     if (lookupForm) {
         lookupForm.addEventListener("submit", function(event) {
@@ -103,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
     
-        })
+        })}
     const updateClientIdInput = document.getElementById("client_id");
     if (updateClientIdInput) {
         console.log("✅ JS loaded");            
@@ -273,7 +274,7 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Failed to load tasks:", err);
         });
         
-}
+
 }
     const inputs = document.querySelectorAll(".pending-details input");
 
