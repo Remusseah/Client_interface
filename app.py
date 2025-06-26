@@ -554,12 +554,11 @@ def view_table():
     sort_fields = request.form.getlist("sort_by[]")
     sort_orders = request.form.getlist("sort_order[]")
 
-    # ✅ Whitelist allowed sort fields to prevent SQL injection
     allowed_columns = [
-    "Name", "Client_id", "Age",
-    "Risk_rating", "Relationship_Manager", "Service_type",
-    "Client_type", "Pep", "Nationality"
-]
+        "Name", "Client_id", "Age",
+        "Risk_rating", "Relationship_Manager", "Service_type",
+        "Client_type", "Pep", "Nationality"
+    ]
     valid_sort_orders = ["ASC", "DESC"]
 
     order_clauses = []
@@ -569,7 +568,6 @@ def view_table():
 
     sort_clause = f"ORDER BY {', '.join(order_clauses)}" if order_clauses else ""
 
-    # 🗂 Query building
     cur = conn.cursor()
     if table == "all":
         query = f"""
@@ -587,9 +585,24 @@ def view_table():
     cur.execute(query)
     rows = cur.fetchall()
     columns = [desc[0] for desc in cur.description]
+
+    # 🔄 Fetch associated files for each client
+    files_by_client = {}
+    if table in ("client_data", "all"):
+        client_ids = [row[columns.index("Client_id")] for row in rows if "Client_id" in columns]
+        format_ids = tuple(client_ids) if len(client_ids) > 1 else f"({client_ids[0]})"
+        cur.execute("SELECT client_id, file_name, file_path FROM client_files WHERE client_id IN %s", (format_ids,))
+        files = cur.fetchall()
+
+        for client_id, file_name, file_path in files:
+            files_by_client.setdefault(client_id, []).append({
+                "file_name": file_name,
+                "file_path": file_path
+            })
+
     cur.close()
 
-    return render_template("view.html", columns=columns, rows=rows, selected_table=table)
+    return render_template("view.html", columns=columns, rows=rows, selected_table=table, files_by_client=files_by_client)
 
 @app.route('/delete-client/<int:client_id>', methods=['DELETE'])
 def delete_client(client_id):
