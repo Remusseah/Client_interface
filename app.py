@@ -603,7 +603,39 @@ def view_table():
     cur.close()
 
     return render_template("view.html", columns=columns, rows=rows, selected_table=table, files_by_client=files_by_client)
+import io
+import mimetypes
 
+@app.route('/view-file/<int:file_id>')
+def view_file(file_id):
+    cur = conn.cursor()
+
+    # Get file data and type
+    query = """
+        SELECT cf.file_name, cf.file_data, ft.type
+        FROM client_files cf
+        JOIN file_types ft ON cf.file_type_id = ft.file_type_id
+        WHERE cf.file_id = %s
+    """
+    cur.execute(query, (file_id,))
+    result = cur.fetchone()
+    cur.close()
+
+    if not result:
+        return abort(404, description="File not found")
+
+    file_name, file_data, file_type = result
+
+    # Guess MIME type
+    extension = file_name.rsplit(".", 1)[-1].lower()
+    mime_type = mimetypes.types_map.get(f".{extension}", "application/octet-stream")
+
+    return send_file(
+        io.BytesIO(file_data),
+        mimetype=mime_type,
+        download_name=file_name,
+        as_attachment=False  # Show inline if browser supports it
+    )
 @app.route('/delete-client/<int:client_id>', methods=['DELETE'])
 def delete_client(client_id):
     try:

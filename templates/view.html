@@ -69,6 +69,20 @@
                     {% endfor %}
                 </tr>
             {% endfor %}
+            {% set client_id = row[columns.index("Client_id")] %}
+            {% if files_by_client.get(client_id) %}
+            <tr>
+                <td colspan="{{ columns|length }}">
+                    <strong>Files for Client {{ client_id }}:</strong><br>
+                    {% for file in files_by_client[client_id] %}
+                        <div style="margin-bottom: 20px;">
+                            <p><strong>{{ file.file_name }}</strong></p>
+                            <iframe src="{{ url_for('serve_file', file_id=file.file_id) }}" width="500" height="400" style="border:1px solid #ccc;"></iframe>
+                        </div>
+                    {% endfor %}
+                </td>
+            </tr>
+
         </tbody>
     </table>
     {% endif %}
