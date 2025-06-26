@@ -62,6 +62,12 @@
             </tr>
         </thead>
         <tbody>
+        {% for row in rows %}
+            <tr>
+            {% for cell in row %}
+                <td>{{ cell }}</td>
+            {% endfor %}
+            </tr>
             <tr>
             <td colspan="{{ columns|length }}">
                 {% set client_id = row[columns.index("Client_id")] %}
@@ -74,8 +80,8 @@
                 {% endif %}
             </td>
             </tr>
-
-        </tbody>
+        {% endfor %}
+    </tbody>
     </table>
     {% endif %}
     <script>
