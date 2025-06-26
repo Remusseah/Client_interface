@@ -569,6 +569,8 @@ def view_table():
     sort_clause = f"ORDER BY {', '.join(order_clauses)}" if order_clauses else ""
 
     cur = conn.cursor()
+
+    # Get data rows
     if table == "all":
         query = f"""
             SELECT cd.*, cc."Onboarded_date", cc."Last_periodic_risk_assessment",
@@ -586,31 +588,40 @@ def view_table():
     rows = cur.fetchall()
     columns = [desc[0] for desc in cur.description]
 
-    # 🔄 Fetch associated files for each client
+    # Fetch file data if applicable
     files_by_client = {}
     if table in ("client_data", "all"):
-        client_ids = [row[columns.index("Client_id")] for row in rows if "Client_id" in columns]
-        format_ids = tuple(client_ids) if len(client_ids) > 1 else f"({client_ids[0]})"
-        cur.execute("SELECT client_id, file_name, file_path FROM client_files WHERE client_id IN %s", (format_ids,))
-        files = cur.fetchall()
-
-        for client_id, file_name, file_path in files:
-            files_by_client.setdefault(client_id, []).append({
-                "file_name": file_name,
-                "file_path": file_path
-            })
+        client_ids = [row[columns.index("Client_id")] for row in rows if row[columns.index("Client_id")] is not None]
+        if client_ids:
+            format_ids = tuple(client_ids)
+            query_files = """
+                SELECT client_id, file_id, file_name 
+                FROM client_files 
+                WHERE client_id IN %s
+            """
+            cur.execute(query_files, (format_ids,))
+            for client_id, file_id, file_name in cur.fetchall():
+                files_by_client.setdefault(client_id, []).append({
+                    "file_id": file_id,
+                    "file_name": file_name
+                })
 
     cur.close()
 
-    return render_template("view.html", columns=columns, rows=rows, selected_table=table, files_by_client=files_by_client)
+    return render_template(
+        "view.html",
+        columns=columns,
+        rows=rows,
+        selected_table=table,
+        files_by_client=files_by_client
+    )
+
 import io
 import mimetypes
 
 @app.route('/view-file/<int:file_id>')
 def view_file(file_id):
     cur = conn.cursor()
-
-    # Get file data and type
     query = """
         SELECT cf.file_name, cf.file_data, ft.type
         FROM client_files cf
@@ -626,7 +637,7 @@ def view_file(file_id):
 
     file_name, file_data, file_type = result
 
-    # Guess MIME type
+    # Determine MIME type from extension
     extension = file_name.rsplit(".", 1)[-1].lower()
     mime_type = mimetypes.types_map.get(f".{extension}", "application/octet-stream")
 
@@ -634,8 +645,9 @@ def view_file(file_id):
         io.BytesIO(file_data),
         mimetype=mime_type,
         download_name=file_name,
-        as_attachment=False  # Show inline if browser supports it
+        as_attachment=False  # 👈 Display inline (for images, PDFs, etc.)
     )
+
 @app.route('/delete-client/<int:client_id>', methods=['DELETE'])
 def delete_client(client_id):
     try:
