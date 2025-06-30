@@ -61,30 +61,29 @@
             </tr>
         </thead>
         <tbody>
-        {% for row in rows %}
-            <tr>
-            {% for cell in row %}
-                <td>{{ cell }}</td>
-            {% endfor %}
-            </tr>
-            {% set client_id = row[columns.index("Client_id")] %}
-            {% if files_by_client and client_id in files_by_client %}
-            <tr>
-                <td colspan="{{ columns|length }}">
-                    <strong>Files:</strong><br>
-                    {% for file in files_by_client[client_id] %}
-                        <p><strong>{{ file.file_name }}</strong></p>
-                        <iframe 
-                            src="{{ url_for('view_file', file_id=file.file_id) }}" 
-                            width="400" height="300" 
-                            style="border:1px solid #ccc;">
-                        </iframe><br><br>
+            {% for row in rows %}
+                <tr>
+                    {% for cell in row %}
+                        <td>{{ cell }}</td>
                     {% endfor %}
-                </td>
-            </tr>
-            {% endif %}
-        {% endfor %}
+                    <td>
+                        {% set client_id = row[columns.index('Client_id')] %}
+                        {% if files_by_client.get(client_id) %}
+                            {% for file in files_by_client[client_id] %}
+                                <div>
+                                    <a href="{{ url_for('serve_file', file_id=file.file_id) }}" target="_blank">
+                                        {{ file.file_name }}
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            No files
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
         </tbody>
+
     </table>
     {% endif %}
 
