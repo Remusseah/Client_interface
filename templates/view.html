@@ -75,7 +75,7 @@
                     {% for file in files_by_client[client_id] %}
                         <p><strong>{{ file.file_name }}</strong></p>
                         <iframe 
-                            src="{{ url_for('serve_file', file_id=file.file_id) }}" 
+                            src="{{ url_for('view_file', file_id=file.file_id) }}" 
                             width="400" height="300" 
                             style="border:1px solid #ccc;">
                         </iframe><br><br>
