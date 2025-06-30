@@ -71,7 +71,7 @@
                         {% if files_by_client.get(client_id) %}
                             {% for file in files_by_client[client_id] %}
                                 <div>
-                                    <a href="{{ url_for('serve_file', file_id=file.file_id) }}" target="_blank">
+                                    <a href="{{ url_for('view_file', file_id=file.file_id) }}" target="_blank">
                                         {{ file.file_name }}
                                     </a>
                                 </div>
