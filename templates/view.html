@@ -64,9 +64,12 @@
         <tbody>
             {% for row in rows %}
                 <tr>
-                    {% for col, cell in zip(columns, row) %}
+                    {% for i in range(columns|length) %}
+                        {% set col = columns[i] %}
+                        {% set cell = row[i] %}
                         <td class="col-{{ col|lower|replace(' ', '_') }}" data-label="{{ col }}">{{ cell }}</td>
                     {% endfor %}
+
 
                     <td>
                         {% set client_id = row[columns.index('Client_id')] %}
