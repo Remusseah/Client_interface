@@ -59,6 +59,7 @@
                     <th>{{ col }}</th>
                 {% endfor %}
                 <th>Files</th>
+                <th>Redeem</th>
             </tr>
         </thead>
         <tbody>
@@ -84,6 +85,12 @@
                         {% else %}
                             No files
                         {% endif %}
+                    </td>
+                    <td>
+                        <form method="POST" action="/redeem_single" style="margin: 0;">
+                            <input type="hidden" name="client_id" value="{{ client_id }}">
+                            <button type="submit">Redeem</button>
+                        </form>
                     </td>
                 </tr>
             {% endfor %}
