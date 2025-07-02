@@ -923,6 +923,39 @@ def update_task_status(task_id):
         print("❌ Error updating task status:", e)
         return {"error": str(e)}, 500
 
+def redeem_clients(rows, columns, conn):
+    # Columns to exclude
+    excluded_cols = {'Last_periodic_risk_assessment', 'Next_periodic_risk_assessment', 'Files'}
+    
+    # Filtered column names
+    insert_columns = [col for col in columns if col not in excluded_cols]
+    
+    # SQL placeholders
+    placeholders = ', '.join(['%s'] * len(insert_columns))
+    column_names = ', '.join(insert_columns)
+    insert_sql = f"INSERT INTO redeemed ({column_names}) VALUES ({placeholders}) ON CONFLICT (client_id) DO NOTHING"
+    
+    cur = conn.cursor()
+    
+    for row in rows:
+        # Map column names to values
+        col_to_val = dict(zip(columns, row))
+        filtered_values = [col_to_val[col] for col in insert_columns]
+        cur.execute(insert_sql, filtered_values)
+    
+    conn.commit()
+    cur.close()
+@app.route('/redeem', methods=['POST'])
+def redeem():
+    # Assume rows and columns are stored in session or re-queried here
+    rows = session.get('viewed_rows')     # Or re-fetch from DB based on selection
+    columns = session.get('viewed_columns')
+    
+    if not rows or not columns:
+        return "No data to redeem", 400
+    
+    redeem_clients(rows, columns, conn)
+    return "Clients redeemed successfully", 200
 
 @app.context_processor
 def inject_user():

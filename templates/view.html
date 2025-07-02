@@ -64,9 +64,10 @@
         <tbody>
             {% for row in rows %}
                 <tr>
-                    {% for cell in row %}
-                        <td>{{ cell }}</td>
+                    {% for col, cell in zip(columns, row) %}
+                        <td class="col-{{ col|lower|replace(' ', '_') }}" data-label="{{ col }}">{{ cell }}</td>
                     {% endfor %}
+
                     <td>
                         {% set client_id = row[columns.index('Client_id')] %}
                         {% if files_by_client.get(client_id) %}
@@ -86,6 +87,9 @@
         </tbody>
 
     </table>
+    <br>
+    <button id="redeem-button" type="button" onclick="handleRedeem()">Redeem</button>
+
     {% endif %}
 
     <script>
@@ -114,6 +118,12 @@
             `;
             container.appendChild(newSort);
         }
+        function handleRedeem() {
+            fetch('/redeem', { method: 'POST' })   
+                .then(res => res.text())
+                .then(msg => alert(msg))
+                .catch(err => console.error(err));
+    }
 
         </script>
 </body>
