@@ -966,9 +966,9 @@ def redeem_single():
     all_columns = [r[0] for r in cur.fetchall()]
 
     # Exclude certain columns
-    excluded_cols = {'last_periodic_risk_assessment', 'next_periodic_risk_assessment'}
+    excluded_cols = {'Last_periodic_risk_assessment', 'Next_periodic_risk_assessment'}
     insert_columns = [col for col in all_columns if col not in excluded_cols]
-
+    print(insert_columns)
     # Build insert
     col_placeholders = ', '.join(insert_columns)
     placeholders = ', '.join(['%s'] * len(insert_columns))
