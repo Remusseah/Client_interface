@@ -990,7 +990,7 @@ def redeem_single():
     insert_sql = f'''
         INSERT INTO redeemed ({col_placeholders})
         VALUES ({placeholders})
-        ON CONFLICT ("Client_id") DO NOTHING
+        ON CONFLICT (client_id) DO NOTHING
     '''
 
     # 5. Build values in correct order
