@@ -978,8 +978,8 @@ def redeem_single():
         WHERE d."Client_id" = %s
     ''', (client_id,))
     row = cur.fetchone()
+    redeemed_columns = [desc[0] for desc in cur.description]
 
-    redeemed_columns = [r[0] for r in cur.fetchall()]
 
     # Filter out excluded ones
     excluded_cols_lower = {'last_periodic_risk_assessment', 'next_periodic_risk_assessment'}
