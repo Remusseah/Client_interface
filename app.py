@@ -995,7 +995,8 @@ def redeem_single():
 
     # 5. Build values in correct order
     col_to_val = {col.lower(): val for col, val in zip(redeemed_columns, row)}
-    filtered_values = [col_to_val[col] for col in insert_columns]
+    filtered_values = [col_to_val[col.lower()] for col in insert_columns]
+
 
     # 6. Execute
     cur.execute(insert_sql, filtered_values)
