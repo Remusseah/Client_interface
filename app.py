@@ -1003,6 +1003,13 @@ def redeem_single():
 
     # 6. Execute
     cur.execute(insert_sql, filtered_values)
+    # 7. Copy associated files from client_files to redeemed_files
+    cur.execute('''
+        INSERT INTO redeemed_files (client_id, file_type_id, file_name, file_data, uploaded_at)
+        SELECT client_id, file_type_id, file_name, file_data, uploaded_at
+        FROM client_files
+        WHERE client_id = %s
+    ''', (client_id,))
     conn.commit()
     cur.close()
 
