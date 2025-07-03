@@ -945,17 +945,49 @@ def redeem_clients(rows, columns, conn):
     
     conn.commit()
     cur.close()
-@app.route('/redeem', methods=['POST'])
-def redeem():
-    # Assume rows and columns are stored in session or re-queried here
-    rows = session.get('viewed_rows')     # Or re-fetch from DB based on selection
-    columns = session.get('viewed_columns')
-    
-    if not rows or not columns:
-        return "No data to redeem", 400
-    
-    redeem_clients(rows, columns, conn)
-    return "Clients redeemed successfully", 200
+@app.route('/redeem_single', methods=['POST'])
+def redeem_single():
+    client_id = request.form.get('client_id')
+
+    if not client_id:
+        return "No client_id provided", 400
+
+    cur = conn.cursor()
+
+    # Fetch full row based on client_id from main view query
+    cur.execute("SELECT * FROM client_data WHERE client_id = %s", (client_id,))
+    row = cur.fetchone()
+
+    if not row:
+        return "Client not found", 404
+
+    # Get column names
+    cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'client_data'")
+    all_columns = [r[0] for r in cur.fetchall()]
+
+    # Exclude certain columns
+    excluded_cols = {'last_periodic_risk_assessment', 'next_periodic_risk_assessment'}
+    insert_columns = [col for col in all_columns if col not in excluded_cols]
+
+    # Build insert
+    col_placeholders = ', '.join(insert_columns)
+    placeholders = ', '.join(['%s'] * len(insert_columns))
+
+    insert_sql = f"""
+        INSERT INTO redeemed ({col_placeholders})
+        VALUES ({placeholders})
+        ON CONFLICT (client_id) DO NOTHING
+    """
+
+    # Map column names to row values
+    col_to_val = dict(zip(all_columns, row))
+    filtered_values = [col_to_val[col] for col in insert_columns]
+
+    cur.execute(insert_sql, filtered_values)
+    conn.commit()
+    cur.close()
+
+    return redirect('/view_table')
 
 @app.context_processor
 def inject_user():
