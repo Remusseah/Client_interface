@@ -984,7 +984,7 @@ def redeem_single():
     insert_columns = [col for col in redeemed_columns if col not in excluded]
 
     # 4. Build insert SQL
-    col_placeholders = ', '.join(f'"{col}"' for col in insert_columns)
+    col_placeholders = ', '.join(col.lower() for col in insert_columns)
     placeholders = ', '.join(['%s'] * len(insert_columns))
 
     insert_sql = f'''
@@ -994,7 +994,7 @@ def redeem_single():
     '''
 
     # 5. Build values in correct order
-    col_to_val = dict(zip(redeemed_columns, row))
+    col_to_val = {col.lower(): val for col, val in zip(redeemed_columns, row)}
     filtered_values = [col_to_val[col] for col in insert_columns]
 
     # 6. Execute
