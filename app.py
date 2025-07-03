@@ -955,7 +955,7 @@ def redeem_single():
     cur = conn.cursor()
 
     # Fetch full row based on client_id from main view query
-    cur.execute("SELECT * FROM client_data WHERE Client_id = %s", (client_id,))
+    cur.execute('SELECT * FROM client_data WHERE "Client_id" = %s', (client_id,))
     row = cur.fetchone()
 
     if not row:
