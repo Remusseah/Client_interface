@@ -969,9 +969,9 @@ def redeem_single():
     excluded_cols = {'Last_periodic_risk_assessment', 'Next_periodic_risk_assessment'}
     insert_columns = [col for col in all_columns if col not in excluded_cols]
     if insert_columns != "":
-        print(insert_columns)
+        console.log(insert_columns)
     else:
-        print("theres nothing")
+        console.log("theres nothing")
     # Build insert
     col_placeholders = ', '.join(insert_columns)
     placeholders = ', '.join(['%s'] * len(insert_columns))
