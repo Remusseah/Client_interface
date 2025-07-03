@@ -993,7 +993,7 @@ def redeem_single():
     """
 
     # Map column names to row values
-    col_to_val = dict(zip(all_columns, row))
+    col_to_val = {col.lower(): val for col, val in zip(all_columns, row)}
     filtered_values = [col_to_val[col] for col in insert_columns]
 
     cur.execute(insert_sql, filtered_values)
