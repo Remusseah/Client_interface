@@ -983,7 +983,7 @@ def redeem_single():
 
     # Filter out excluded ones
     excluded_cols_lower = {'last_periodic_risk_assessment', 'next_periodic_risk_assessment'}
-    insert_columns = [col.lower() for col in redeemed_columns if col.lower() not in excluded_cols_lower]
+    insert_columns = [col for col in redeemed_columns if col.lower() not in excluded_cols_lower]
     if insert_columns != "":
         print(insert_columns)
     else:
