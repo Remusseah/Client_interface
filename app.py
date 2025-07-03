@@ -967,7 +967,17 @@ def redeem_single():
 
     # Exclude certain columns
     excluded_cols = {'Last_periodic_risk_assessment', 'Next_periodic_risk_assessment'}
-    insert_columns = [col for col in all_columns if col not in excluded_cols]
+    cur.execute("""
+    SELECT column_name 
+    FROM information_schema.columns 
+    WHERE table_name = 'redeemed' 
+    ORDER BY ordinal_position
+    """)
+    redeemed_columns = [r[0] for r in cur.fetchall()]
+
+    # Filter out excluded ones
+    excluded_cols_lower = {'last_periodic_risk_assessment', 'next_periodic_risk_assessment'}
+    insert_columns = [col for col in redeemed_columns if col.lower() not in excluded_cols_lower]
     if insert_columns != "":
         print(insert_columns)
     else:
