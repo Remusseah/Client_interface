@@ -954,54 +954,50 @@ def redeem_single():
 
     cur = conn.cursor()
 
-    # Fetch full row based on client_id from main view query
-    cur.execute('SELECT * FROM client_data WHERE "Client_id" = %s', (client_id,))
+    # 1. Fetch data from JOINed client_data + client_compliance
+    cur.execute('''
+        SELECT 
+            d."Client_id", d."Name", d."Nationality", d."Residency_address", d."Contact_number",
+            d."Date_of_birth", d."Ic_number", d."Age", d."Client_profile", d."Employment_status", d."Email_address",
+            c."Onboarded_date", c."Risk_rating", c."Relationship_Manager", c."Service_type", 
+            c."Client_type", c."Pep"
+        FROM client_data d
+        JOIN client_compliance c ON d."Client_id" = c."Client_id"
+        WHERE d."Client_id" = %s
+    ''', (client_id,))
+    
     row = cur.fetchone()
 
     if not row:
         return "Client not found", 404
 
-    # Get column names
-    cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'client_data'")
-    all_columns = [r[0] for r in cur.fetchall()]
+    # 2. Get the column names in order (must match SELECT above)
+    redeemed_columns = [
+        "Client_id", "Name", "Nationality", "Residency_address", "Contact_number",
+        "Date_of_birth", "Ic_number", "Age", "Client_profile", "Employment_status", "Email_address",
+        "Onboarded_date", "Risk_rating", "Relationship_Manager", "Service_type",
+        "Client_type", "Pep"
+    ]
 
-    # Exclude certain columns
-    excluded_cols = {'Last_periodic_risk_assessment', 'Next_periodic_risk_assessment'}
-    cur.execute('''
-    SELECT 
-        d."Client_id", d."Name", d."Nationality", d."Residency_address", d."Contact_number",
-        d."Date_of_birth", d."Ic_number", d."Age", d."Client_profile", d."Employment_status", d."Email_address",
-        c."Onboarded_date", c."Risk_rating", c."Relationship_Manager", c."Service_type", 
-        c."Client_type", c."Pep"
-        FROM client_data d
-        JOIN client_compliance c ON d."Client_id" = c."Client_id"
-        WHERE d."Client_id" = %s
-    ''', (client_id,))
-    row = cur.fetchone()
-    redeemed_columns = [desc[0] for desc in cur.description]
+    # 3. Exclude unwanted columns (like periodic assessment dates)
+    excluded = {"Last_periodic_risk_assessment", "Next_periodic_risk_assessment"}
+    insert_columns = [col for col in redeemed_columns if col not in excluded]
 
-
-    # Filter out excluded ones
-    excluded_cols_lower = {'last_periodic_risk_assessment', 'next_periodic_risk_assessment'}
-    insert_columns = [col for col in redeemed_columns if col.lower() not in excluded_cols_lower]
-    if insert_columns != "":
-        print(insert_columns)
-    else:
-        print("theres nothing")
-    # Build insert
-    col_placeholders = ', '.join(insert_columns)
+    # 4. Build insert SQL
+    col_placeholders = ', '.join(f'"{col}"' for col in insert_columns)
     placeholders = ', '.join(['%s'] * len(insert_columns))
 
-    insert_sql = f"""
+    insert_sql = f'''
         INSERT INTO redeemed ({col_placeholders})
         VALUES ({placeholders})
-        ON CONFLICT (client_id) DO NOTHING
-    """
+        ON CONFLICT ("Client_id") DO NOTHING
+    '''
 
-    # Map column names to row values
-    col_to_val = {col.lower(): val for col, val in zip(all_columns, row)}
+    # 5. Build values in correct order
+    col_to_val = dict(zip(redeemed_columns, row))
     filtered_values = [col_to_val[col] for col in insert_columns]
 
+    # 6. Execute
     cur.execute(insert_sql, filtered_values)
     conn.commit()
     cur.close()
