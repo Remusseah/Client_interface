@@ -968,7 +968,10 @@ def redeem_single():
     # Exclude certain columns
     excluded_cols = {'Last_periodic_risk_assessment', 'Next_periodic_risk_assessment'}
     insert_columns = [col for col in all_columns if col not in excluded_cols]
-    print(insert_columns)
+    if insert_columns != "":
+        print(insert_columns)
+    else:
+        print("theres nothing")
     # Build insert
     col_placeholders = ', '.join(insert_columns)
     placeholders = ', '.join(['%s'] * len(insert_columns))
