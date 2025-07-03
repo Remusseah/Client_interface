@@ -550,7 +550,10 @@ def update_client():
 
 @app.route("/view_table", methods=['GET', 'POST'])
 def view_table():
+    
     table = request.form.get("table")
+    if not table:
+        table = "client_data"
     sort_fields = request.form.getlist("sort_by[]")
     sort_orders = request.form.getlist("sort_order[]")
 
