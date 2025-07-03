@@ -548,7 +548,7 @@ def update_client():
         print("Update failed:", e)
         return jsonify({"error": "Update failed"}), 500
 
-@app.route("/view_table", methods=["POST"])
+@app.route("/view_table", methods=['GET', 'POST'])
 def view_table():
     table = request.form.get("table")
     sort_fields = request.form.getlist("sort_by[]")
