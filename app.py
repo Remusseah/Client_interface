@@ -962,7 +962,7 @@ def redeem_single():
         return "Client not found", 404
 
     # Get column names
-    cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'client_data'")
+    cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'Client_data'")
     all_columns = [r[0] for r in cur.fetchall()]
 
     # Exclude certain columns
