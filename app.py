@@ -967,12 +967,18 @@ def redeem_single():
 
     # Exclude certain columns
     excluded_cols = {'Last_periodic_risk_assessment', 'Next_periodic_risk_assessment'}
-    cur.execute("""
-    SELECT column_name 
-    FROM information_schema.columns 
-    WHERE table_name = 'redeemed' 
-    ORDER BY ordinal_position
-    """)
+    cur.execute('''
+    SELECT 
+        d."Client_id", d."Name", d."Nationality", d."Residency_address", d."Contact_number",
+        d."Date_of_birth", d."Ic_number", d."Age", d."Client_profile", d."Employment_status", d."Email_address",
+        c."Onboarded_date", c."Risk_rating", c."Relationship_Manager", c."Service_type", 
+        c."Client_type", c."Pep"
+        FROM client_data d
+        JOIN client_compliance c ON d."Client_id" = c."Client_id"
+        WHERE d."Client_id" = %s
+    ''', (client_id,))
+    row = cur.fetchone()
+
     redeemed_columns = [r[0] for r in cur.fetchall()]
 
     # Filter out excluded ones
