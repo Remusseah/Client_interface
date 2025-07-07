@@ -628,10 +628,10 @@ def redeemed_view():
     sort_orders = request.form.getlist("sort_order[]")
 
     allowed_columns = [
-        "Name", "Client_id", "Age",
-        "Risk_rating", "Relationship_Manager", "Service_type",
-        "Client_type", "Pep", "Nationality"
-    ]
+    "name", "client_id", "age",
+    "risk_rating", "relationship_manager", "service_type",
+    "client_type", "pep", "nationality"
+]
     valid_sort_orders = ["ASC", "DESC"]
 
     order_clauses = []
