@@ -1087,12 +1087,13 @@ def redeem_single():
 @app.route('/get-address-from-postal', methods=['POST'])
 def get_address_from_postal():
     data = request.get_json()
+    print("Received data:", data)
+
     postal_code = data.get('postal_code')
     if not postal_code:
         return jsonify({'error': 'Postal code is required'}), 400
 
-    # Your JWT token
-    token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+    token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo3ODEyLCJmb3JldmVyIjpmYWxzZSwiaXNzIjoiT25lTWFwIiwiaWF0IjoxNzUxODcxNDI0LCJuYmYiOjE3NTE4NzE0MjQsImV4cCI6MTc1MjEzMDYyNCwianRpIjoiNGQwOTIzOWYtNTUyYi00M2VmLTg0ZTgtMDlmYTVkZGM2YmQwIn0.GM1BjULiwKjgDdmhAu4PPabrbLrMcLoIby4wc1nTJ34vu3oTqtEvlCsPqa9qxO9kAQrBjP1TOv_XYVKFPmBiFjpDd6ccI0IU_T8nMbTcbHLhfwLPfSFLMsBca94wKtzkBOMqBV2xG83TRxC7g_z8mJR49490zBgBfdTs84YDsk3b-Siu2WOk8r0oDy21I__teie1tOpaM2oTi3SUFwVPtozD_ApRIIs0lgthlQdHvRIbO91PLQ8MHcK7SUyYXAZWjg2tKjIc1_hCx3wU16NF167kIvThfMgOZEX00TNSvxr3S8Q0VrqlJXGpopx7Bp_YB3dLDyt9tp7662bWU3p1yQ"
 
     headers = {
         "Authorization": f"Bearer {token}",
@@ -1107,14 +1108,20 @@ def get_address_from_postal():
     }
 
     try:
+        print("Sending request to OneMap...")
         response = requests.post(
             "https://developers.onemap.sg/privateapi/search",
             json=payload,
             headers=headers
         )
+        print("Response status:", response.status_code)
+        print("Response body:", response.text)
+
         return jsonify(response.json())
     except Exception as e:
+        print("Error in lookup:", e)
         return jsonify({"error": str(e)}), 500
+
 
 @app.context_processor
 def inject_user():
