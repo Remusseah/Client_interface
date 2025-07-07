@@ -292,6 +292,8 @@ def view_page():
 @app.route("/statistics_page")
 def statistics_page():
     return render_template("statistics.html")
+@app.route("/redeemed_view_page")
+    return render_template("redeemed_view.html")
 @app.route('/to_do')
 def to_do():
     cursor = conn.cursor()
