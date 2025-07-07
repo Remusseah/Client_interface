@@ -19,3 +19,4 @@ XlsxWriter==3.2.3
 email-validator==2.1.0.post1
 python-dotenv==1.0.1
 gunicorn==21.2.0
+requests
