@@ -1016,28 +1016,6 @@ def update_task_status(task_id):
         print("❌ Error updating task status:", e)
         return {"error": str(e)}, 500
 
-def redeem_clients(rows, columns, conn):
-    # Columns to exclude
-    excluded_cols = {'Last_periodic_risk_assessment', 'Next_periodic_risk_assessment', 'Files'}
-    
-    # Filtered column names
-    insert_columns = [col for col in columns if col not in excluded_cols]
-    
-    # SQL placeholders
-    placeholders = ', '.join(['%s'] * len(insert_columns))
-    column_names = ', '.join(insert_columns)
-    insert_sql = f"INSERT INTO redeemed ({column_names}) VALUES ({placeholders}) ON CONFLICT (client_id) DO NOTHING"
-    
-    cur = conn.cursor()
-    
-    for row in rows:
-        # Map column names to values
-        col_to_val = dict(zip(columns, row))
-        filtered_values = [col_to_val[col] for col in insert_columns]
-        cur.execute(insert_sql, filtered_values)
-    
-    conn.commit()
-    cur.close()
 @app.route('/redeem_single', methods=['POST'])
 def redeem_single():
     client_id = request.form.get('client_id')
@@ -1062,9 +1040,10 @@ def redeem_single():
     row = cur.fetchone()
 
     if not row:
+        cur.close()
         return "Client not found", 404
 
-    # 2. Get the column names in order (must match SELECT above)
+    # 2. Columns (must match SELECT order)
     redeemed_columns = [
         "Client_id", "Name", "Nationality", "Residency_address", "Contact_number",
         "Date_of_birth", "Ic_number", "Age", "Client_profile", "Employment_status", "Email_address",
@@ -1072,38 +1051,39 @@ def redeem_single():
         "Client_type", "Pep"
     ]
 
-    # 3. Exclude unwanted columns (like periodic assessment dates)
-    excluded = {"Last_periodic_risk_assessment", "Next_periodic_risk_assessment"}
-    insert_columns = [col for col in redeemed_columns if col not in excluded]
-
-    # 4. Build insert SQL
-    col_placeholders = ', '.join(col.lower() for col in insert_columns)
-    placeholders = ', '.join(['%s'] * len(insert_columns))
-
+    # 3. Build INSERT into `redeemed`
+    col_placeholders = ', '.join(col.lower() for col in redeemed_columns)
+    placeholders = ', '.join(['%s'] * len(redeemed_columns))
     insert_sql = f'''
         INSERT INTO redeemed ({col_placeholders})
         VALUES ({placeholders})
         ON CONFLICT (client_id) DO NOTHING
     '''
 
-    # 5. Build values in correct order
+    # 4. Prepare values
     col_to_val = {col.lower(): val for col, val in zip(redeemed_columns, row)}
-    filtered_values = [col_to_val[col.lower()] for col in insert_columns]
+    values = [col_to_val[col.lower()] for col in redeemed_columns]
 
+    # 5. Insert into redeemed
+    cur.execute(insert_sql, values)
 
-    # 6. Execute
-    cur.execute(insert_sql, filtered_values)
-    # 7. Copy associated files from client_files to redeemed_files
+    # 6. Copy files to redeemed_files
     cur.execute('''
         INSERT INTO redeemed_files (client_id, file_type_id, file_name, file_data, uploaded_at)
         SELECT client_id, file_type_id, file_name, file_data, uploaded_at
         FROM client_files
         WHERE client_id = %s
     ''', (client_id,))
+
+    # 7. Delete from original tables
+    cur.execute('DELETE FROM client_compliance WHERE "Client_id" = %s', (client_id,))
+    cur.execute('DELETE FROM client_data WHERE "Client_id" = %s', (client_id,))
+
     conn.commit()
     cur.close()
 
-    return redirect('/view_table')
+    return "Client successfully redeemed and removed", 200
+
 
 @app.context_processor
 def inject_user():
