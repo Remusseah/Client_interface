@@ -675,6 +675,39 @@ def redeemed_view():
         selected_table="redeemed",
         redeemed_files_by_client=redeemed_files_by_client
     )
+@app.route("/view_redeemed_file/<int:file_id>")
+def view_redeemed_file(file_id):
+    cur = conn.cursor()
+    cur.execute("SELECT file_data, file_name, file_type_id FROM redeemed_files WHERE file_id = %s", (file_id,))
+    file = cur.fetchone()
+    cur.close()
+
+    if file:
+        file_data, file_name, file_type_id = file
+        # Guess MIME type from extension or use a mapping from your file_types table
+        cur = conn.cursor()
+        cur.execute("SELECT extension FROM file_types WHERE file_type_id = %s", (file_type_id,))
+        result = cur.fetchone()
+        cur.close()
+
+        if result:
+            extension = result[0].lower()
+            mimetypes = {
+                "pdf": "application/pdf",
+                "jpg": "image/jpeg",
+                "jpeg": "image/jpeg",
+                "png": "image/png",
+                "gif": "image/gif"
+            }
+            mimetype = mimetypes.get(extension, "application/octet-stream")
+        else:
+            mimetype = "application/octet-stream"
+
+        return Response(file_data, mimetype=mimetype, headers={
+            "Content-Disposition": f"inline; filename={file_name}"
+        })
+    else:
+        return "File not found", 404
 
 import io
 import mimetypes
