@@ -11,13 +11,41 @@
             Logged in as <strong>{{ logged_in_user }}</strong>
         </div>
     {% endif %}
+
     <a href="/main_page" style="text-decoration: none;">
         <button type="button">Go back</button>
-    </a>  
+    </a>
 
     <h2>Redeemed Clients</h2>
+    <form method="POST" action="/redeemed_view" id="filterForm">
+        <div id="sort-container">
+            <label>Sort By:</label>
+            <div class="sort-row">
+                <select name="sort_by[]">
+                    <option value="">-- None --</option>
+                    <option value="Name">Name</option>
+                    <option value="Client_id">Client ID</option>
+                    <option value="Age">Age</option>
+                    <option value="Risk_rating">Risk Rating</option>
+                    <option value="Relationship_Manager">Relationship Manager</option>
+                    <option value="Service_type">Service Type</option>
+                    <option value="Client_type">Client Type</option>
+                    <option value="Pep">PEP</option>
+                    <option value="Nationality">Nationality</option>
+                </select>
+                <select name="sort_order[]">
+                    <option value="ASC">Ascending</option>
+                    <option value="DESC">Descending</option>
+                </select>
+            </div>
+        </div>
+        <button type="button" onclick="addSort()">Add Another Sort</button>
+        <br><br>
+        <button type="submit">View</button>
+    </form>
 
     {% if columns %}
+    <h3>Redeemed Table</h3>
     <table>
         <thead>
             <tr>
@@ -35,10 +63,11 @@
                         {% set cell = row[i] %}
                         <td class="col-{{ col|lower|replace(' ', '_') }}" data-label="{{ col }}">{{ cell }}</td>
                     {% endfor %}
+
                     <td>
                         {% set client_id = row[columns.index('Client_id')] %}
-                        {% if files_by_client.get(client_id) %}
-                            {% for file in files_by_client[client_id] %}
+                        {% if redeemed_files_by_client.get(client_id) %}
+                            {% for file in redeemed_files_by_client[client_id] %}
                                 <div>
                                     <a href="{{ url_for('view_redeemed_file', file_id=file.file_id) }}" target="_blank">
                                         {{ file.file_name }}
@@ -54,5 +83,33 @@
         </tbody>
     </table>
     {% endif %}
+
+    <script>
+        function addSort() {
+            const container = document.getElementById("sort-container");
+            const newSort = document.createElement("div");
+            newSort.classList.add("sort-row");
+
+            newSort.innerHTML = `
+                <select name="sort_by[]">
+                    <option value="">-- None --</option>
+                    <option value="Name">Name</option>
+                    <option value="Client_id">Client ID</option>
+                    <option value="Age">Age</option>
+                    <option value="Risk_rating">Risk Rating</option>
+                    <option value="Relationship_Manager">Relationship Manager</option>
+                    <option value="Service_type">Service Type</option>
+                    <option value="Client_type">Client Type</option>
+                    <option value="Pep">PEP</option>
+                    <option value="Nationality">Nationality</option>
+                </select>
+                <select name="sort_order[]">
+                    <option value="ASC">Ascending</option>
+                    <option value="DESC">Descending</option>
+                </select>
+            `;
+            container.appendChild(newSort);
+        }
+    </script>
 </body>
 </html>
