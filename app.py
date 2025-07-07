@@ -1082,7 +1082,8 @@ def redeem_single():
     conn.commit()
     cur.close()
 
-    return "Client successfully redeemed and removed", 200
+    flash("Client successfully redeemed and removed.", "success")
+    return redirect(url_for('view_table'))  # or 'redeemed_view' if that's more relevant
 
 
 @app.context_processor
