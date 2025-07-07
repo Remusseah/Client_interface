@@ -23,15 +23,15 @@
             <div class="sort-row">
                 <select name="sort_by[]">
                     <option value="">-- None --</option>
-                    <option value="Name">Name</option>
-                    <option value="Client_id">Client ID</option>
-                    <option value="Age">Age</option>
-                    <option value="Risk_rating">Risk Rating</option>
-                    <option value="Relationship_Manager">Relationship Manager</option>
-                    <option value="Service_type">Service Type</option>
-                    <option value="Client_type">Client Type</option>
-                    <option value="Pep">PEP</option>
-                    <option value="Nationality">Nationality</option>
+                    <option value="name">Name</option>
+                    <option value="client_id">Client ID</option>
+                    <option value="age">Age</option>
+                    <option value="risk_rating">Risk Rating</option>
+                    <option value="relationship_Manager">Relationship Manager</option>
+                    <option value="service_type">Service Type</option>
+                    <option value="client_type">Client Type</option>
+                    <option value="pep">PEP</option>
+                    <option value="nationality">Nationality</option>
                 </select>
                 <select name="sort_order[]">
                     <option value="ASC">Ascending</option>
@@ -65,7 +65,7 @@
                     {% endfor %}
 
                     <td>
-                        {% set client_id = row[columns.index('Client_id')] %}
+                        {% set client_id = row[columns.index('client_id')] %}
                         {% if redeemed_files_by_client.get(client_id) %}
                             {% for file in redeemed_files_by_client[client_id] %}
                                 <div>
