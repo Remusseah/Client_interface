@@ -651,7 +651,7 @@ def redeemed_view():
 
     # Get associated files from redeemed_files table
     redeemed_files_by_client = {}
-    client_ids = [row[columns.index("Client_id")] for row in rows if row[columns.index("Client_id")] is not None]
+    client_ids = [row[columns.index("client_id")] for row in rows if row[columns.index("client_id")] is not None]
     if client_ids:
         format_ids = tuple(client_ids)
         query_files = """
