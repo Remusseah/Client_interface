@@ -355,6 +355,42 @@ function drop(ev, targetId) {
     });
   }
 }
+function lookupPostal() {
+    const postal = document.getElementById("postal_code").value;
+    const nationality = document.getElementById("nationality").value;
+
+    if (nationality !== "Singaporean") {
+        alert("Postal code lookup is only for Singaporeans.");
+        return;
+    }
+
+    if (!postal || postal.length !== 6) {
+        alert("Please enter a valid 6-digit postal code.");
+        return;
+    }
+
+    fetch('/get-address-from-postal', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ postal_code: postal })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.found > 0) {
+            const result = data.results[0];
+            const baseAddress = `${result.BLOCK} ${result.ROAD_NAME}, Singapore ${result.POSTAL}`;
+            document.getElementById("residency_address").value = baseAddress;
+        } else {
+            alert("No address found for this postal code.");
+        }
+    })
+    .catch(error => {
+        console.error("Error fetching address:", error);
+        alert("Failed to fetch address.");
+    });
+}
 function toggleDetails(id) {
   const el = document.getElementById(id);
   if (el) {

@@ -1084,7 +1084,37 @@ def redeem_single():
 
     flash("Client successfully redeemed and removed.", "success")
     return redirect(url_for('view_table'))  # or 'redeemed_view' if that's more relevant
+@app.route('/get-address-from-postal', methods=['POST'])
+def get_address_from_postal():
+    data = request.get_json()
+    postal_code = data.get('postal_code')
+    if not postal_code:
+        return jsonify({'error': 'Postal code is required'}), 400
 
+    # Your JWT token
+    token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "searchVal": postal_code,
+        "returnGeom": "N",
+        "getAddrDetails": "Y",
+        "pageNum": 1
+    }
+
+    try:
+        response = requests.post(
+            "https://developers.onemap.sg/privateapi/search",
+            json=payload,
+            headers=headers
+        )
+        return jsonify(response.json())
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.context_processor
 def inject_user():
