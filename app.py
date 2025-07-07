@@ -621,6 +621,60 @@ def view_table():
         selected_table=table,
         files_by_client=files_by_client
     )
+@app.route("/redeemed_view", methods=['GET', 'POST'])
+def redeemed_view():
+    table = "redeemed"
+    sort_fields = request.form.getlist("sort_by[]")
+    sort_orders = request.form.getlist("sort_order[]")
+
+    allowed_columns = [
+        "Name", "Client_id", "Age",
+        "Risk_rating", "Relationship_Manager", "Service_type",
+        "Client_type", "Pep", "Nationality"
+    ]
+    valid_sort_orders = ["ASC", "DESC"]
+
+    order_clauses = []
+    for field, direction in zip(sort_fields, sort_orders):
+        if field in allowed_columns and direction in valid_sort_orders:
+            order_clauses.append(f'"{field}" {direction}')
+
+    sort_clause = f"ORDER BY {', '.join(order_clauses)}" if order_clauses else ""
+
+    cur = conn.cursor()
+
+    # Get data from redeemed table
+    query = f'SELECT * FROM redeemed {sort_clause}'
+    cur.execute(query)
+    rows = cur.fetchall()
+    columns = [desc[0] for desc in cur.description]
+
+    # Get associated files from redeemed_files table
+    redeemed_files_by_client = {}
+    client_ids = [row[columns.index("Client_id")] for row in rows if row[columns.index("Client_id")] is not None]
+    if client_ids:
+        format_ids = tuple(client_ids)
+        query_files = """
+            SELECT client_id, file_id, file_name 
+            FROM redeemed_files 
+            WHERE client_id IN %s
+        """
+        cur.execute(query_files, (format_ids,))
+        for client_id, file_id, file_name in cur.fetchall():
+            redeemed_files_by_client.setdefault(client_id, []).append({
+                "file_id": file_id,
+                "file_name": file_name
+            })
+
+    cur.close()
+
+    return render_template(
+        "redeemed_view.html",
+        columns=columns,
+        rows=rows,
+        selected_table="redeemed",
+        redeemed_files_by_client=redeemed_files_by_client
+    )
 
 import io
 import mimetypes
