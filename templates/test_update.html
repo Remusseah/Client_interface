@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Clients</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .details-section {
+            display: none;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .expand-button {
+            color: blue;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <a href="/test_update_page"><button type="button">Go Back</button></a>
+    <h2>Update Client Records</h2>
+
+    {% if client_rows %}
+    <table>
+        <thead>
+            <tr>
+                <th>Client ID</th>
+                <th>Name</th>
+                <th>Nationality</th>
+                <th>Risk Rating</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in client_rows %}
+            <tr>
+                <td>{{ client.client_id }}</td>
+                <td>
+                    <span class="expand-button" onclick="toggleDetails('details-{{ client.client_id }}')">
+                        {{ client.name }}
+                    </span>
+                </td>
+                <td>{{ client.nationality }}</td>
+                <td>{{ client.risk_rating }}</td>
+                <td><button onclick="toggleDetails('details-{{ client.client_id }}')">Edit</button></td>
+            </tr>
+            <tr id="details-{{ client.client_id }}" class="details-section">
+                <td colspan="5">
+                    <form method="POST" action="/update_client/{{ client.client_id }}">
+                        <label>Name:</label>
+                        <input type="text" name="name" value="{{ client.name }}"><br>
+                        <label>Nationality:</label>
+                        <input type="text" name="nationality" value="{{ client.nationality }}"><br>
+                        <label>Risk Rating:</label>
+                        <input type="text" name="risk_rating" value="{{ client.risk_rating }}"><br>
+                        <!-- Add other fields as needed -->
+                        <button type="submit">Save</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No client data found.</p>
+    {% endif %}
+
+    <script>
+        function toggleDetails(id) {
+            const section = document.getElementById(id);
+            section.style.display = section.style.display === 'none' ? 'table-row' : 'none';
+        }
+    </script>
+</body>
+</html>
