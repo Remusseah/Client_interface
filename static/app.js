@@ -380,8 +380,9 @@ function lookupPostal() {
     .then(data => {
         if (data.found > 0) {
             const result = data.results[0];
-            const baseAddress = `${result.BLOCK} ${result.ROAD_NAME}, Singapore ${result.POSTAL}`;
-            document.getElementById("residency_address").value = baseAddress;
+            const blk = result.BLK_NO && result.BLK_NO !== "NIL" ? `Blk ${result.BLK_NO}` : "";
+            const address = `${blk} ${result.ROAD_NAME}, Singapore ${result.POSTAL}`.trim().replace(/\s+/g, ' ');
+            document.getElementById("residency_address").value = address;
         } else {
             alert("No address found for this postal code.");
         }
