@@ -1096,7 +1096,7 @@ def get_address_from_postal():
     try:
         print("Sending request to OneMap public API...")
         response = requests.get(
-            f"https://developers.onemap.sg/commonapi/search?searchVal={postal_code}&returnGeom=Y&getAddrDetails=Y"
+            f"https://onemap.gov.sg/commonapi/search?searchVal={postal_code}&returnGeom=Y&getAddrDetails=Y"
         )
         result = response.json()
         print("Response status:", response.status_code)
