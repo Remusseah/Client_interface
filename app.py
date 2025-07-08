@@ -1095,23 +1095,25 @@ def get_address_from_postal():
 
     try:
         print("Sending request to OneMap public API...")
-        response = requests.get(
-            f"https://onemap.gov.sg/commonapi/search?searchVal={postal_code}&returnGeom=Y&getAddrDetails=Y"
-        )
-        result = response.json()
-        print("Response status:", response.status_code)
-        print("Response body:", response.text)
+        url = f"https://www.onemap.gov.sg/api/common/elastic/search?searchVal={postal_code}&returnGeom=Y&getAddrDetails=Y&pageNum=1"
+        response = requests.get(url)
 
-        if result["found"] > 0:
-            address = result["results"][0]["ADDRESS"]
-            return jsonify({"address": address})
+        print("Response status:", response.status_code)
+        print("Response text:", response.text)  # <- This will help us debug non-JSON responses
+
+        # Check if response is JSON before parsing
+        if response.headers.get("Content-Type", "").startswith("application/json"):
+            return jsonify(response.json())
         else:
-            return jsonify({"error": "No address found"}), 404
+            return jsonify({
+                "error": "Response was not JSON",
+                "status_code": response.status_code,
+                "raw_response": response.text
+            }), 500
 
     except Exception as e:
         print("Error in lookup:", e)
         return jsonify({"error": str(e)}), 500
-
 
 
 @app.context_processor
