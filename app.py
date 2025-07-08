@@ -1093,34 +1093,25 @@ def get_address_from_postal():
     if not postal_code:
         return jsonify({'error': 'Postal code is required'}), 400
 
-    token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo3ODEyLCJmb3JldmVyIjpmYWxzZSwiaXNzIjoiT25lTWFwIiwiaWF0IjoxNzUxODcxNDI0LCJuYmYiOjE3NTE4NzE0MjQsImV4cCI6MTc1MjEzMDYyNCwianRpIjoiNGQwOTIzOWYtNTUyYi00M2VmLTg0ZTgtMDlmYTVkZGM2YmQwIn0.GM1BjULiwKjgDdmhAu4PPabrbLrMcLoIby4wc1nTJ34vu3oTqtEvlCsPqa9qxO9kAQrBjP1TOv_XYVKFPmBiFjpDd6ccI0IU_T8nMbTcbHLhfwLPfSFLMsBca94wKtzkBOMqBV2xG83TRxC7g_z8mJR49490zBgBfdTs84YDsk3b-Siu2WOk8r0oDy21I__teie1tOpaM2oTi3SUFwVPtozD_ApRIIs0lgthlQdHvRIbO91PLQ8MHcK7SUyYXAZWjg2tKjIc1_hCx3wU16NF167kIvThfMgOZEX00TNSvxr3S8Q0VrqlJXGpopx7Bp_YB3dLDyt9tp7662bWU3p1yQ"
-
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "searchVal": postal_code,
-        "returnGeom": "N",
-        "getAddrDetails": "Y",
-        "pageNum": 1
-    }
-
     try:
-        print("Sending request to OneMap...")
-        response = requests.post(
-            "https://developers.onemap.sg/privateapi/search",
-            json=payload,
-            headers=headers
+        print("Sending request to OneMap public API...")
+        response = requests.get(
+            f"https://developers.onemap.sg/commonapi/search?searchVal={postal_code}&returnGeom=Y&getAddrDetails=Y"
         )
+        result = response.json()
         print("Response status:", response.status_code)
         print("Response body:", response.text)
 
-        return jsonify(response.json())
+        if result["found"] > 0:
+            address = result["results"][0]["ADDRESS"]
+            return jsonify({"address": address})
+        else:
+            return jsonify({"error": "No address found"}), 404
+
     except Exception as e:
         print("Error in lookup:", e)
         return jsonify({"error": str(e)}), 500
+
 
 
 @app.context_processor
