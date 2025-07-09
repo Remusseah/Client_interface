@@ -624,6 +624,56 @@ def view_table():
         selected_table=table,
         files_by_client=files_by_client
     )
+@app.route('/get-all-clients', methods=['GET'])
+def get_all_clients():
+    try:
+        cur = conn.cursor()
+
+        # Get combined client and compliance data
+        cur.execute("""
+            SELECT 
+                d."Client_id", d."Name", d."Nationality", d."Residency_address",
+                d."Contact_number", d."Date_of_birth", d."Ic_number", d."Age",
+                d."Client_profile", d."Employment_status", d."Email_address",
+                c."Onboarded_date", c."Last_periodic_risk_assessment",
+                c."Next_periodic_risk_assessment", c."Risk_rating",
+                c."Relationship_Manager", c."Service_type",
+                c."Client_type", c."Pep"
+            FROM client_data d
+            LEFT JOIN client_compliance c ON d."Client_id" = c."Client_id"
+        """)
+        rows = cur.fetchall()
+        columns = [desc[0] for desc in cur.description]
+        clients = [dict(zip(columns, row)) for row in rows]
+
+        # Get all files for all clients
+        cur.execute("""
+            SELECT client_id, file_id, file_name 
+            FROM client_files
+        """)
+        file_rows = cur.fetchall()
+
+        # Organize files by client_id
+        files_by_client = {}
+        for client_id, file_id, file_name in file_rows:
+            files_by_client.setdefault(client_id, []).append({
+                "file_id": file_id,
+                "file_name": file_name,
+                "url": url_for('view_file', file_id=file_id)
+            })
+
+        # Attach files to each client record
+        for client in clients:
+            cid = client["Client_id"]
+            client["files"] = files_by_client.get(cid, [])
+
+        cur.close()
+        return jsonify(clients), 200
+
+    except Exception as e:
+        print("Error fetching clients and files:", e)
+        return jsonify({"error": "Failed to retrieve client data"}), 500
+
 @app.route("/redeemed_view", methods=['GET', 'POST'])
 def redeemed_view():
     table = "redeemed"
