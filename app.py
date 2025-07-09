@@ -286,6 +286,9 @@ def download_page():
 @app.route('/update_page')
 def update_page():
     return render_template('update.html')
+@app.route('/test_update_page')
+def test_update_page():
+    return render_template('test_update.html')
 @app.route("/view_page")
 def view_page():
     return render_template("view.html")
