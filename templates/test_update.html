@@ -22,7 +22,6 @@
     <a href="/test_update_page"><button type="button">Go Back</button></a>
     <h2>Update Client Records</h2>
 
-    {% if client_rows %}
     <table>
         <thead>
             <tr>
@@ -33,57 +32,11 @@
                 <th>Action</th>
             </tr>
         </thead>
-        <tbody>
-            {% for client in client_rows %}
-            <tr>
-                <td>{{ client.client_id }}</td>
-                <td>
-                    <span class="expand-button" onclick="toggleDetails('details-{{ client.client_id }}')">
-                        {{ client.name }}
-                    </span>
-                </td>
-                <td>{{ client.nationality }}</td>
-                <td>{{ client.risk_rating }}</td>
-                <td><button onclick="toggleDetails('details-{{ client.client_id }}')">Edit</button></td>
-            </tr>
-            <tr id="details-{{ client.client_id }}" class="details-section">
-                <td colspan="5">
-                    <form method="POST" action="/update_client/{{ client.client_id }}">
-                        <label>Name:</label>
-                        <input type="text" name="name" value="{{ client.name }}"><br>
-                        <label>Nationality:</label>
-                        <input type="text" name="nationality" value="{{ client.nationality }}"><br>
-                        <label>Risk Rating:</label>
-                        <input type="text" name="risk_rating" value="{{ client.risk_rating }}"><br>
-                        <!-- Add other fields as needed -->
-                        <button type="submit">Save</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
+        <tbody id="clientTableBody">
+            <!-- Populated via JS -->
         </tbody>
     </table>
-        <!-- Modal Popup -->
-    <div id="editModal" class="modal" style="display:none;">
-    <div class="modal-content">
-        <span class="close" onclick="closeEditModal()">&times;</span>
-        <h3>Edit Client</h3>
-        <form id="editForm">
-        <input type="hidden" name="Client_id" id="editClientId">
-        <label>Name:</label>
-        <input type="text" name="Name" id="editName"><br>
-        <label>Nationality:</label>
-        <input type="text" name="Nationality" id="editNationality"><br>
-        <label>Residency Address:</label>
-        <input type="text" name="Residency_address" id="editResidency"><br>
-        <!-- Add more fields as needed -->
-        <button type="button" onclick="submitUpdate()">Save</button>
-        </form>
-    </div>
-    </div>
-    {% else %}
-    <p>No client data found.</p>
-    {% endif %}
+
 
     <script>
         function toggleDetails(id) {

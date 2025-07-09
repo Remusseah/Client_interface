@@ -316,13 +316,7 @@ function deleteTask(id) {
         console.error("Delete error:", err);
     });
 }
-// 🔁 This function should be globally accessible
-function toggleDetails(id) {
-    const details = document.getElementById(id);
-    if (details) {
-        details.style.display = (details.style.display === "none" || details.style.display === "") ? "block" : "none";
-    }
-}
+
 function drop(ev, targetId) {
   ev.preventDefault();
   const data = ev.dataTransfer.getData("text");
@@ -390,6 +384,79 @@ function lookupPostal() {
     .catch(error => {
         console.error("Error fetching address:", error);
         alert("Failed to fetch address.");
+    });
+}
+document.addEventListener("DOMContentLoaded", function () {
+    fetch("/get-all-clients")
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById("clientTableBody");
+            if (!tbody) return;
+
+            tbody.innerHTML = "";  // Clear any existing rows
+
+            data.forEach(client => {
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${client.Client_id}</td>
+                    <td>
+                        <span class="expand-button" onclick="toggleDetails('details-${client.Client_id}')">
+                            ${client.Name}
+                        </span>
+                    </td>
+                    <td>${client.Nationality}</td>
+                    <td>${client.Risk_rating || ""}</td>
+                    <td><button onclick="toggleDetails('details-${client.Client_id}')">Edit</button></td>
+                `;
+
+                const detailRow = document.createElement("tr");
+                detailRow.id = `details-${client.Client_id}`;
+                detailRow.className = "details-section";
+                detailRow.innerHTML = `
+                    <td colspan="5">
+                        <form onsubmit="event.preventDefault(); submitClientUpdate(${client.Client_id}, this)">
+                            <label>Name:</label>
+                            <input type="text" name="Name" value="${client.Name || ""}"><br>
+                            <label>Nationality:</label>
+                            <input type="text" name="Nationality" value="${client.Nationality || ""}"><br>
+                            <label>Risk Rating:</label>
+                            <input type="text" name="Risk_rating" value="${client.Risk_rating || ""}"><br>
+                            <button type="submit">Save</button>
+                        </form>
+                    </td>
+                `;
+
+                tbody.appendChild(row);
+                tbody.appendChild(detailRow);
+            });
+        })
+        .catch(err => {
+            console.error("Error loading client data:", err);
+            alert("Failed to load client data.");
+        });
+});
+function submitClientUpdate(clientId, form) {
+    const formData = new FormData(form);
+    const payload = { Client_id: clientId };
+    formData.forEach((value, key) => {
+        payload[key] = value;
+    });
+
+    fetch('/update-client', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message || "Updated successfully");
+    })
+    .catch(err => {
+        console.error("Update failed:", err);
+        alert("Failed to update client.");
     });
 }
 function toggleDetails(id) {
