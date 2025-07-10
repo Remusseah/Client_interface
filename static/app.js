@@ -416,76 +416,62 @@ document.addEventListener("DOMContentLoaded", function () {
                 detailRow.innerHTML = `
                 <td colspan="5">
                     <form onsubmit="event.preventDefault(); submitClientUpdate(${client.Client_id}, this)">
-                        <div style="display: flex; gap: 40px; align-items: flex-start;">
-                            <!-- Client Data Section -->
+                        <div style="display: flex; gap: 20px;">
+                            <!-- Left column (Client Data Part 1) -->
                             <div style="flex: 1;">
-                                <h4>Client Data</h4>
                                 <label>Name:</label><br>
                                 <input type="text" name="Name" value="${client.Name || ""}"><br>
-
                                 <label>Nationality:</label><br>
                                 <input type="text" name="Nationality" value="${client.Nationality || ""}"><br>
-
                                 <label>Residency Address:</label><br>
                                 <input type="text" name="Residency_address" value="${client.Residency_address || ""}"><br>
-
                                 <label>Contact Number:</label><br>
                                 <input type="text" name="Contact_number" value="${client.Contact_number || ""}"><br>
-
-                                <label>Date of Birth:</label><br>
-                                <input type="date" name="Date_of_birth" value="${formatDate(client.Date_of_birth)}"><br>
-
-                                <label>IC Number:</label><br>
-                                <input type="text" name="IC_number" value="${client.Ic_number || ""}"><br>
-
-                                <label>Age:</label><br>
-                                <input type="number" name="Age" value="${client.Age || ""}"><br>
-
-                                <label>Client Profile:</label><br>
-                                <input type="text" name="Client_profile" value="${client.Client_profile || ""}"><br>
-
-                                <label>Employment Status:</label><br>
-                                <input type="text" name="Employment_status" value="${client.Employment_status || ""}"><br>
-
                                 <label>Email Address:</label><br>
                                 <input type="email" name="Email_address" value="${client.Email_address || ""}"><br>
                             </div>
 
-                            <!-- Compliance Info Section -->
+                            <!-- Right column (Client Data Part 2) -->
                             <div style="flex: 1;">
-                                <h4>Compliance Info</h4>
-                                <label>Onboarded Date:</label><br>
-                                <input type="date" name="Onboarded_date" value="${formatDate(client.Onboarded_date)}"><br>
-
-                                <label>Last Periodic Risk Assessment:</label><br>
-                                <input type="date" name="Last_periodic_risk_assessment" value="${formatDate(client.Last_periodic_risk_assessment)}"><br>
-
-                                <label>Next Periodic Risk Assessment:</label><br>
-                                <input type="date" name="Next_periodic_risk_assessment" value="${formatDate(client.Next_periodic_risk_assessment)}"><br>
-
-                                <label>Risk Rating:</label><br>
-                                <input type="text" name="Risk_rating" value="${client.Risk_rating || ""}"><br>
-
-                                <label>Relationship Manager:</label><br>
-                                <input type="text" name="Relationship_Manager" value="${client.Relationship_Manager || ""}"><br>
-
-                                <label>Service Type:</label><br>
-                                <input type="text" name="Service_type" value="${client.Service_type || ""}"><br>
-
-                                <label>Client Type:</label><br>
-                                <input type="text" name="Client_type" value="${client.Client_type || ""}"><br>
-
-                                <label>PEP (Politically Exposed Person):</label><br>
-                                <input type="text" name="Pep" value="${client.Pep || ""}"><br>
+                                <label>Employment Status:</label><br>
+                                <input type="text" name="Employment_status" value="${client.Employment_status || ""}"><br>
+                                <label>IC Number:</label><br>
+                                <input type="text" name="IC_number" value="${client.Ic_number || ""}"><br>
+                                <label>Client Profile:</label><br>
+                                <input type="text" name="Client_profile" value="${client.Client_profile || ""}"><br>
+                                <label>Date of Birth:</label><br>
+                                <input type="date" name="Date_of_birth" value="${formatDate(client.Date_of_birth)}"><br>
+                                <label>Age:</label><br>
+                                <input type="number" name="Age" value="${client.Age || ""}"><br>
                             </div>
                         </div>
 
+                        <!-- Compliance Row -->
                         <div style="margin-top: 15px;">
-                            <button type="submit">Save</button>
+                            <h4>Compliance Details</h4>
+                            <label>Onboarded Date:</label>
+                            <input type="date" name="Onboarded_date" value="${formatDate(client.Onboarded_date)}"><br>
+                            <label>Last Periodic Risk Assessment:</label>
+                            <input type="date" name="Last_periodic_risk_assessment" value="${formatDate(client.Last_periodic_risk_assessment)}"><br>
+                            <label>Next Periodic Risk Assessment:</label>
+                            <input type="date" name="Next_periodic_risk_assessment" value="${formatDate(client.Next_periodic_risk_assessment)}"><br>
+                            <label>Risk Rating:</label>
+                            <input type="text" name="Risk_rating" value="${client.Risk_rating || ""}"><br>
+                            <label>Relationship Manager:</label>
+                            <input type="text" name="Relationship_Manager" value="${client.Relationship_Manager || ""}"><br>
+                            <label>Service Type:</label>
+                            <input type="text" name="Service_type" value="${client.Service_type || ""}"><br>
+                            <label>Client Type:</label>
+                            <input type="text" name="Client_type" value="${client.Client_type || ""}"><br>
+                            <label>PEP:</label>
+                            <input type="text" name="Pep" value="${client.Pep || ""}"><br>
                         </div>
+
+                        <button type="submit" style="margin-top: 10px;">Save</button>
                     </form>
                 </td>
             `;
+
 
 
                 tbody.appendChild(row);
