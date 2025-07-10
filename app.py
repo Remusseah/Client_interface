@@ -289,6 +289,9 @@ def update_page():
 @app.route('/test_update_page')
 def test_update_page():
     return render_template('test_update.html')
+@app.route('/add_account_page')
+def add_account_page():
+    return render_template('add_account.html')
 @app.route("/view_page")
 def view_page():
     return render_template("view.html")
@@ -1167,7 +1170,41 @@ def get_address_from_postal():
     except Exception as e:
         print("Error in lookup:", e)
         return jsonify({"error": str(e)}), 500
+@app.route("/add-account", methods=["GET", "POST"])
+def add_account():
+    if request.method == "GET":
+        return render_template("add_account.html")
 
+    try:
+        data = request.form
+        client_id = int(data["client_id"])
+        account_id = data["account_id"]
+        account_name = data["account_name"]
+        amount = float(data["amount"])
+        month = data["month"]  # format: YYYY-MM
+
+        cursor = conn.cursor()
+
+        # Insert into client_accounts (if not exists)
+        cursor.execute("""
+            INSERT INTO client_accounts (account_id, client_id, account_name)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (account_id) DO NOTHING
+        """, (account_id, client_id, account_name))
+
+        # Insert into account_monthly_values
+        cursor.execute("""
+            INSERT INTO account_monthly_values (account_id, amount, month)
+            VALUES (%s, %s, %s)
+        """, (account_id, amount, month))
+
+        conn.commit()
+        cursor.close()
+        return "Account and value added successfully."
+
+    except Exception as e:
+        conn.rollback()
+        return f"❌ Error: {e}", 500
 
 @app.context_processor
 def inject_user():

@@ -1,0 +1,29 @@
+<!-- templates/add_account.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Client Account</title>
+</head>
+<body>
+    <h2>Add Account Details</h2>
+    <form method="POST" action="/add-account">
+        <label>Client ID:</label>
+        <input type="number" name="client_id" required><br>
+
+        <label>Account Name:</label>
+        <input type="text" name="account_name" required><br>
+
+        <label>Account ID:</label>
+        <input type="text" name="account_id" required><br>
+
+        <label>Amount:</label>
+        <input type="number" name="amount" step="0.01" required><br>
+
+        <label>Month (YYYY-MM):</label>
+        <input type="month" name="month" required><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
