@@ -254,3 +254,20 @@ tbody tr:hover {
     font-size: 20px;
     cursor: pointer;
 }
+.details-section td {
+    width: 100%;
+    padding: 20px;
+}
+
+.details-section form {
+    width: 100%;
+}
+
+.details-section form > div {
+    width: 100%;
+}
+
+.details-section input {
+    width: 100%;
+    box-sizing: border-box;
+}
