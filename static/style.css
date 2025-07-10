@@ -226,3 +226,31 @@ tbody tr:hover {
   margin-top: 8px;
   display: none;
 }
+/* Modal overlay */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+/* Modal content box */
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 60%;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+/* Close button */
+.modal-content .close {
+    position: absolute;
+    top: 8px; right: 12px;
+    font-size: 20px;
+    cursor: pointer;
+}
