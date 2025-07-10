@@ -433,7 +433,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <input type="text" name="Contact_number" value="${client.Contact_number || ""}"><br>
 
                                 <label>Date of Birth:</label><br>
-                                <input type="date" name="Date_of_birth" value="${client.Date_of_birth || ""}"><br>
+                                <input type="date" name="Date_of_birth" value="${formatDate(client.Date_of_birth)}"><br>
 
                                 <label>IC Number:</label><br>
                                 <input type="text" name="IC_number" value="${client.Ic_number || ""}"><br>
@@ -455,13 +455,13 @@ document.addEventListener("DOMContentLoaded", function () {
                             <div style="flex: 1;">
                                 <h4>Compliance Info</h4>
                                 <label>Onboarded Date:</label><br>
-                                <input type="date" name="Onboarded_date" value="${client.Onboarded_date || ""}"><br>
+                                <input type="date" name="Onboarded_date" value="${formatDate(client.Onboarded_date)}"><br>
 
                                 <label>Last Periodic Risk Assessment:</label><br>
-                                <input type="date" name="Last_periodic_risk_assessment" value="${client.Last_periodic_risk_assessment || ""}"><br>
+                                <input type="date" name="Last_periodic_risk_assessment" value="${formatDate(client.Last_periodic_risk_assessment)}"><br>
 
                                 <label>Next Periodic Risk Assessment:</label><br>
-                                <input type="date" name="Next_periodic_risk_assessment" value="${client.Next_periodic_risk_assessment || ""}"><br>
+                                <input type="date" name="Next_periodic_risk_assessment" value="${formatDate(client.Next_periodic_risk_assessment)}"><br>
 
                                 <label>Risk Rating:</label><br>
                                 <input type="text" name="Risk_rating" value="${client.Risk_rating || ""}"><br>
@@ -526,3 +526,10 @@ function toggleDetails(id) {
     el.style.display = (el.style.display === "block") ? "none" : "block";
   }
 }
+function formatDate(rawDate) {
+    if (!rawDate) return "";
+    const date = new Date(rawDate);
+    if (isNaN(date)) return "";  // invalid date
+    return date.toISOString().split('T')[0];  // returns 'YYYY-MM-DD'
+}
+
