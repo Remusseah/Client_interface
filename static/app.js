@@ -414,7 +414,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 detailRow.id = `details-${client.Client_id}`;
                 detailRow.className = "details-section";
                 detailRow.innerHTML = `
-                <td colspan="5">
+                <td colspan="10">
                     <form onsubmit="event.preventDefault(); submitClientUpdate(${client.Client_id}, this)">
                         <div style="display: flex; gap: 20px;">
                             <!-- Left column (Client Data Part 1) -->
