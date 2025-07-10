@@ -444,7 +444,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <label>Age:</label><br>
                                 <input type="number" name="Age" value="${client.Age || ""}"><br>
                             </div>
-                        </div>
+                        
 
                         <!-- Compliance Row -->
                         <div style="margin-top: 15px;">
@@ -465,8 +465,8 @@ document.addEventListener("DOMContentLoaded", function () {
                             <input type="text" name="Client_type" value="${client.Client_type || ""}"><br>
                             <label>PEP:</label>
                             <input type="text" name="Pep" value="${client.Pep || ""}"><br>
+                            </div>
                         </div>
-
                         <button type="submit" style="margin-top: 10px;">Save</button>
                     </form>
                 </td>
