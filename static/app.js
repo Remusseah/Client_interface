@@ -414,68 +414,79 @@ document.addEventListener("DOMContentLoaded", function () {
                 detailRow.id = `details-${client.Client_id}`;
                 detailRow.className = "details-section";
                 detailRow.innerHTML = `
-                    <td colspan="5">
-                        <form onsubmit="event.preventDefault(); submitClientUpdate(${client.Client_id}, this)">
-                            <label>Name:</label>
-                            <input type="text" name="Name" value="${client.Name || ""}"><br>
+                <td colspan="5">
+                    <form onsubmit="event.preventDefault(); submitClientUpdate(${client.Client_id}, this)">
+                        <div style="display: flex; gap: 40px; align-items: flex-start;">
+                            <!-- Client Data Section -->
+                            <div style="flex: 1;">
+                                <h4>Client Data</h4>
+                                <label>Name:</label><br>
+                                <input type="text" name="Name" value="${client.Name || ""}"><br>
 
-                            <label>Nationality:</label>
-                            <input type="text" name="Nationality" value="${client.Nationality || ""}"><br>
+                                <label>Nationality:</label><br>
+                                <input type="text" name="Nationality" value="${client.Nationality || ""}"><br>
 
-                            <label>Residency Address:</label>
-                            <input type="text" name="Residency_address" value="${client.Residency_address || ""}"><br>
+                                <label>Residency Address:</label><br>
+                                <input type="text" name="Residency_address" value="${client.Residency_address || ""}"><br>
 
-                            <label>Contact Number:</label>
-                            <input type="text" name="Contact_number" value="${client.Contact_number || ""}"><br>
+                                <label>Contact Number:</label><br>
+                                <input type="text" name="Contact_number" value="${client.Contact_number || ""}"><br>
 
-                            <label>Date of Birth:</label>
-                            <input type="date" name="Date_of_birth" value="${client.Date_of_birth || ""}"><br>
+                                <label>Date of Birth:</label><br>
+                                <input type="date" name="Date_of_birth" value="${client.Date_of_birth || ""}"><br>
 
-                            <label>IC Number:</label>
-                            <input type="text" name="IC_number" value="${client.Ic_number || ""}"><br>
+                                <label>IC Number:</label><br>
+                                <input type="text" name="IC_number" value="${client.Ic_number || ""}"><br>
 
-                            <label>Age:</label>
-                            <input type="number" name="Age" value="${client.Age || ""}"><br>
+                                <label>Age:</label><br>
+                                <input type="number" name="Age" value="${client.Age || ""}"><br>
 
-                            <label>Client Profile:</label>
-                            <input type="text" name="Client_profile" value="${client.Client_profile || ""}"><br>
+                                <label>Client Profile:</label><br>
+                                <input type="text" name="Client_profile" value="${client.Client_profile || ""}"><br>
 
-                            <label>Employment Status:</label>
-                            <input type="text" name="Employment_status" value="${client.Employment_status || ""}"><br>
+                                <label>Employment Status:</label><br>
+                                <input type="text" name="Employment_status" value="${client.Employment_status || ""}"><br>
 
-                            <label>Email Address:</label>
-                            <input type="email" name="Email_address" value="${client.Email_address || ""}"><br>
+                                <label>Email Address:</label><br>
+                                <input type="email" name="Email_address" value="${client.Email_address || ""}"><br>
+                            </div>
 
-                            <h4>Compliance Info</h4>
+                            <!-- Compliance Info Section -->
+                            <div style="flex: 1;">
+                                <h4>Compliance Info</h4>
+                                <label>Onboarded Date:</label><br>
+                                <input type="date" name="Onboarded_date" value="${client.Onboarded_date || ""}"><br>
 
-                            <label>Onboarded Date:</label>
-                            <input type="date" name="Onboarded_date" value="${client.Onboarded_date || ""}"><br>
+                                <label>Last Periodic Risk Assessment:</label><br>
+                                <input type="date" name="Last_periodic_risk_assessment" value="${client.Last_periodic_risk_assessment || ""}"><br>
 
-                            <label>Last Periodic Risk Assessment:</label>
-                            <input type="date" name="Last_periodic_risk_assessment" value="${client.Last_periodic_risk_assessment || ""}"><br>
+                                <label>Next Periodic Risk Assessment:</label><br>
+                                <input type="date" name="Next_periodic_risk_assessment" value="${client.Next_periodic_risk_assessment || ""}"><br>
 
-                            <label>Next Periodic Risk Assessment:</label>
-                            <input type="date" name="Next_periodic_risk_assessment" value="${client.Next_periodic_risk_assessment || ""}"><br>
+                                <label>Risk Rating:</label><br>
+                                <input type="text" name="Risk_rating" value="${client.Risk_rating || ""}"><br>
 
-                            <label>Risk Rating:</label>
-                            <input type="text" name="Risk_rating" value="${client.Risk_rating || ""}"><br>
+                                <label>Relationship Manager:</label><br>
+                                <input type="text" name="Relationship_Manager" value="${client.Relationship_Manager || ""}"><br>
 
-                            <label>Relationship Manager:</label>
-                            <input type="text" name="Relationship_Manager" value="${client.Relationship_Manager || ""}"><br>
+                                <label>Service Type:</label><br>
+                                <input type="text" name="Service_type" value="${client.Service_type || ""}"><br>
 
-                            <label>Service Type:</label>
-                            <input type="text" name="Service_type" value="${client.Service_type || ""}"><br>
+                                <label>Client Type:</label><br>
+                                <input type="text" name="Client_type" value="${client.Client_type || ""}"><br>
 
-                            <label>Client Type:</label>
-                            <input type="text" name="Client_type" value="${client.Client_type || ""}"><br>
+                                <label>PEP (Politically Exposed Person):</label><br>
+                                <input type="text" name="Pep" value="${client.Pep || ""}"><br>
+                            </div>
+                        </div>
 
-                            <label>PEP (Politically Exposed Person):</label>
-                            <input type="text" name="Pep" value="${client.Pep || ""}"><br>
-
+                        <div style="margin-top: 15px;">
                             <button type="submit">Save</button>
-                        </form>
-                    </td>
-                `;
+                        </div>
+                    </form>
+                </td>
+            `;
+
 
                 tbody.appendChild(row);
                 tbody.appendChild(detailRow);
