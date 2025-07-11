@@ -414,7 +414,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 detailRow.id = `details-${client.Client_id}`;
                 detailRow.className = "details-section";
                 detailRow.innerHTML = `
-                <td colspan="999" style="padding: 0; border: none;">
+                <td colspan="999" style="background: rgba(255,0,0,0.05);">
                     <div class="form-container" style="width: 100%; box-sizing: border-box;">
                         <form onsubmit="event.preventDefault(); submitClientUpdate(${client.Client_id}, this)">
                             <div class="form-columns" style="display: flex; gap: 30px; width: 100%; box-sizing: border-box; align-items: flex-start;">
