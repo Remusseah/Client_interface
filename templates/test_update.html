@@ -3,12 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Update Clients</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        
+        .details-section {
+            display: none;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .expand-button {
+            color: blue;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <button type="button" class="back-btn" onclick="window.location.href='/test_update_page'">Go Back</button>
+    <a href="/test_update_page"><button type="button">Go Back</button></a>
     <h2>Update Client Records</h2>
     
+
     <table>
         <thead>
             <tr>
@@ -24,6 +39,13 @@
         </tbody>
     </table>
 
-    <script src="script.js"></script>
+
+    <script>
+        function toggleDetails(id) {
+            const section = document.getElementById(id);
+            section.style.display = section.style.display === 'none' ? 'table-row' : 'none';
+        }
+    </script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>
