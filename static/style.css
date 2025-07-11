@@ -60,7 +60,14 @@ table {
     background-color: white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
-
+.table-wrapper {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+}
 th, td {
     border: 1px solid #e1e1e1;
     padding: 10px 12px;
