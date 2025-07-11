@@ -415,7 +415,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 detailRow.className = "details-section";
                 detailRow.innerHTML = `
                 <td colspan="999">
-                    <div style="width: 100%;">
+                    <div class="form-columns">
                         <form onsubmit="event.preventDefault(); submitClientUpdate(${client.Client_id}, this)">
                             <div style="display: flex; gap: 30px; align-items: flex-start; width: 100%; box-sizing: border-box;">
 
