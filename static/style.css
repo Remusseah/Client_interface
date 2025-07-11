@@ -271,3 +271,14 @@ tbody tr:hover {
     width: 100%;
     box-sizing: border-box;
 }
+.details-section {
+    display: none;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+.expand-button {
+    color: blue;
+    cursor: pointer;
+    text-decoration: underline;
+}
