@@ -472,10 +472,10 @@ document.addEventListener("DOMContentLoaded", function () {
                             <div style="margin-top: 10px;">
                                 <button type="submit">Save</button>
                             </div>
-                        </form>
-                    </td>
-                    `;
-
+                         </form>
+                    </div>
+                </td>
+            `;
 
 
                 tbody.appendChild(row);
