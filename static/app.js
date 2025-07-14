@@ -105,54 +105,55 @@ document.addEventListener("DOMContentLoaded", function () {
 
     
         })}
-    const updateClientIdInput = document.getElementById("client_id");
-    if (updateClientIdInput) {
-        console.log("✅ JS loaded");            
-        updateClientIdInput.addEventListener("change", function () {
-            console.log("🟡 Client ID changed");
-            const clientId = updateClientIdInput.value;
-            if (!clientId) return;
+    if (document.body.id === "update-page") {
+        const updateClientIdInput = document.getElementById("client_id");
+        if (updateClientIdInput) {
+            console.log("✅ JS loaded");            
+            updateClientIdInput.addEventListener("change", function () {
+                console.log("🟡 Client ID changed");
+                const clientId = updateClientIdInput.value;
+                if (!clientId) return;
 
-            fetch(`/client/${clientId}`)
-                .then(response => {
-                    console.log("🔄 Response status:", response.status);
-                    return response.json();
-                })
-                .then(data => {
-                    console.log("📦 Fetched data:", data);
+                fetch(`/client/${clientId}`)
+                    .then(response => {
+                        console.log("🔄 Response status:", response.status);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("📦 Fetched data:", data);
 
 
-                    // Fill client fields
-                    document.getElementById("name").value = data.Name || '';
-                    document.getElementById("date_of_birth").value = formatDate(data.Date_of_birth);
-                    document.getElementById("contact_number").value = data.Contact_number || '';
-                    document.getElementById("email_address").value = data.Email_address || '';
-                    document.getElementById("nationality").value = data.Nationality || '';
-                    document.getElementById("residency_address").value = data.Residency_address || '';
-                    document.getElementById("employment_status").value = data.Employment_status || '';
-                    document.getElementById("age").value = data.Age || '';
-                    document.getElementById("ic_number").value = data.Ic_number || '';
-                    document.getElementById("client_profile").value = data.Client_profile || '';
+                        // Fill client fields
+                        document.getElementById("name").value = data.Name || '';
+                        document.getElementById("date_of_birth").value = formatDate(data.Date_of_birth);
+                        document.getElementById("contact_number").value = data.Contact_number || '';
+                        document.getElementById("email_address").value = data.Email_address || '';
+                        document.getElementById("nationality").value = data.Nationality || '';
+                        document.getElementById("residency_address").value = data.Residency_address || '';
+                        document.getElementById("employment_status").value = data.Employment_status || '';
+                        document.getElementById("age").value = data.Age || '';
+                        document.getElementById("ic_number").value = data.Ic_number || '';
+                        document.getElementById("client_profile").value = data.Client_profile || '';
 
-                    // Fill compliance fields (if present)
-                    document.querySelector("[name='onboarded_date']").value = formatDate(data.Onboarded_date);
-                    document.querySelector("[name='last_assessment']").value = formatDate(data.Last_periodic_risk_assessment);
-                    document.querySelector("[name='next_assessment']").value = formatDate(data.Next_periodic_risk_assessment);
-                    document.querySelector("[name='risk_rating']").value = data.Risk_rating || '';
-                    document.querySelector("[name='relationship_manager']").value = data.Relationship_Manager || '';
-                    document.querySelector("[name='service_type']").value = data.Service_type || '';
-                    document.querySelector("[name='client_type']").value = data.Client_type || '';
-                    document.querySelector("[name='pep']").value = data.Pep || '';
-                })
-                .catch(error => {
-                    console.error("Error fetching client data:", error);
-                    alert("Something went wrong.");
-                });
-        });}
-    
-    else{
-        console.log("❌ client_id input not found");
-    }
+                        // Fill compliance fields (if present)
+                        document.querySelector("[name='onboarded_date']").value = formatDate(data.Onboarded_date);
+                        document.querySelector("[name='last_assessment']").value = formatDate(data.Last_periodic_risk_assessment);
+                        document.querySelector("[name='next_assessment']").value = formatDate(data.Next_periodic_risk_assessment);
+                        document.querySelector("[name='risk_rating']").value = data.Risk_rating || '';
+                        document.querySelector("[name='relationship_manager']").value = data.Relationship_Manager || '';
+                        document.querySelector("[name='service_type']").value = data.Service_type || '';
+                        document.querySelector("[name='client_type']").value = data.Client_type || '';
+                        document.querySelector("[name='pep']").value = data.Pep || '';
+                    })
+                    .catch(error => {
+                        console.error("Error fetching client data:", error);
+                        alert("Something went wrong.");
+                    });
+            });}
+        
+        else{
+            console.log("❌ client_id input not found");
+        }}
     
     
     const updateClientForm = document.getElementById("updateClientForm");
