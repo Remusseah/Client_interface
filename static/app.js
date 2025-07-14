@@ -417,7 +417,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td colspan="999" style="width: 100%;">
                     <div class="form-container" style="width: 100%; box-sizing: border-box;">
                         <form style="width: 100%;">
-                        <div class="form-columns" style="display: flex; width: 100%;">
+                            <div class="form-columns" style="display: flex; width: 100%;">
 
 
                                 <!-- Left Column -->
