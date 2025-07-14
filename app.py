@@ -1178,21 +1178,30 @@ def add_account():
     try:
         data = request.form
         client_id = int(data["client_id"])
-        account_id = data["account_id"]
         account_name = data["account_name"]
         amount = float(data["amount"])
         month = data["month"]  # format: YYYY-MM
 
         cursor = conn.cursor()
 
-        # Insert into client_accounts (if not exists)
-        cursor.execute("""
-            INSERT INTO client_accounts (account_id, client_id, account_name)
-            VALUES (%s, %s, %s)
-            ON CONFLICT (account_id) DO NOTHING
-        """, (account_id, client_id, account_name))
+        # ✅ Check if client already has an account
+        cursor.execute("SELECT account_id FROM client_accounts WHERE client_id = %s", (client_id,))
+        result = cursor.fetchone()
 
-        # Insert into account_monthly_values
+        if result:
+            account_id = result[0]
+        else:
+            # ✅ Get next available account_id
+            cursor.execute("SELECT COALESCE(MAX(account_id), 0) + 1 FROM client_accounts")
+            account_id = cursor.fetchone()[0]
+
+            # ✅ Insert into client_accounts
+            cursor.execute("""
+                INSERT INTO client_accounts (account_id, client_id, account_name)
+                VALUES (%s, %s, %s)
+            """, (account_id, client_id, account_name))
+
+        # ✅ Insert into account_monthly_values
         cursor.execute("""
             INSERT INTO account_monthly_values (account_id, amount, month)
             VALUES (%s, %s, %s)
@@ -1200,26 +1209,33 @@ def add_account():
 
         conn.commit()
         cursor.close()
-        return "Account and value added successfully."
+        return "✅ Account and value added successfully."
 
     except Exception as e:
         conn.rollback()
         return f"❌ Error: {e}", 500
 @app.route("/get-client-name/<int:client_id>")
 def get_client_name(client_id):
-    cur = conn.cursor()
-    cur.execute('SELECT "Name" FROM client_data WHERE "Client_id" = %s', (client_id,))
-    result = cur.fetchone()
-    cur.close()
+    cursor = conn.cursor()
 
-    if result:
-        return jsonify({"name": result[0]})
-    return jsonify({"error": "Client not found"}), 404
-@app.context_processor
-def inject_user():
-    email = session.get("user_email")
-    username = email.split("@")[0] if email else None
-    return dict(logged_in_user=username, user_email=email)
+    # Get client name
+    cursor.execute('SELECT "Name" FROM client_data WHERE "Client_id" = %s', (client_id,))
+    name_row = cursor.fetchone()
+    name = name_row[0] if name_row else None
+
+    # Check for existing account_id
+    cursor.execute("SELECT account_id FROM client_accounts WHERE client_id = %s", (client_id,))
+    acc_row = cursor.fetchone()
+
+    if acc_row:
+        account_id = acc_row[0]
+    else:
+        cursor.execute("SELECT COALESCE(MAX(account_id), 0) + 1 FROM client_accounts")
+        account_id = cursor.fetchone()[0]
+
+    cursor.close()
+
+    return jsonify({"name": name, "account_id": account_id})
 
 
 if __name__ == '__main__':

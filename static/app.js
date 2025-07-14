@@ -577,22 +577,24 @@ function submitMonthlyValue() {
 function autofillClientName() {
     const clientIdInput = document.getElementById("client_id");
     const clientId = clientIdInput?.value?.trim();
-
     if (!clientId) return;
 
     fetch(`/get-client-name/${clientId}`)
         .then(response => response.json())
         .then(data => {
             const nameField = document.getElementById("client_name");
-            if (!nameField) {
+            const accountIdField = document.getElementById("account_id");
+
+            if (nameField) {
+                nameField.value = data.name || "Not found";
+            } else {
                 console.warn("⚠️ client_name input not found in DOM.");
-                return;
             }
 
-            if (data.name) {
-                nameField.value = data.name;
+            if (accountIdField) {
+                accountIdField.value = data.account_id || "";
             } else {
-                nameField.value = "Not found";
+                console.warn("⚠️ account_id input not found in DOM.");
             }
         })
         .catch(err => {
@@ -603,13 +605,3 @@ function autofillClientName() {
             }
         });
 }
-document.addEventListener("DOMContentLoaded", function () {
-    if (document.body.id === "add_account_page") {
-        const clientIdInput = document.getElementById("client_id");
-
-        if (clientIdInput) {
-            clientIdInput.addEventListener("change", autofillClientName);  // or "input"
-        } else {
-            console.warn("⚠️ client_id field not found.");
-        }}
-});
