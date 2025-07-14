@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     
         })}
-    if (document.body.id === "update-page") {
+    if (document.body.id === "update_page") {
         const updateClientIdInput = document.getElementById("client_id");
         if (updateClientIdInput) {
             console.log("✅ JS loaded");            
@@ -604,7 +604,7 @@ function autofillClientName() {
         });
 }
 document.addEventListener("DOMContentLoaded", function () {
-    if (document.body.id === "update-page") {
+    if (document.body.id === "add_account_page") {
         const clientIdInput = document.getElementById("client_id");
 
         if (clientIdInput) {
