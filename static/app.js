@@ -576,14 +576,19 @@ function submitMonthlyValue() {
 }
 function autofillClientName() {
     const clientIdInput = document.getElementById("client_id");
+    const clientId = clientIdInput?.value?.trim();
 
-
-    const clientId = clientIdInput.value.trim();
     if (!clientId) return;
 
     fetch(`/get-client-name/${clientId}`)
         .then(response => response.json())
         .then(data => {
+            const nameField = document.getElementById("client_name");
+            if (!nameField) {
+                console.warn("⚠️ client_name input not found in DOM.");
+                return;
+            }
+
             if (data.name) {
                 nameField.value = data.name;
             } else {
@@ -592,6 +597,9 @@ function autofillClientName() {
         })
         .catch(err => {
             console.error("Error fetching client name:", err);
-            nameField.value = "Error";
+            const nameField = document.getElementById("client_name");
+            if (nameField) {
+                nameField.value = "Error";
+            }
         });
 }
