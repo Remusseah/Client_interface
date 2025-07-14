@@ -603,3 +603,13 @@ function autofillClientName() {
             }
         });
 }
+document.addEventListener("DOMContentLoaded", function () {
+    if (document.body.id === "update-page") {
+        const clientIdInput = document.getElementById("client_id");
+
+        if (clientIdInput) {
+            clientIdInput.addEventListener("change", autofillClientName);  // or "input"
+        } else {
+            console.warn("⚠️ client_id field not found.");
+        }}
+});
