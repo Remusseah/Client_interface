@@ -525,3 +525,72 @@ function formatDate(rawDate) {
     return date.toISOString().split('T')[0];  // returns 'YYYY-MM-DD'
 }
 
+function fetchClientName() {
+    const id = document.getElementById("client_id").value;
+    if (!id) return;
+
+    fetch(`/get-client-name/${id}`)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("client_name").value = data.name || "Not found";
+        })
+        .catch(err => {
+            alert("Error fetching name");
+            console.error(err);
+        });
+}
+
+function submitAccount() {
+    const payload = {
+        client_id: document.getElementById("client_id").value,
+        account_name: document.getElementById("account_name").value,
+        account_number: document.getElementById("account_number").value
+    };
+
+    fetch("/add-account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => alert(data.message || "Success"))
+    .catch(err => alert("Error adding account"));
+}
+
+function submitMonthlyValue() {
+    const payload = {
+        account_id: document.getElementById("account_id").value,
+        month: document.getElementById("month").value,
+        amount: document.getElementById("amount").value
+    };
+
+    fetch("/add-monthly-value", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => alert(data.message || "Success"))
+    .catch(err => alert("Error adding monthly value"));
+}
+function autofillClientName() {
+    const clientIdInput = document.getElementById("client_id");
+    const nameField = document.getElementById("client_name");
+
+    const clientId = clientIdInput.value.trim();
+    if (!clientId) return;
+
+    fetch(`/get-client-name/${clientId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.name) {
+                nameField.value = data.name;
+            } else {
+                nameField.value = "Not found";
+            }
+        })
+        .catch(err => {
+            console.error("Error fetching client name:", err);
+            nameField.value = "Error";
+        });
+}

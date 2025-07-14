@@ -1205,7 +1205,16 @@ def add_account():
     except Exception as e:
         conn.rollback()
         return f"❌ Error: {e}", 500
+@app.route("/get-client-name/<int:client_id>")
+def get_client_name(client_id):
+    cur = conn.cursor()
+    cur.execute('SELECT "Name" FROM client_data WHERE "Client_id" = %s', (client_id,))
+    result = cur.fetchone()
+    cur.close()
 
+    if result:
+        return jsonify({"name": result[0]})
+    return jsonify({"error": "Client not found"}), 404
 @app.context_processor
 def inject_user():
     email = session.get("user_email")
