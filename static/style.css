@@ -61,12 +61,7 @@ table {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 .table-wrapper {
-    width: 100vw;
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
+    width: 100%;
 }
 th, td {
     border: 1px solid #e1e1e1;
