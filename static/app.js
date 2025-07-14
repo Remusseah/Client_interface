@@ -575,7 +575,8 @@ function submitMonthlyValue() {
 }
 function autofillClientName() {
     const clientIdInput = document.getElementById("client_id");
-    const nameField = document.getElementById("client_name");
+    document.getElementById("client_name").value = data.name;
+
 
     const clientId = clientIdInput.value.trim();
     if (!clientId) return;
