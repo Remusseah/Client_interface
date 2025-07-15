@@ -136,7 +136,46 @@
                 })
                 .catch(err => console.error("Error loading months:", err));
         }
+        
+        function loadClientAccountValues(clientId, container) {
+            fetch(`/get-account-values-by-client/${clientId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (!Array.isArray(data) || data.length === 0) {
+                        container.innerHTML = "<p>No account data found.</p>";
+                        return;
+                    }
 
+                    const table = document.createElement("table");
+                    table.className = "accounts-table";
+
+                    table.innerHTML = `
+                        <thead>
+                            <tr>
+                                <th>Account ID</th>
+                                <th>Account Name</th>
+                                <th>Month</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(row => `
+                                <tr>
+                                    <td>${row.account_id}</td>
+                                    <td>${row.account_name || ""}</td>
+                                    <td>${row.month}</td>
+                                    <td>${row.amount}</td>
+                                </tr>`).join("")}
+                        </tbody>
+                    `;
+                    container.innerHTML = "";
+                    container.appendChild(table);
+                })
+                .catch(err => {
+                    container.innerHTML = "<p>Error loading account data.</p>";
+                    console.error("Error fetching account data:", err);
+                });
+        }
         
         </script>
         <script src="{{ url_for('static', filename='app.js') }}"></script>
