@@ -386,7 +386,8 @@ function lookupPostal() {
         console.error("Error fetching address:", error);
         alert("Failed to fetch address.");
     });
-}document.addEventListener("DOMContentLoaded", () => {
+}
+document.addEventListener("DOMContentLoaded", () => {
             loadMonthButtons();
             fetch("/get-all-clients")
                 .then(response => response.json())
