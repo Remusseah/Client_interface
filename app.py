@@ -1196,7 +1196,7 @@ def add_account_and_value():
             cursor.execute("""
                 INSERT INTO client_accounts (account_id, client_id, account_name,account_number)
                 VALUES (%s, %s, %s, %s)
-            """, (account_id, client_id, account_name))
+            """, (account_id, client_id, account_name,account_number))
         
         # Insert into account_monthly_values
         amount = float(data["amount"])
