@@ -1176,28 +1176,26 @@ def add_account_and_value():
         data = request.get_json()
         client_id = int(data["client_id"])
         account_name = data["account_name"]
-        account_number = data.get("account_number", "")
         amount = float(data["amount"])
-        month = data["month"]  # format: YYYY-MM
+        month = data["month"]
 
         cursor = conn.cursor()
 
-        # Check if account already exists for client
+        # Check if client has existing account
         cursor.execute("SELECT account_id FROM client_accounts WHERE client_id = %s", (client_id,))
         result = cursor.fetchone()
 
         if result:
             account_id = result[0]
         else:
-            # New account_id
+            # Get next available account_id
             cursor.execute("SELECT COALESCE(MAX(account_id), 0) + 1 FROM client_accounts")
             account_id = cursor.fetchone()[0]
 
-            # Insert into client_accounts
             cursor.execute("""
-                INSERT INTO client_accounts (account_id, client_id, account_name, account_number)
-                VALUES (%s, %s, %s, %s)
-            """, (account_id, client_id, account_name, account_number))
+                INSERT INTO client_accounts (account_id, client_id, account_name)
+                VALUES (%s, %s, %s)
+            """, (account_id, client_id, account_name))
 
         # Insert into account_monthly_values
         cursor.execute("""
@@ -1207,10 +1205,11 @@ def add_account_and_value():
 
         conn.commit()
         cursor.close()
-        return jsonify({"message": "✅ Account and value saved", "account_id": account_id})
+        return jsonify({"message": "✅ Account and value added successfully."})
 
     except Exception as e:
         conn.rollback()
+        print("❌ Error in /add-account-and-value:", e)  # Log the actual error
         return jsonify({"error": str(e)}), 500
 
 @app.route("/get-client-name/<int:client_id>")
