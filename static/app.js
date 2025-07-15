@@ -605,3 +605,21 @@ function autofillClientName() {
             }
         });
 }
+function submitAccountAndValue() {
+    const payload = {
+        client_id: document.getElementById("client_id").value,
+        account_name: document.getElementById("account_name").value,
+        account_number: document.getElementById("account_number").value,
+        month: document.getElementById("month").value,
+        amount: document.getElementById("amount").value
+    };
+
+    fetch("/add-account-and-value", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => alert(data.message || "Success"))
+    .catch(err => alert("❌ Error adding account/value"));
+}
