@@ -1170,38 +1170,36 @@ def get_address_from_postal():
     except Exception as e:
         print("Error in lookup:", e)
         return jsonify({"error": str(e)}), 500
-@app.route("/add-account", methods=["GET", "POST"])
-def add_account():
-    if request.method == "GET":
-        return render_template("add_account.html")
-
+@app.route("/add-account-and-value", methods=["POST"])
+def add_account_and_value():
     try:
-        data = request.form
+        data = request.get_json()
         client_id = int(data["client_id"])
         account_name = data["account_name"]
+        account_number = data.get("account_number", "")
         amount = float(data["amount"])
         month = data["month"]  # format: YYYY-MM
 
         cursor = conn.cursor()
 
-        # ✅ Check if client already has an account
+        # Check if account already exists for client
         cursor.execute("SELECT account_id FROM client_accounts WHERE client_id = %s", (client_id,))
         result = cursor.fetchone()
 
         if result:
             account_id = result[0]
         else:
-            # ✅ Get next available account_id
+            # New account_id
             cursor.execute("SELECT COALESCE(MAX(account_id), 0) + 1 FROM client_accounts")
             account_id = cursor.fetchone()[0]
 
-            # ✅ Insert into client_accounts
+            # Insert into client_accounts
             cursor.execute("""
-                INSERT INTO client_accounts (account_id, client_id, account_name)
-                VALUES (%s, %s, %s)
-            """, (account_id, client_id, account_name))
+                INSERT INTO client_accounts (account_id, client_id, account_name, account_number)
+                VALUES (%s, %s, %s, %s)
+            """, (account_id, client_id, account_name, account_number))
 
-        # ✅ Insert into account_monthly_values
+        # Insert into account_monthly_values
         cursor.execute("""
             INSERT INTO account_monthly_values (account_id, amount, month)
             VALUES (%s, %s, %s)
@@ -1209,11 +1207,12 @@ def add_account():
 
         conn.commit()
         cursor.close()
-        return "✅ Account and value added successfully."
+        return jsonify({"message": "✅ Account and value saved", "account_id": account_id})
 
     except Exception as e:
         conn.rollback()
-        return f"❌ Error: {e}", 500
+        return jsonify({"error": str(e)}), 500
+
 @app.route("/get-client-name/<int:client_id>")
 def get_client_name(client_id):
     cursor = conn.cursor()
