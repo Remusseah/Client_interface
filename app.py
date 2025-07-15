@@ -1238,6 +1238,37 @@ def get_client_name(client_id):
     cursor.close()
 
     return jsonify({"name": name, "account_id": account_id})
+@app.route("/get-account-values/<month>")
+def get_account_values(month):
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT ca.client_id, ca.account_id, ca.account_name, amv.month, amv.amount
+        FROM client_accounts ca
+        JOIN account_monthly_values amv ON ca.account_id = amv.account_id
+        WHERE amv.month = %s
+        ORDER BY ca.client_id
+    """, (month,))
+    results = cur.fetchall()
+    cur.close()
+
+    return jsonify([
+        {
+            "client_id": r[0],
+            "account_id": r[1],
+            "account_name": r[2],
+            "month": r[3],
+            "amount": r[4]
+        }
+        for r in results
+    ])
+
+@app.route("/get-available-months")
+def get_available_months():
+    cur = conn.cursor()
+    cur.execute("SELECT DISTINCT month FROM account_monthly_values ORDER BY month DESC")
+    months = [r[0] for r in cur.fetchall()]
+    cur.close()
+    return jsonify(months)
 
 
 if __name__ == '__main__':

@@ -37,37 +37,106 @@
         margin: 0 !important;
         padding: 0 20px;
     }
-</style>
+    .month-buttons button {
+        margin-right: 10px;
+        margin-top: 20px;
+        padding: 6px 12px;
+        cursor: pointer;
+    }
+    .accounts-section {
+        margin-top: 30px;
+    }
+    </style>
 </head>
 <body>
-    <div class="wide-container"></div>
-    <a href="/test_update_page"><button type="button">Go Back</button></a>
-    <h2>Update Client Records</h2>
-    
+    <div class="wide-container">
+        <a href="/test_update_page"><button type="button">Go Back</button></a>
+        <h2>Update Client Records</h2>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Client ID</th>
-                <th>Name</th>
-                <th>Nationality</th>
-                <th>Risk Rating</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="clientTableBody">
-            <!-- Populated via JS -->
-        </tbody>
-    </table>
+        <table>
+            <thead>
+                <tr>
+                    <th>Client ID</th>
+                    <th>Name</th>
+                    <th>Nationality</th>
+                    <th>Risk Rating</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="clientTableBody">
+                <!-- Populated via JS -->
+            </tbody>
+        </table>
 
+        <div class="accounts-section">
+            <h2>Client Account Values</h2>
+            <div class="month-buttons" id="monthButtons">
+                <!-- Buttons will be added here dynamically -->
+            </div>
 
-    <script>
+            <table id="accountTable">
+                <thead>
+                    <tr>
+                        <th>Client ID</th>
+                        <th>Account ID</th>
+                        <th>Account Name</th>
+                        <th>Month</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="accountTableBody">
+                    <!-- Populated via JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <script>
         function toggleDetails(id) {
             const section = document.getElementById(id);
             section.style.display = section.style.display === 'none' ? 'table-row' : 'none';
         }
-    </script>
-    <script src="{{ url_for('static', filename='app.js') }}"></script>
+
+        function loadAccountData(month) {
+            fetch(`/get-account-values/${month}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById("accountTableBody");
+                    tbody.innerHTML = "";
+
+                    data.forEach(row => {
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td>${row.client_id}</td>
+                            <td>${row.account_id}</td>
+                            <td>${row.account_name}</td>
+                            <td>${row.month}</td>
+                            <td>${row.amount}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                })
+                .catch(err => console.error("Error fetching account data:", err));
+        }
+
+        function loadMonthButtons() {
+            fetch("/get-available-months")
+                .then(response => response.json())
+                .then(months => {
+                    const container = document.getElementById("monthButtons");
+                    container.innerHTML = "";
+                    months.forEach(month => {
+                        const btn = document.createElement("button");
+                        btn.textContent = month;
+                        btn.onclick = () => loadAccountData(month);
+                        container.appendChild(btn);
+                    });
+                })
+                .catch(err => console.error("Error loading months:", err));
+        }
+
+        
+        </script>
+        <script src="{{ url_for('static', filename='app.js') }}"></script>
     </div>
 </body>
 </html>
