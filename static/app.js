@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     
         })}
-    if (document.body.id === "updateClientForm") {
+    if (document.body.id === "updateClient") {
         const updateClientIdInput = document.getElementById("client_id");
         if (updateClientIdInput) {
             console.log("✅ JS loaded");            
