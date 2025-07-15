@@ -387,100 +387,117 @@ function lookupPostal() {
         alert("Failed to fetch address.");
     });
 }
-document.addEventListener("DOMContentLoaded", () => {
-            loadMonthButtons();
-            fetch("/get-all-clients")
-                .then(response => response.json())
-                .then(data => {
-                    const tbody = document.getElementById("clientTableBody");
-                    if (!tbody) return;
+document.addEventListener("DOMContentLoaded", function () {
+    fetch("/get-all-clients")
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById("clientTableBody");
+            if (!tbody) return;
 
-                    tbody.innerHTML = "";
+            tbody.innerHTML = "";  // Clear existing rows
 
-                    data.forEach(client => {
-                        const row = document.createElement("tr");
+            data.forEach(client => {
+                // Main row
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${client.Client_id}</td>
+                    <td>
+                        <span class="expand-button" onclick="toggleDetails('details-${client.Client_id}')">
+                            ${client.Name}
+                        </span>
+                    </td>
+                    <td>${client.Nationality}</td>
+                    <td>${client.Risk_rating || ""}</td>
+                    <td><button onclick="toggleDetails('details-${client.Client_id}')">Edit</button></td>
+                `;
 
-                        row.innerHTML = `
-                            <td>${client.Client_id}</td>
-                            <td>
-                                <span class="expand-button" onclick="toggleDetails('details-${client.Client_id}')">
-                                    ${client.Name}
-                                </span>
-                            </td>
-                            <td>${client.Nationality}</td>
-                            <td>${client.Risk_rating || ""}</td>
-                            <td><button onclick="toggleDetails('details-${client.Client_id}')">Edit</button></td>
-                        `;
+                // Detail row with client info + account section
+                const detailRow = document.createElement("tr");
+                detailRow.id = `details-${client.Client_id}`;
+                detailRow.className = "details-section";
+                detailRow.innerHTML = `
+                    <td colspan="5" style="padding: 0;">
+                        <div style="width: 100%;">
+                            <form style="width: 100%;">
+                                <div style="display: flex; width: 100%; gap: 30px; box-sizing: border-box; padding: 10px;">
+                                    <!-- Left Column -->
+                                    <div style="flex: 1;">
+                                        <label>Name:</label><br>
+                                        <input type="text" name="Name" value="${client.Name || ""}"><br>
+                                        <label>Nationality:</label><br>
+                                        <input type="text" name="Nationality" value="${client.Nationality || ""}"><br>
+                                        <label>Residency Address:</label><br>
+                                        <input type="text" name="Residency_address" value="${client.Residency_address || ""}"><br>
+                                        <label>Contact Number:</label><br>
+                                        <input type="text" name="Contact_number" value="${client.Contact_number || ""}"><br>
+                                        <label>Email Address:</label><br>
+                                        <input type="email" name="Email_address" value="${client.Email_address || ""}"><br>
+                                    </div>
 
-                        const detailRow = document.createElement("tr");
-                        detailRow.id = `details-${client.Client_id}`;
-                        detailRow.className = "details-section";
-                        detailRow.innerHTML = `
-                            <td colspan="5" style="padding: 0;">
-                                <div style="width: 100%;">
-                                    <form style="width: 100%;">
-                                        <div style="display: flex; width: 100%; gap: 30px; box-sizing: border-box; padding: 10px;">
-                                            <div style="flex: 1;">
-                                                <label>Name:</label><br>
-                                                <input type="text" name="Name" value="${client.Name || ""}"><br>
-                                                <label>Nationality:</label><br>
-                                                <input type="text" name="Nationality" value="${client.Nationality || ""}"><br>
-                                                <label>Residency Address:</label><br>
-                                                <input type="text" name="Residency_address" value="${client.Residency_address || ""}"><br>
-                                                <label>Contact Number:</label><br>
-                                                <input type="text" name="Contact_number" value="${client.Contact_number || ""}"><br>
-                                                <label>Email Address:</label><br>
-                                                <input type="email" name="Email_address" value="${client.Email_address || ""}"><br>
-                                            </div>
-                                            <div style="flex: 1;">
-                                                <label>Employment Status:</label><br>
-                                                <input type="text" name="Employment_status" value="${client.Employment_status || ""}"><br>
-                                                <label>IC Number:</label><br>
-                                                <input type="text" name="IC_number" value="${client.Ic_number || ""}"><br>
-                                                <label>Client Profile:</label><br>
-                                                <input type="text" name="Client_profile" value="${client.Client_profile || ""}"><br>
-                                                <label>Date of Birth:</label><br>
-                                                <input type="date" name="Date_of_birth" value="${formatDate(client.Date_of_birth)}"><br>
-                                                <label>Age:</label><br>
-                                                <input type="number" name="Age" value="${client.Age || ""}"><br>
-                                            </div>
-                                            <div style="flex: 1;">
-                                                <h4>Compliance Details</h4>
-                                                <label>Onboarded Date:</label><br>
-                                                <input type="date" name="Onboarded_date" value="${formatDate(client.Onboarded_date)}"><br>
-                                                <label>Last Periodic Risk Assessment:</label><br>
-                                                <input type="date" name="Last_periodic_risk_assessment" value="${formatDate(client.Last_periodic_risk_assessment)}"><br>
-                                                <label>Next Periodic Risk Assessment:</label><br>
-                                                <input type="date" name="Next_periodic_risk_assessment" value="${formatDate(client.Next_periodic_risk_assessment)}"><br>
-                                                <label>Risk Rating:</label><br>
-                                                <input type="text" name="Risk_rating" value="${client.Risk_rating || ""}"><br>
-                                                <label>Relationship Manager:</label><br>
-                                                <input type="text" name="Relationship_Manager" value="${client.Relationship_Manager || ""}"><br>
-                                                <label>Service Type:</label><br>
-                                                <input type="text" name="Service_type" value="${client.Service_type || ""}"><br>
-                                                <label>Client Type:</label><br>
-                                                <input type="text" name="Client_type" value="${client.Client_type || ""}"><br>
-                                                <label>PEP:</label><br>
-                                                <input type="text" name="Pep" value="${client.Pep || ""}"><br>
-                                            </div>
-                                        </div>
-                                        <div style="margin-top: 10px;">
-                                            <button type="submit">Save</button>
-                                        </div>
-                                    </form>
+                                    <!-- Middle Column -->
+                                    <div style="flex: 1;">
+                                        <label>Employment Status:</label><br>
+                                        <input type="text" name="Employment_status" value="${client.Employment_status || ""}"><br>
+                                        <label>IC Number:</label><br>
+                                        <input type="text" name="IC_number" value="${client.Ic_number || ""}"><br>
+                                        <label>Client Profile:</label><br>
+                                        <input type="text" name="Client_profile" value="${client.Client_profile || ""}"><br>
+                                        <label>Date of Birth:</label><br>
+                                        <input type="date" name="Date_of_birth" value="${formatDate(client.Date_of_birth)}"><br>
+                                        <label>Age:</label><br>
+                                        <input type="number" name="Age" value="${client.Age || ""}"><br>
+                                    </div>
+
+                                    <!-- Right Column (Compliance) -->
+                                    <div style="flex: 1;">
+                                        <h4>Compliance Details</h4>
+                                        <label>Onboarded Date:</label><br>
+                                        <input type="date" name="Onboarded_date" value="${formatDate(client.Onboarded_date)}"><br>
+                                        <label>Last Periodic Risk Assessment:</label><br>
+                                        <input type="date" name="Last_periodic_risk_assessment" value="${formatDate(client.Last_periodic_risk_assessment)}"><br>
+                                        <label>Next Periodic Risk Assessment:</label><br>
+                                        <input type="date" name="Next_periodic_risk_assessment" value="${formatDate(client.Next_periodic_risk_assessment)}"><br>
+                                        <label>Risk Rating:</label><br>
+                                        <input type="text" name="Risk_rating" value="${client.Risk_rating || ""}"><br>
+                                        <label>Relationship Manager:</label><br>
+                                        <input type="text" name="Relationship_Manager" value="${client.Relationship_Manager || ""}"><br>
+                                        <label>Service Type:</label><br>
+                                        <input type="text" name="Service_type" value="${client.Service_type || ""}"><br>
+                                        <label>Client Type:</label><br>
+                                        <input type="text" name="Client_type" value="${client.Client_type || ""}"><br>
+                                        <label>PEP:</label><br>
+                                        <input type="text" name="Pep" value="${client.Pep || ""}"><br>
+                                    </div>
                                 </div>
-                            </td>
-                        `;
 
-                        tbody.appendChild(row);
-                        tbody.appendChild(detailRow);
-                    });
-                })
-                .catch(err => {
-                    console.error("Error loading client data:", err);
-                    alert("Failed to load client data.");
-                });
+                                <div style="margin-top: 10px;">
+                                    <button type="submit">Save</button>
+                                </div>
+                            </form>
+
+                            <!-- Account values will go here -->
+                            <div id="accounts-${client.Client_id}" class="client-accounts" style="margin-top: 20px;">
+                                <h4>Account Values</h4>
+                                <p>Loading...</p>
+                            </div>
+                        </div>
+                    </td>
+                `;
+
+                // Append both rows
+                tbody.appendChild(row);
+                tbody.appendChild(detailRow);
+
+                // Load account data for this client
+                loadClientAccountValues(client.Client_id, document.getElementById(`accounts-${client.Client_id}`));
+            });
+        })
+        .catch(err => {
+            console.error("Error loading client data:", err);
+            alert("Failed to load client data.");
         });
+});
+
 function submitClientUpdate(clientId, form) {
     const formData = new FormData(form);
     const payload = { Client_id: clientId };
