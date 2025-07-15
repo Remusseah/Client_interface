@@ -1176,6 +1176,7 @@ def add_account_and_value():
         data = request.get_json()
         client_id = int(data["client_id"])
         account_name = data["account_name"]
+        account_number = data["account_number"]
         amount = float(data["amount"])
         month = data["month"]
 
@@ -1193,8 +1194,8 @@ def add_account_and_value():
             account_id = cursor.fetchone()[0]
 
             cursor.execute("""
-                INSERT INTO client_accounts (account_id, client_id, account_name)
-                VALUES (%s, %s, %s)
+                INSERT INTO client_accounts (account_id, client_id, account_name,account_number)
+                VALUES (%s, %s, %s, %s)
             """, (account_id, client_id, account_name))
         
         # Insert into account_monthly_values
