@@ -935,8 +935,8 @@ app.config["MAIL_USE_TLS"] = True
 app.config["MAIL_USERNAME"] = "remuspostgres@gmail.com"
 app.config["MAIL_PASSWORD"] = "xtch ldrm yger vhzb"  # from App Passwords
 app.config["MAIL_DEFAULT_SENDER"] = "remuseah@gmail.com"
-
 mail = Mail(app)
+
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
@@ -958,15 +958,17 @@ def signup():
             conn.commit()
             cur.close()
 
-            # Send email
+            # ✅ Send email
             send_verification_email(email, token)
 
             return render_template("signup.html", message="Check your email to verify your account.")
         except psycopg2.Error as e:
             conn.rollback()
             return render_template("signup.html", error="Email already in use or invalid.")
-
+    
+    # GET request fallback
     return render_template("signup.html")
+
 @app.route("/test_email")
 def test_email():
     msg = Message("Test", recipients=["Latias1463@gmail.com"], body="This is a test")
