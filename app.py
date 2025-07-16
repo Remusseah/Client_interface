@@ -308,8 +308,10 @@ def to_do():
     rows = cursor.fetchall()
     columns = [desc[0] for desc in cursor.description]
     tasks = [dict(zip(columns, row)) for row in rows]
+    logged_in_user=session.get("user_email")
+    logged_in_user = logged_in_user.split("@")[0]
     cursor.close()
-    return render_template("to_do.html", tasks=tasks, logged_in_user=session.get("username"))
+    return render_template("to_do.html", tasks=tasks, logged_in_user = logged_in_user)
 @app.route('/add_task')
 def add_task_page():
     return render_template('add_task.html') 
