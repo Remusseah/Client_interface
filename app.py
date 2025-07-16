@@ -36,14 +36,16 @@ conn = psycopg2.connect(
     port=os.environ.get("DB_PORT", 5432),
     sslmode="require"
 )
-
+@app.context_processor
+def inject_logged_in_user():
+    user_email = session.get("user_email")
+    username = user_email.split("@")[0] if user_email else None
+    return dict(logged_in_user=username)
 
 
 # Route to render the frontend HTML
 @app.route('/main_page')
 def index():
-    user_email = session.get("user_email")  # Or however you're storing it
-    print(f"🧠 Logged in user: {user_email}")  # Log to console for debugging
     return render_template('index.html')
 def log_action(action, client_id, details=""):
     cur = conn.cursor()
@@ -211,7 +213,7 @@ def submit_pending():
         data = request.form
         print("Last assessment:", data.get("last_periodic_risk_assessment"))
         print("Next assessment:", data.get("next_periodic_risk_assessment"))
-        submitted_by = session.get("user_email") 
+        submitted_by = session.get("username") 
 
         cursor = conn.cursor()
 
@@ -244,7 +246,7 @@ def submit_pending():
             data.get("service_type"),
             data.get("client_type"),
             data.get("pep"),
-            session.get("user_email"),
+            session.get("username"),
             datetime.now()
         ))
 
@@ -308,10 +310,8 @@ def to_do():
     rows = cursor.fetchall()
     columns = [desc[0] for desc in cursor.description]
     tasks = [dict(zip(columns, row)) for row in rows]
-    logged_in_user=session.get("user_email")
-    logged_in_user = logged_in_user.split("@")[0]
     cursor.close()
-    return render_template("to_do.html", tasks=tasks, logged_in_user = logged_in_user)
+    return render_template("to_do.html", tasks=tasks,)
 @app.route('/add_task')
 def add_task_page():
     return render_template('add_task.html') 
@@ -356,8 +356,7 @@ def pending_page():
     # Convert each row to a dictionary
     pending_clients = [dict(zip(columns, row)) for row in pending_entries]
 
-    return render_template("pending.html", pending_entries=pending_clients,
-    logged_in_user=session.get("user_email"))
+    return render_template("pending.html", pending_entries=pending_clients)
 
 
 @app.route("/login_page")
