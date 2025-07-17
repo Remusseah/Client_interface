@@ -42,7 +42,7 @@
             <p><strong>Submitted At:</strong> {{ entry.submitted_at }}</p>
             <p><strong>Approval Status:</strong> {{ entry.approval_status }}</p>
             <p><strong>Comments:</strong> {{ entry.comments }}</p>
-            {% if logged_in_user in ["remuseah@gmail.com", "boss@example.com", "rm_lead@example.com"] %}
+            {% if logged_in_user in ["remuseah", "boss@example.com", "rm_lead@example.com"] %}
 
             <div class="action-buttons">
                 <form method="POST" action="/approve/{{ entry.pending_id }}" style="display: inline;">
