@@ -39,8 +39,17 @@ conn = psycopg2.connect(
 @app.context_processor
 def inject_logged_in_user():
     user_email = session.get("user_email")
-    username = user_email.split("@")[0] if user_email else None
-    return dict(logged_in_user=username)
+    if user_email:
+        raw_username = user_email.split("@")[0]
+        # Replace non-alphanumeric characters with spaces
+        cleaned_username = re.sub(r'[^a-zA-Z0-9]', ' ', raw_username)
+    else:
+        cleaned_username = None
+
+    return dict(
+        logged_in_user=cleaned_username,
+        user_email=user_email
+    )
 
 
 # Route to render the frontend HTML
