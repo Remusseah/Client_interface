@@ -984,30 +984,37 @@ def test_email():
     mail.send(msg)
     return "Email sent!"
 from flask import Response
-@app.route("/verify/<token>")
+@app.route("/verify/<token>", methods=["GET", "POST"])
 def verify_email(token):
-    print("🔍 Received token:", token)
-
-    cur = conn.cursor()
-    cur.execute("""
-        SELECT email FROM users
-        WHERE verification_token = %s AND is_verified = FALSE
-    """, (token,))
-    result = cur.fetchone()
-    print("✅ DB result:", result)
-
-    if result:
+    if request.method == "POST":
+        # User clicked the confirmation button
+        cur = conn.cursor()
         cur.execute("""
-            UPDATE users
-            SET is_verified = TRUE, verification_token = NULL
-            WHERE verification_token = %s
+            SELECT email FROM users
+            WHERE verification_token = %s AND is_verified = FALSE
         """, (token,))
-        conn.commit()
-        cur.close()
-        return Response("<h3>✅ Email verified successfully. You may now <a href='/login'>log in</a>.</h3>", mimetype='text/html')
-    else:
-        cur.close()
-        return Response("<h3>❌ Invalid or expired verification link.</h3>", mimetype='text/html')
+        result = cur.fetchone()
+
+        if result:
+            cur.execute("""
+                UPDATE users
+                SET is_verified = TRUE, verification_token = NULL
+                WHERE verification_token = %s
+            """, (token,))
+            conn.commit()
+            cur.close()
+            return Response("<h3>✅ Email verified successfully. You may now <a href='/login'>log in</a>.</h3>", mimetype='text/html')
+        else:
+            cur.close()
+            return Response("<h3>❌ Invalid or expired verification link.</h3>", mimetype='text/html')
+
+    # On GET, just show the "Confirm" button
+    return Response(f"""
+        <h3>Confirm Email Verification</h3>
+        <form method="POST">
+            <button type="submit">Click to Confirm Verification</button>
+        </form>
+    """, mimetype='text/html')
 
 from flask_mail import Message
 
