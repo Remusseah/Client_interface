@@ -225,7 +225,8 @@ def submit_pending():
         submitted_by = session.get("username") 
 
         cursor = conn.cursor()
-
+        username = email.split("@")[0]  # take part before @
+        username = re.sub(r'\W+', '', username)  # remove all non-alphanumeric characters
         # ✅ Insert into `pending`
         cursor.execute("""
             INSERT INTO pending (
@@ -255,6 +256,7 @@ def submit_pending():
             data.get("service_type"),
             data.get("client_type"),
             data.get("pep"),
+            
             session.get("username"),
             datetime.now()
         ))
