@@ -258,7 +258,7 @@ def submit_pending():
             data.get("client_type"),
             data.get("pep"),
             
-            session.get("username"),
+            username,
             datetime.now()
         ))
 
