@@ -315,7 +315,8 @@ form button,
 a button {
     margin-top: 15px;
     font-weight: 500;
-    background-color: #95a5a6;
+    background-color: #27ae60; /* Emerald green */
+    color: white;
 }
 form label {
     margin-bottom: 5px;
