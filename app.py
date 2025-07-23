@@ -14,7 +14,7 @@ from flask_mail import Mail, Message
 from flask import session, redirect, url_for
 from werkzeug.utils import secure_filename
 from datetime import datetime
-
+import pytz
 @app.route("/")
 def home():
     # If user is logged in, show index.html
@@ -286,7 +286,8 @@ def submit_pending():
             data.get("pep"),
             
             username,
-            datetime.now()
+            datetime.now(pytz.timezone("Asia/Singapore"))
+
         ))
 
         pending_id = cursor.fetchone()[0]
@@ -359,32 +360,11 @@ def pending_page():
     cursor = conn.cursor()
     cursor.execute("""
         SELECT 
-            pending_id,                 -- No.
-            onboarded_date,             -- Onboarded Date
-            service_type,               -- Service Type
-            name,                       -- Name
-            nationality,                -- Nationality
-            residency_address,          -- Residency Address
-            contact_number,             -- Contact No.
-            email_address,              -- Email Address
-            ic_number,                  -- ID Number
-            expiry_date,                -- Expiry Date
-            client_type,                -- Client Type
-            pep,                        -- PEP (Yes/No)
-            risk_rating,                -- Risk Rating
-            irpq_rating,                -- IRPQ Rating
-            last_periodic_risk_assessment,  -- Last Periodic Risk Assessment
-            next_periodic_risk_assessment,  -- Next Periodic Risk Assessment
-            relationship_manager,       -- Relationship Manager
-            remarks,                    -- Remarks
-            client_profile,             -- Client Profile
-            employment_status,          -- Employed/Self-Employed
-            date_of_birth,              -- Date of Birth
-            age,                        -- Age
-            submitted_by,
-            submitted_at,
-            approval_status,
-            comments
+            pending_id, onboarded_date, service_type, name, nationality, residency_address,
+            contact_number, email_address, ic_number, expiry_date, client_type, pep,
+            risk_rating, irpq_rating, last_periodic_risk_assessment, next_periodic_risk_assessment,
+            relationship_manager, remarks, client_profile, employment_status, date_of_birth,
+            age, submitted_by, submitted_at, approval_status, comments
         FROM pending
         ORDER BY submitted_at DESC
     """)
@@ -392,11 +372,17 @@ def pending_page():
     columns = [desc[0] for desc in cursor.description]
     cursor.close()
 
-    # Convert each row to a dictionary
-    pending_clients = [dict(zip(columns, row)) for row in pending_entries]
+    pending_clients = []
+    for row in pending_entries:
+        row_dict = dict(zip(columns, row))
+
+        # Format submitted_at to YYYY-MM-DD HH:MM
+        if row_dict["submitted_at"]:
+            row_dict["submitted_at"] = row_dict["submitted_at"].strftime("%Y-%m-%d %H:%M")
+
+        pending_clients.append(row_dict)
 
     return render_template("pending.html", pending_entries=pending_clients)
-
 
 @app.route("/login_page")
 def login_page():
