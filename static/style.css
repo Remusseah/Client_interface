@@ -284,3 +284,40 @@ tbody tr:hover {
     cursor: pointer;
     text-decoration: underline;
 }
+/* Enhanced page header */
+h1 {
+    font-size: 28px;
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+/* Sectioning for better layout */
+.form-section {
+    margin-bottom: 30px;
+}
+
+/* Back button hover effect */
+a button:hover {
+    background-color: #7f8c8d;
+}
+
+/* Input focus glow */
+form input:focus,
+form select:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+/* Button spacing */
+form button,
+a button {
+    margin-top: 15px;
+    font-weight: 500;
+    background-color: #95a5a6;
+}
+form label {
+    margin-bottom: 5px;
+    font-size: 15px;
+}
