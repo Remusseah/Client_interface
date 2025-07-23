@@ -81,7 +81,7 @@ def main_page():
 
     cur.close()
 
-    return render_template("main_page.html", recent_pending=recent_pending, user_pending=user_pending)
+    return render_template("index.html", recent_pending=recent_pending, user_pending=user_pending)
 
 def log_action(action, client_id, details=""):
     cur = conn.cursor()
