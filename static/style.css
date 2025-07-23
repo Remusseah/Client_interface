@@ -1,11 +1,40 @@
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     max-width: 900px;
-    background-color: #f5f7fa;
+    background-color: #f7f9fb;  
     color: #333;
     padding: 20px;
     margin: 0 auto;
 }
+dashboard-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.dashboard-nav a button {
+    padding: 10px 14px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.dashboard-nav a button:hover {
+    background-color: #0056b3;
+}
+
+.dashboard-section {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
 
 label {
     display: block;
@@ -143,7 +172,8 @@ tbody tr:hover {
     position: absolute;
     top: 10px;
     right: 20px;
-  }
+    font-weight: bold;
+}
 
   .header-buttons {
     margin-bottom: 20px;

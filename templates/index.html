@@ -7,52 +7,44 @@
 </head>
 <body>
     {% if logged_in_user %}
-        <div class="user-greeting" style="position: absolute; top: 10px; right: 20px;">
-            Logged in as <strong>{{ logged_in_user }}</strong>
-        </div>
+    <div class="user-greeting">
+        Welcome, <strong>{{ logged_in_user }}</strong>
+    </div>
     {% endif %}
 
-    <h1 style="margin-top: 60px;">Client Dashboard</h1>
+    <h1>Client Dashboard</h1>
 
-    <div class="nav-buttons">
+    <nav class="dashboard-nav">
         <a href="/pending_page"><button>Pending</button></a>
-        <a href="/add"><button>Add New Data</button></a>
-        <a href="/download_page"><button>Download Table</button></a>
-        <a href="/update_page"><button>Update Table</button></a>
+        <a href="/add"><button>Add New</button></a>
+        <a href="/download_page"><button>Download</button></a>
+        <a href="/update_page"><button>Update</button></a>
         <a href="/test_update_page"><button>Test Update</button></a>
         <a href="/add_account_page"><button>Add Account</button></a>
         <a href="/view_page"><button>View Table</button></a>
-        <a href="/redeemed_view_page"><button>Redeemed Table</button></a>
+        <a href="/redeemed_view_page"><button>Redeemed</button></a>
         <a href="/log_page"><button>Logs</button></a>
         <a href="/statistics_page"><button>Statistics</button></a>
         <a href="/to_do"><button>To Do</button></a>
-        <a href="/logout"><button style="background-color: #f44336;">Logout</button></a>
-    </div>
+        <a href="/logout"><button>Logout</button></a>
+    </nav>
 
-    <div class="dashboard-section">
-        <h2>🕑 Recent Pending Additions</h2>
-        {% if recent_pending %}
-            <ul>
-                {% for entry in recent_pending %}
-                    <li><strong>{{ entry.name }}</strong> ({{ entry.submitted_at[:10] }}) — {{ entry.relationship_manager }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>No recent entries.</p>
-        {% endif %}
-    </div>
+    <section class="dashboard-section">
+        <h2>📌 Recent Pending Clients</h2>
+        <div id="recent-pending">
+            <p>Loading recent entries...</p>
+            <!-- Insert recent pending entries here -->
+        </div>
+    </section>
 
-    <div class="dashboard-section">
-        <h2>🧑‍💼 Your Pending Submissions</h2>
-        {% if user_pending %}
-            <ul>
-                {% for entry in user_pending %}
-                    <li><strong>{{ entry.name }}</strong> — Status: <em>{{ entry.approval_status }}</em></li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>You haven’t submitted any pending clients yet.</p>
-        {% endif %}
-    </div>
+    <section class="dashboard-section">
+        <h2>📝 Your Unapproved Submissions</h2>
+        <div id="user-pending">
+            <p>Loading your pending entries...</p>
+            <!-- Insert user-specific pending entries here -->
+        </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>
