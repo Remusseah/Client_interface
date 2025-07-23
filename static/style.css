@@ -300,7 +300,7 @@ h1 {
 
 /* Back button hover effect */
 a button:hover {
-    background-color: #7f8c8d;
+    background-color: #d35400;
 }
 
 /* Input focus glow */
@@ -315,7 +315,7 @@ form button,
 a button {
     margin-top: 15px;
     font-weight: 500;
-    background-color: #27ae60; /* Emerald green */
+    background-color: #e67e22;
     color: white;
 }
 form label {
