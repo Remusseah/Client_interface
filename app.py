@@ -53,9 +53,36 @@ def inject_logged_in_user():
 
 
 # Route to render the frontend HTML
-@app.route('/main_page')
-def index():
-    return render_template('index.html')
+@app.route("/main_page")
+def main_page():
+    if "user_email" not in session:
+        return redirect("/login")
+
+    cur = conn.cursor()
+
+    # Recent 5 additions
+    cur.execute("""
+        SELECT name, relationship_manager, submitted_at 
+        FROM pending 
+        ORDER BY submitted_at DESC 
+        LIMIT 5
+    """)
+    recent_pending = [dict(name=row[0], relationship_manager=row[1], submitted_at=str(row[2])) for row in cur.fetchall()]
+
+    # Current user's unapproved entries
+    user = session.get("username")
+    cur.execute("""
+        SELECT name, approval_status 
+        FROM pending 
+        WHERE submitted_by = %s
+        ORDER BY submitted_at DESC
+    """, (user,))
+    user_pending = [dict(name=row[0], approval_status=row[1]) for row in cur.fetchall()]
+
+    cur.close()
+
+    return render_template("main_page.html", recent_pending=recent_pending, user_pending=user_pending)
+
 def log_action(action, client_id, details=""):
     cur = conn.cursor()
     cur.execute("""
