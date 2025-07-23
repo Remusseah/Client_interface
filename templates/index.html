@@ -32,16 +32,30 @@
     <section class="dashboard-section">
         <h2>📌 Recent Pending Clients</h2>
         <div id="recent-pending">
-            <p>Loading recent entries...</p>
-            <!-- Insert recent pending entries here -->
+            {% if recent_pending %}
+                <ul>
+                {% for entry in recent_pending %}
+                    <li><strong>{{ entry.name }}</strong> ({{ entry.relationship_manager }}) - {{ entry.submitted_at }}</li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>No recent entries found.</p>
+            {% endif %}
         </div>
     </section>
 
     <section class="dashboard-section">
         <h2>📝 Your Unapproved Submissions</h2>
         <div id="user-pending">
-            <p>Loading your pending entries...</p>
-            <!-- Insert user-specific pending entries here -->
+            {% if user_pending %}
+                <ul>
+                {% for entry in user_pending %}
+                    <li><strong>{{ entry.name }}</strong> - Status: {{ entry.approval_status }}</li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>You have no unapproved submissions.</p>
+            {% endif %}
         </div>
     </section>
 
