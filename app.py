@@ -409,113 +409,116 @@ def logout():
     return redirect("/login")
 @app.route("/download", methods=["GET", "POST"])
 def download_table():
-    table = request.form.get("table")
-    file_format = request.form.get("format")
-    sort_by = request.form.get("sort_by")
-    sort_order = request.form.get("sort_order", "ASC").upper()
+    try:
+        table = request.form.get("table")
+        file_format = request.form.get("format")
+        sort_by = request.form.get("sort_by")
+        sort_order = request.form.get("sort_order", "ASC").upper()
 
-    valid_sort_orders = ["ASC", "DESC"]
-    sort_clause = ""
+        valid_sort_orders = ["ASC", "DESC"]
+        sort_clause = ""
 
-    if sort_by:
-        # Whitelist to avoid SQL injection
-        allowed_columns = [
-            "Client_id", "Name", "Date_of_birth", "Age"
-            # Add more allowed columns here if needed
-        ]
-        if sort_by in allowed_columns and sort_order in valid_sort_orders:
-            sort_clause = f' ORDER BY "{sort_by}" {sort_order}'
+        if sort_by:
+            # Whitelist to avoid SQL injection
+            allowed_columns = [
+                "Client_id", "Name", "Date_of_birth", "Age"
+                # Add more allowed columns here if needed
+            ]
+            if sort_by in allowed_columns and sort_order in valid_sort_orders:
+                sort_clause = f' ORDER BY "{sort_by}" {sort_order}'
 
-    cur = conn.cursor()
+        cur = conn.cursor()
 
-    if table == "all":
-        query = f"""
-            SELECT cd.*, cc."Onboarded_date", cc."Last_periodic_risk_assessment", 
-                   cc."Next_periodic_risk_assessment", cc."Risk_rating", 
-                   cc."Relationship_Manager", cc."Service_type", 
-                   cc."Client_type", cc."Pep"
-            FROM client_data cd
-            LEFT JOIN client_compliance cc ON cd."Client_id" = cc."Client_id"
-            {sort_clause};
-        """
-    else:
-        query = f'SELECT * FROM {table} {sort_clause}'
+        if table == "all":
+            query = f"""
+                SELECT cd.*, cc."Onboarded_date", cc."Last_periodic_risk_assessment", 
+                       cc."Next_periodic_risk_assessment", cc."Risk_rating", 
+                       cc."Relationship_Manager", cc."Service_type", 
+                       cc."Client_type", cc."Pep"
+                FROM client_data cd
+                LEFT JOIN client_compliance cc ON cd."Client_id" = cc."Client_id"
+                {sort_clause};
+            """
+        else:
+            query = f'SELECT * FROM {table} {sort_clause}'
 
-    cur.execute(query)
-    rows = cur.fetchall()
-    columns = [desc[0] for desc in cur.description]
-    df = pd.DataFrame(rows, columns=columns)
-    cur.close()
+        print("🔍 Executing query:", query)  # Optional: for debugging
 
-    if table == "all":
-        df.drop_duplicates(subset=["Client_id"], keep="first", inplace=True)
+        cur.execute(query)
+        rows = cur.fetchall()
+        columns = [desc[0] for desc in cur.description]
+        cur.close()
 
-    if file_format == "excel":
-        output = io.BytesIO()
-        with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
-            df.to_excel(writer, index=False)
-        output.seek(0)
-        return send_file(output, as_attachment=True, download_name="data.xlsx", mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        df = pd.DataFrame(rows, columns=columns)
 
-    elif file_format == "pdf":
-        pdf = FPDF(orientation='L', unit='mm', format='A4')  # Landscape
-        pdf.set_auto_page_break(auto=True, margin=10)
-        pdf.add_page()
+        if table == "all":
+            df.drop_duplicates(subset=["Client_id"], keep="first", inplace=True)
 
-        pdf.set_font("Arial", size=7)
+        if file_format == "excel":
+            output = io.BytesIO()
+            with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+                df.to_excel(writer, index=False)
+            output.seek(0)
+            return send_file(output, as_attachment=True, download_name="data.xlsx",
+                             mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
-        # Adjust column width (max total width = 277mm in landscape A4)
-        page_width = pdf.w - 2 * pdf.l_margin
-        max_col_width = 50  # prevent overly wide columns
-        col_width = min(page_width / len(columns), max_col_width)
+        elif file_format == "pdf":
+            pdf = FPDF(orientation='L', unit='mm', format='A4')  # Landscape
+            pdf.set_auto_page_break(auto=True, margin=10)
+            pdf.add_page()
 
-        # Header row
-        pdf.set_font("Arial", style='B', size=4)
-        for col in columns:
-            header_text = str(col)[:30]
-            pdf.cell(col_width, 7, header_text, border=1, align='C')
-        pdf.ln()
+            pdf.set_font("Arial", size=7)
 
-        # Data rows
-        pdf.set_font("Arial", size=7)
-        for row in rows:
-            y_start = pdf.get_y()
-            x_start = pdf.l_margin
-            max_y = y_start
+            page_width = pdf.w - 2 * pdf.l_margin
+            max_col_width = 50
+            col_width = min(page_width / len(columns), max_col_width)
 
-            cell_heights = []
+            pdf.set_font("Arial", style='B', size=4)
+            for col in columns:
+                header_text = str(col)[:30]
+                pdf.cell(col_width, 7, header_text, border=1, align='C')
+            pdf.ln()
 
-            # First pass: determine max height for this row
-            for idx, item in enumerate(row):
-                text = str(item) if item is not None else ''
-                lines = pdf.multi_cell(col_width, 4, text, border=0, align='L', split_only=True)
-                cell_heights.append(len(lines) * 4)
+            pdf.set_font("Arial", size=7)
+            for row in rows:
+                y_start = pdf.get_y()
+                x_start = pdf.l_margin
+                max_y = y_start
+                cell_heights = []
 
-            row_height = max(cell_heights)
+                for idx, item in enumerate(row):
+                    text = str(item) if item is not None else ''
+                    lines = pdf.multi_cell(col_width, 4, text, border=0, align='L', split_only=True)
+                    cell_heights.append(len(lines) * 4)
 
-            # Second pass: draw each cell with uniform row height
-            for idx, item in enumerate(row):
-                text = str(item) if item is not None else ''
-                x = x_start + idx * col_width
-                pdf.set_xy(x, y_start)
-                pdf.multi_cell(col_width, 4, text, border=1, align='L')
+                row_height = max(cell_heights)
 
-            pdf.set_y(y_start + row_height)
+                for idx, item in enumerate(row):
+                    text = str(item) if item is not None else ''
+                    x = x_start + idx * col_width
+                    pdf.set_xy(x, y_start)
+                    pdf.multi_cell(col_width, 4, text, border=1, align='L')
 
+                pdf.set_y(y_start + row_height)
 
-        pdf_bytes = pdf.output(dest="S").encode("latin-1")
-        pdf_output = io.BytesIO(pdf_bytes)
+            pdf_bytes = pdf.output(dest="S").encode("latin-1")
+            pdf_output = io.BytesIO(pdf_bytes)
 
-        return send_file(
-            pdf_output,
-            as_attachment=True,
-            download_name="document.pdf",
-            mimetype="application/pdf"
-        )
+            return send_file(
+                pdf_output,
+                as_attachment=True,
+                download_name="document.pdf",
+                mimetype="application/pdf"
+            )
 
+        return "Invalid request", 400
 
+    except Exception as e:
+        conn.rollback()  # 💡 Key line to reset DB error state
+        print("❌ Error during download:")
+        traceback.print_exc()
+        return "An internal error occurred while downloading.", 500
 
-    return "Invalid request", 400
 
 @app.route('/update-client', methods=['POST'])
 def update_client():
