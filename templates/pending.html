@@ -18,6 +18,16 @@
 
     <h1>Pending Client Approvals</h1>
 
+    <form method="get" action="/pending_page">
+        <label for="submitted_by_filter">Filter by Submitted By:</label>
+        <select name="submitted_by" id="submitted_by_filter" onchange="this.form.submit()">
+            <option value="">-- All --</option>
+            {% for submitter in submitters %}
+                <option value="{{ submitter }}" {% if selected_submitter == submitter %}selected{% endif %}>{{ submitter }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
     {% for entry in pending_entries %}
     <div class="pending-box" onclick="toggleDetails('details-{{ entry.pending_id }}')">
         <strong>{{ entry.name }}</strong> - {{ entry.nationality }}
@@ -53,7 +63,7 @@
                     <button type="submit">❌ Reject</button>
                 </form>
             </div>
-        {% endif %}
+            {% endif %}
         </div>
     </div>
     {% endfor %}
