@@ -60,7 +60,7 @@ def main_page():
 
     cur = conn.cursor()
 
-    # Recent 5 additions
+    # ✅ Recent 5 overall pending additions
     cur.execute("""
         SELECT name, relationship_manager, submitted_at 
         FROM pending 
@@ -76,15 +76,23 @@ def main_page():
             "submitted_at": formatted_time
         })
 
-    # Current user's unapproved entries
+    # ✅ Most recent 3 pending entries by current user
     user = session.get("username")
     cur.execute("""
-        SELECT name, approval_status 
+        SELECT name, approval_status, submitted_at 
         FROM pending 
         WHERE submitted_by = %s
         ORDER BY submitted_at DESC
+        LIMIT 3
     """, (user,))
-    user_pending = [dict(name=row[0], approval_status=row[1]) for row in cur.fetchall()]
+    user_pending = []
+    for row in cur.fetchall():
+        formatted_time = row[2].strftime("%Y-%m-%d %H:%M") if row[2] else None
+        user_pending.append({
+            "name": row[0],
+            "approval_status": row[1],
+            "submitted_at": formatted_time
+        })
 
     cur.close()
 
