@@ -67,7 +67,14 @@ def main_page():
         ORDER BY submitted_at DESC 
         LIMIT 5
     """)
-    recent_pending = [dict(name=row[0], relationship_manager=row[1], submitted_at=str(row[2])) for row in cur.fetchall()]
+    recent_pending = []
+    for row in cur.fetchall():
+        formatted_time = row[2].strftime("%Y-%m-%d %H:%M") if row[2] else None
+        recent_pending.append({
+            "name": row[0],
+            "relationship_manager": row[1],
+            "submitted_at": formatted_time
+        })
 
     # Current user's unapproved entries
     user = session.get("username")
@@ -82,6 +89,7 @@ def main_page():
     cur.close()
 
     return render_template("index.html", recent_pending=recent_pending, user_pending=user_pending)
+
 
 def log_action(action, client_id, details=""):
     cur = conn.cursor()
