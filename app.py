@@ -84,7 +84,7 @@ def main_page():
         WHERE submitted_by = %s
         ORDER BY submitted_at DESC
         LIMIT 3
-    """, (user))
+    """, (user,))
     user_pending = []
     for row in cur.fetchall():
         formatted_time = row[2].strftime("%Y-%m-%d %H:%M") if row[2] else None
