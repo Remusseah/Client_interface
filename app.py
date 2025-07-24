@@ -77,7 +77,7 @@ def main_page():
         })
 
     # ✅ Most recent 3 pending entries by current user
-    user = session.get("username")
+    user = session.get("logged_in_user")
     cur.execute("""
         SELECT name, approval_status, submitted_at 
         FROM pending 
