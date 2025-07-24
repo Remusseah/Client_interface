@@ -8,7 +8,7 @@
 <body>
     {% if logged_in_user %}
         <div class="user-greeting" style="position: absolute; top: 10px; right: 20px;">
-            Logged in as <strong>{{ logged_in_user }}</strong>
+            Logged in as <strong>{{ user_email }}</strong>
         </div>
     {% endif %}
 
@@ -42,7 +42,7 @@
             <p><strong>Submitted At:</strong> {{ entry.submitted_at }}</p>
             <p><strong>Approval Status:</strong> {{ entry.approval_status }}</p>
             <p><strong>Comments:</strong> {{ entry.comments }}</p>
-            {% if user_email in ["remuseah@gmail.com", "keith.lim@rockstead.com", ""] %}
+            {% if user_email in ["remuseah@gmail.com", "keith.lim@rockstead.com"] %}
 
             <div class="action-buttons">
                 <form method="POST" action="/approve/{{ entry.pending_id }}" style="display: inline;">
