@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='sidebar.css') }}">
 </head>
+
 <body>
     <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
 
@@ -23,6 +24,7 @@
         <a href="/to_do"><button>To Do</button></a>
         <a href="/logout"><button>Logout</button></a>
     </div>
+
 
     <div class="main-content">
         {% if logged_in_user %}
