@@ -7,7 +7,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='sidebar.css') }}">
 </head>
 <body>
-    <div class="sidebar">
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+    <div class="sidebar" id="sidebar">
         <a href="/pending_page"><button>Pending</button></a>
         <a href="/add"><button>Add New</button></a>
         <a href="/download_page"><button>Download</button></a>
@@ -62,6 +64,13 @@
         </section>
     </div>
 
+    <script>
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("collapsed");
+        }
+    </script>
+
     <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>
+
