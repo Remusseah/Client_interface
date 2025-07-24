@@ -4,17 +4,10 @@
     <meta charset="UTF-8">
     <title>Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='sidebar.css') }}">
 </head>
 <body>
-    {% if logged_in_user %}
-    <div class="user-greeting">
-        Welcome, <strong>{{ logged_in_user }}</strong>
-    </div>
-    {% endif %}
-
-    <h1>Client Dashboard</h1>
-
-    <nav class="dashboard-nav">
+    <div class="sidebar">
         <a href="/pending_page"><button>Pending</button></a>
         <a href="/add"><button>Add New</button></a>
         <a href="/download_page"><button>Download</button></a>
@@ -27,37 +20,47 @@
         <a href="/statistics_page"><button>Statistics</button></a>
         <a href="/to_do"><button>To Do</button></a>
         <a href="/logout"><button>Logout</button></a>
-    </nav>
+    </div>
 
-    <section class="dashboard-section">
-        <h2>📌 Recent Pending Clients</h2>
-        <div id="recent-pending">
-            {% if recent_pending %}
-                <ul>
-                {% for entry in recent_pending %}
-                    <li><strong>{{ entry.name }}</strong> ({{ entry.relationship_manager }}) - {{ entry.submitted_at }}</li>
-                {% endfor %}
-                </ul>
-            {% else %}
-                <p>No recent entries found.</p>
-            {% endif %}
+    <div class="main-content">
+        {% if logged_in_user %}
+        <div class="user-greeting">
+            Welcome, <strong>{{ logged_in_user }}</strong>
         </div>
-    </section>
+        {% endif %}
 
-    <section class="dashboard-section">
-        <h2>📝 Your Unapproved Submissions</h2>
-        <div id="user-pending">
-            {% if user_pending %}
-                <ul>
-                {% for entry in user_pending %}
-                    <li><strong>{{ entry.name }}</strong> - Status: {{ entry.approval_status }} ({{ entry.submitted_at }})</li>
-                {% endfor %}
-                </ul>
-            {% else %}
-                <p>You have no unapproved submissions.</p>
-            {% endif %}
-        </div>
-    </section>
+        <h1>Client Dashboard</h1>
+
+        <section class="dashboard-section">
+            <h2>📌 Recent Pending Clients</h2>
+            <div id="recent-pending">
+                {% if recent_pending %}
+                    <ul>
+                    {% for entry in recent_pending %}
+                        <li><strong>{{ entry.name }}</strong> ({{ entry.relationship_manager }}) - {{ entry.submitted_at }}</li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No recent entries found.</p>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="dashboard-section">
+            <h2>📝 Your Unapproved Submissions</h2>
+            <div id="user-pending">
+                {% if user_pending %}
+                    <ul>
+                    {% for entry in user_pending %}
+                        <li><strong>{{ entry.name }}</strong> - Status: {{ entry.approval_status }} ({{ entry.submitted_at }})</li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>You have no unapproved submissions.</p>
+                {% endif %}
+            </div>
+        </section>
+    </div>
 
     <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
