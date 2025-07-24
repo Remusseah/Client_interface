@@ -84,7 +84,7 @@ def main_page():
         WHERE submitted_by = %s
         ORDER BY submitted_at DESC
         LIMIT 3
-    """, (user,))
+    """, (user))
     user_pending = []
     for row in cur.fetchall():
         formatted_time = row[2].strftime("%Y-%m-%d %H:%M") if row[2] else None
@@ -270,7 +270,8 @@ def submit_pending():
         cursor = conn.cursor()
         email = session.get("user_email")
         username = email.split("@")[0]  # take part before @
-        username = re.sub(r'\W+', '', username)  # remove all non-alphanumeric characters
+        username = re.sub(r'[^a-zA-Z0-9]', ' ', username)  # Replace special chars with space
+
         # ✅ Insert into `pending`
         cursor.execute("""
             INSERT INTO pending (
