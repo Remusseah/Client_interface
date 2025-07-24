@@ -374,17 +374,43 @@ def add_task_page():
     return render_template('add_task.html') 
 @app.route("/pending_page")
 def pending_page():
+    selected_submitter = request.args.get("submitted_by")
+
     cursor = conn.cursor()
+
+    # Fetch distinct list of submitters for the dropdown
     cursor.execute("""
-        SELECT 
-            pending_id, onboarded_date, service_type, name, nationality, residency_address,
-            contact_number, email_address, ic_number, expiry_date, client_type, pep,
-            risk_rating, irpq_rating, last_periodic_risk_assessment, next_periodic_risk_assessment,
-            relationship_manager, remarks, client_profile, employment_status, date_of_birth,
-            age, submitted_by, submitted_at, approval_status, comments
-        FROM pending
-        ORDER BY submitted_at DESC
+        SELECT DISTINCT submitted_by 
+        FROM pending 
+        WHERE submitted_by IS NOT NULL AND submitted_by != ''
     """)
+    submitters = sorted([row[0] for row in cursor.fetchall()])
+
+    # Fetch filtered or all pending entries
+    if selected_submitter:
+        cursor.execute("""
+            SELECT 
+                pending_id, onboarded_date, service_type, name, nationality, residency_address,
+                contact_number, email_address, ic_number, expiry_date, client_type, pep,
+                risk_rating, irpq_rating, last_periodic_risk_assessment, next_periodic_risk_assessment,
+                relationship_manager, remarks, client_profile, employment_status, date_of_birth,
+                age, submitted_by, submitted_at, approval_status, comments
+            FROM pending
+            WHERE submitted_by = %s
+            ORDER BY submitted_at DESC
+        """, (selected_submitter,))
+    else:
+        cursor.execute("""
+            SELECT 
+                pending_id, onboarded_date, service_type, name, nationality, residency_address,
+                contact_number, email_address, ic_number, expiry_date, client_type, pep,
+                risk_rating, irpq_rating, last_periodic_risk_assessment, next_periodic_risk_assessment,
+                relationship_manager, remarks, client_profile, employment_status, date_of_birth,
+                age, submitted_by, submitted_at, approval_status, comments
+            FROM pending
+            ORDER BY submitted_at DESC
+        """)
+
     pending_entries = cursor.fetchall()
     columns = [desc[0] for desc in cursor.description]
     cursor.close()
@@ -393,13 +419,18 @@ def pending_page():
     for row in pending_entries:
         row_dict = dict(zip(columns, row))
 
-        # Format submitted_at to YYYY-MM-DD HH:MM
+        # Format submitted_at to "YYYY-MM-DD HH:MM"
         if row_dict["submitted_at"]:
             row_dict["submitted_at"] = row_dict["submitted_at"].strftime("%Y-%m-%d %H:%M")
 
         pending_clients.append(row_dict)
 
-    return render_template("pending.html", pending_entries=pending_clients)
+    return render_template(
+        "pending.html",
+        pending_entries=pending_clients,
+        submitters=submitters,
+        selected_submitter=selected_submitter
+    )
 
 @app.route("/login_page")
 def login_page():
