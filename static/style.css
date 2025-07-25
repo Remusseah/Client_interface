@@ -388,11 +388,6 @@ form label {
     border-radius: 4px;
 }
 
-.sidebar {
-    height: 100vh;
-    overflow-y: auto;
-}
-
 .sidebar.collapsed {
     width: 50px;
 }
@@ -418,4 +413,16 @@ form label {
 
 .sidebar.collapsed + .main-content {
     margin-left: 60px;
-        }
+}
+.sidebar-toggle {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+}
