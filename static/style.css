@@ -352,7 +352,38 @@ form label {
     margin-bottom: 5px;
     font-size: 15px;
 }
+/* Sidebar container */
+.sidebar {
+    width: 200px;
+    height: 100vh;
+    background-color: #2c3e50;
+    padding-top: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
 
+/* Sidebar buttons */
+.sidebar a {
+    display: block;
+    text-align: left;
+    padding: 10px 20px;
+    text-decoration: none;
+}
+
+.sidebar button {
+    width: 100%;
+    padding: 10px;
+    background-color: #34495e;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.sidebar button:hover {
+    background-color: #1abc9c;
+}
 
 /* Main content beside the sidebar */
 .main-content {
