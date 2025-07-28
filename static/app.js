@@ -610,3 +610,25 @@ function submitAccountAndValue() {
     .then(data => alert(data.message || "Success"))
     .catch(err => alert("❌ Error adding account/value"));
 }
+function calculateAgeFromDOB() {
+    const dobInput = document.getElementById("date_of_birth");
+    const ageInput = document.getElementById("age");
+
+    if (!dobInput || !ageInput) return;
+
+    const dobValue = dobInput.value;
+    if (!dobValue) return;
+
+    const dob = new Date(dobValue);
+    const today = new Date();
+
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+        age--;
+    }
+
+    if (!isNaN(age)) {
+        ageInput.value = age;
+    }
+}
