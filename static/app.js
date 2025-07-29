@@ -646,3 +646,40 @@ function toggleSidebar() {
         }
     }
 }
+document.addEventListener("DOMContentLoaded", function () {
+    const sidebar = document.getElementById("sidebar");
+    const currentPage = document.body.dataset.page;
+
+    const links = [
+        { href: "/main_page", label: "Dashboard", id: "main_page" },
+        { href: "/pending_page", label: "Pending", id: "pending_page" },
+        { href: "/add", label: "Add New", id: "add" },
+        { href: "/download_page", label: "Download", id: "download_page" },
+        { href: "/update_page", label: "Update", id: "update_page" },
+        { href: "/test_update_page", label: "Test Update", id: "test_update_page" },
+        { href: "/add_account_page", label: "Add Account", id: "add_account_page" },
+        { href: "/view_page", label: "View Table", id: "view_page" },
+        { href: "/redeemed_view_page", label: "Redeemed", id: "redeemed_view_page" },
+        { href: "/log_page", label: "Logs", id: "log_page" },
+        { href: "/statistics_page", label: "Statistics", id: "statistics_page" },
+        { href: "/to_do", label: "To Do", id: "to_do" },
+        { href: "/logout", label: "Logout", id: "logout" }
+    ];
+
+    // Add toggle button to top
+    const toggleBtn = document.createElement("button");
+    toggleBtn.className = "sidebar-toggle";
+    toggleBtn.innerText = "☰";
+    toggleBtn.onclick = toggleSidebar;
+    sidebar.appendChild(toggleBtn);
+
+    // Loop and add buttons, skip current page
+    links.forEach(link => {
+        if (link.id !== currentPage) {
+            const a = document.createElement("a");
+            a.href = link.href;
+            a.textContent = link.label;
+            sidebar.appendChild(a);
+        }
+    });
+});
