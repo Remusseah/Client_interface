@@ -632,3 +632,17 @@ function calculateAgeFromDOB() {
         ageInput.value = age;
     }
 }
+function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const content = document.getElementById("main-content");
+
+    sidebar.classList.toggle("collapsed");
+
+    if (content) {
+        if (sidebar.classList.contains("collapsed")) {
+            content.style.marginLeft = "60px"; // Adjust as needed
+        } else {
+            content.style.marginLeft = "220px"; // Match sidebar width
+        }
+    }
+}
