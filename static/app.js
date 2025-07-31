@@ -701,25 +701,28 @@ function lookupByName() {
                 return;
             }
 
-            document.getElementById("field-name").textContent = data.Name;
-            document.getElementById("field-nationality").textContent = data.Nationality;
-            document.getElementById("field-contact").textContent = data.Contact_number;
-            document.getElementById("field-email").textContent = data.Email_address;
-            document.getElementById("clientDetails").style.display = "block";
+            document.getElementById("field-client-id").textContent = data.Client_id;
+                    document.getElementById("field-name").textContent = data.Name;
+                    document.getElementById("field-nationality").textContent = data.Nationality;
+                    document.getElementById("field-contact").textContent = data.Contact_number;
+                    document.getElementById("field-email").textContent = data.Email_address;
 
-            if (includeCompliance) {
-                document.getElementById("field-onboarded").textContent = data.Onboarded_date || 'N/A';
-                document.getElementById("field-service").textContent = data.Service_type || 'N/A';
-                document.getElementById("field-client-type").textContent = data.Client_type || 'N/A';
-                document.getElementById("field-pep").textContent = data.Pep || 'N/A';
-                document.getElementById("field-risk").textContent = data.Risk_rating || 'N/A';
-                document.getElementById("field-last-assessment").textContent = data.Last_periodic_risk_assessment || 'N/A';
-                document.getElementById("field-next-assessment").textContent = data.Next_periodic_risk_assessment || 'N/A';
-                document.getElementById("field-rm").textContent = data.Relationship_Manager || 'N/A';
-                document.getElementById("complianceDetails").style.display = "block";
-            } else {
-                document.getElementById("complianceDetails").style.display = "none";
-            }
+                    document.getElementById("clientDetails").style.display = "block";
+
+                    if (includeCompliance) {
+                        document.getElementById("field-onboarded").textContent = data.Onboarded_date || 'N/A';
+                        document.getElementById("field-service").textContent = data.Service_type || 'N/A';
+                        document.getElementById("field-client-type").textContent = data.Client_type || 'N/A';
+                        document.getElementById("field-pep").textContent = data.Pep || 'N/A';
+                        document.getElementById("field-risk").textContent = data.Risk_rating || 'N/A';
+                        document.getElementById("field-last-assessment").textContent = data.Last_periodic_risk_assessment || 'N/A';
+                        document.getElementById("field-next-assessment").textContent = data.Next_periodic_risk_assessment || 'N/A';
+                        document.getElementById("field-rm").textContent = data.Relationship_Manager || 'N/A';
+                        
+                        document.getElementById("complianceDetails").style.display = "block";
+                    } else {
+                        document.getElementById("complianceDetails").style.display = "none";
+                    }
         })
         .catch(error => {
             console.error("Error fetching data: ", error);
