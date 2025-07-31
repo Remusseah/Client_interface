@@ -726,17 +726,16 @@ function lookupByName() {
             document.getElementById("ic_number").value = data.Ic_number || '';
             document.getElementById("client_profile").value = data.Client_profile || '';
 
-            // ✅ Fill compliance fields (if included)
-            if (includeCompliance) {
-                document.querySelector("[name='onboarded_date']").value = formatDate(data.Onboarded_date);
-                document.querySelector("[name='last_assessment']").value = formatDate(data.Last_periodic_risk_assessment);
-                document.querySelector("[name='next_assessment']").value = formatDate(data.Next_periodic_risk_assessment);
-                document.querySelector("[name='risk_rating']").value = data.Risk_rating || '';
-                document.querySelector("[name='relationship_manager']").value = data.Relationship_Manager || '';
-                document.querySelector("[name='service_type']").value = data.Service_type || '';
-                document.querySelector("[name='client_type']").value = data.Client_type || '';
-                document.querySelector("[name='pep']").value = data.Pep || '';
-            }
+            
+            document.querySelector("[name='onboarded_date']").value = formatDate(data.Onboarded_date);
+            document.querySelector("[name='last_assessment']").value = formatDate(data.Last_periodic_risk_assessment);
+            document.querySelector("[name='next_assessment']").value = formatDate(data.Next_periodic_risk_assessment);
+            document.querySelector("[name='risk_rating']").value = data.Risk_rating || '';
+            document.querySelector("[name='relationship_manager']").value = data.Relationship_Manager || '';
+            document.querySelector("[name='service_type']").value = data.Service_type || '';
+            document.querySelector("[name='client_type']").value = data.Client_type || '';
+            document.querySelector("[name='pep']").value = data.Pep || '';
+            
         })
         .catch(error => {
             console.error("Error fetching data: ", error);
