@@ -680,58 +680,50 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
-document.addEventListener("DOMContentLoaded", function () {
-    const btn = document.getElementById("lookupByNameBtn");
-    if (btn) {
-        btn.addEventListener("click", function () {
-            const name = document.getElementById("clientName").value.trim();
-        if (!name) {
-            alert("Please enter a client name.");
-            return;
-        }
+function lookupByName() {
+    const name = document.getElementById("clientName").value.trim();
+    if (!name) {
+        alert("Please enter a client name.");
+        return;
+    }
 
-        const includeCompliance = document.getElementById("includeCompliance")?.checked;
-        let apiUrl = `/client_by_name/${encodeURIComponent(name)}`;
-        if (includeCompliance) {
-            apiUrl += "?include_compliance=true";
-        }
+    const includeCompliance = document.getElementById("includeCompliance")?.checked;
+    let apiUrl = `/client_by_name/${encodeURIComponent(name)}`;
+    if (includeCompliance) {
+        apiUrl += "?include_compliance=true";
+    }
 
-        fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert("Client not found");
-                    return;
-                }
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert("Client not found");
+                return;
+            }
 
-                // Autofill the same way as before
-                document.getElementById("field-client-id").textContent = data.Client_id;
-                document.getElementById("field-name").textContent = data.Name;
-                document.getElementById("field-nationality").textContent = data.Nationality;
-                document.getElementById("field-contact").textContent = data.Contact_number;
-                document.getElementById("field-email").textContent = data.Email_address;
+            document.getElementById("field-client-id").textContent = data.Client_id;
+            document.getElementById("field-name").textContent = data.Name;
+            document.getElementById("field-nationality").textContent = data.Nationality;
+            document.getElementById("field-contact").textContent = data.Contact_number;
+            document.getElementById("field-email").textContent = data.Email_address;
+            document.getElementById("clientDetails").style.display = "block";
 
-                document.getElementById("clientDetails").style.display = "block";
-
-                if (includeCompliance) {
-                    document.getElementById("field-onboarded").textContent = data.Onboarded_date || 'N/A';
-                    document.getElementById("field-service").textContent = data.Service_type || 'N/A';
-                    document.getElementById("field-client-type").textContent = data.Client_type || 'N/A';
-                    document.getElementById("field-pep").textContent = data.Pep || 'N/A';
-                    document.getElementById("field-risk").textContent = data.Risk_rating || 'N/A';
-                    document.getElementById("field-last-assessment").textContent = data.Last_periodic_risk_assessment || 'N/A';
-                    document.getElementById("field-next-assessment").textContent = data.Next_periodic_risk_assessment || 'N/A';
-                    document.getElementById("field-rm").textContent = data.Relationship_Manager || 'N/A';
-
-                    document.getElementById("complianceDetails").style.display = "block";
-                } else {
-                    document.getElementById("complianceDetails").style.display = "none";
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching data: ", error);
-                alert("Error fetching client data.");
-            });
-    })
-}})
-
+            if (includeCompliance) {
+                document.getElementById("field-onboarded").textContent = data.Onboarded_date || 'N/A';
+                document.getElementById("field-service").textContent = data.Service_type || 'N/A';
+                document.getElementById("field-client-type").textContent = data.Client_type || 'N/A';
+                document.getElementById("field-pep").textContent = data.Pep || 'N/A';
+                document.getElementById("field-risk").textContent = data.Risk_rating || 'N/A';
+                document.getElementById("field-last-assessment").textContent = data.Last_periodic_risk_assessment || 'N/A';
+                document.getElementById("field-next-assessment").textContent = data.Next_periodic_risk_assessment || 'N/A';
+                document.getElementById("field-rm").textContent = data.Relationship_Manager || 'N/A';
+                document.getElementById("complianceDetails").style.display = "block";
+            } else {
+                document.getElementById("complianceDetails").style.display = "none";
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching data: ", error);
+            alert("Error fetching client data.");
+        });
+}
