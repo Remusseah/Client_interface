@@ -141,7 +141,7 @@ def get_client_by_name(name):
     include_compliance = request.args.get("include_compliance") == "true"
     cur = conn.cursor()
 
-    cur.execute("SELECT * FROM client_data WHERE name ILIKE %s LIMIT 1", (name,))
+    cur.execute('SELECT * FROM client_data WHERE "Name" ILIKE %s LIMIT 1', (name,))
     client = cur.fetchone()
 
     if not client:
