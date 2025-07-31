@@ -726,15 +726,16 @@ function lookupByName() {
             document.getElementById("ic_number").value = data.Ic_number || '';
             document.getElementById("client_profile").value = data.Client_profile || '';
 
-            
-            document.querySelector("[name='onboarded_date']").value = formatDate(data.Onboarded_date);
-            document.querySelector("[name='last_assessment']").value = formatDate(data.Last_periodic_risk_assessment);
-            document.querySelector("[name='next_assessment']").value = formatDate(data.Next_periodic_risk_assessment);
-            document.querySelector("[name='risk_rating']").value = data.Risk_rating || '';
-            document.querySelector("[name='relationship_manager']").value = data.Relationship_Manager || '';
-            document.querySelector("[name='service_type']").value = data.Service_type || '';
-            document.querySelector("[name='client_type']").value = data.Client_type || '';
-            document.querySelector("[name='pep']").value = data.Pep || '';
+            // Former compliance fields
+            document.getElementById("onboarded_date").value = formatDate(data.Onboarded_date);
+            document.getElementById("last_assessment").value = formatDate(data.Last_periodic_risk_assessment);
+            document.getElementById("next_assessment").value = formatDate(data.Next_periodic_risk_assessment);
+            document.getElementById("risk_rating").value = data.Risk_rating || '';
+            document.getElementById("relationship_manager").value = data.Relationship_Manager || '';
+            document.getElementById("service_type").value = data.Service_type || '';
+            document.getElementById("client_type").value = data.Client_type || '';
+            document.getElementById("pep").value = data.Pep || '';
+
             
         })
         .catch(error => {
