@@ -701,7 +701,6 @@ function lookupByName() {
                 return;
             }
 
-            document.getElementById("field-client-id").textContent = data.Client_id;
             document.getElementById("field-name").textContent = data.Name;
             document.getElementById("field-nationality").textContent = data.Nationality;
             document.getElementById("field-contact").textContent = data.Contact_number;
