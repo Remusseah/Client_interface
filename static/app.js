@@ -681,7 +681,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 function lookupByName() {
-    const name = document.getElementById("name").value.trim();
+    const nameInput = document.getElementById("name");
+    if (!nameInput) {
+        alert("Name input field not found.");
+        return;
+    }
+
+    const name = nameInput.value.trim();
     if (!name) {
         alert("Please enter a client name.");
         return;
@@ -701,28 +707,36 @@ function lookupByName() {
                 return;
             }
 
-            document.getElementById("field-client-id").textContent = data.Client_id;
-                    document.getElementById("field-name").textContent = data.Name;
-                    document.getElementById("field-nationality").textContent = data.Nationality;
-                    document.getElementById("field-contact").textContent = data.Contact_number;
-                    document.getElementById("field-email").textContent = data.Email_address;
+            // Utility to handle date formatting
+            function formatDate(dateStr) {
+                if (!dateStr) return '';
+                const date = new Date(dateStr);
+                return date.toISOString().split("T")[0]; // format as YYYY-MM-DD
+            }
 
-                    document.getElementById("clientDetails").style.display = "block";
+            // ✅ Fill client fields
+            document.getElementById("name").value = data.Name || '';
+            document.getElementById("date_of_birth").value = formatDate(data.Date_of_birth);
+            document.getElementById("contact_number").value = data.Contact_number || '';
+            document.getElementById("email_address").value = data.Email_address || '';
+            document.getElementById("nationality").value = data.Nationality || '';
+            document.getElementById("residency_address").value = data.Residency_address || '';
+            document.getElementById("employment_status").value = data.Employment_status || '';
+            document.getElementById("age").value = data.Age || '';
+            document.getElementById("ic_number").value = data.Ic_number || '';
+            document.getElementById("client_profile").value = data.Client_profile || '';
 
-                    if (includeCompliance) {
-                        document.getElementById("field-onboarded").textContent = data.Onboarded_date || 'N/A';
-                        document.getElementById("field-service").textContent = data.Service_type || 'N/A';
-                        document.getElementById("field-client-type").textContent = data.Client_type || 'N/A';
-                        document.getElementById("field-pep").textContent = data.Pep || 'N/A';
-                        document.getElementById("field-risk").textContent = data.Risk_rating || 'N/A';
-                        document.getElementById("field-last-assessment").textContent = data.Last_periodic_risk_assessment || 'N/A';
-                        document.getElementById("field-next-assessment").textContent = data.Next_periodic_risk_assessment || 'N/A';
-                        document.getElementById("field-rm").textContent = data.Relationship_Manager || 'N/A';
-                        
-                        document.getElementById("complianceDetails").style.display = "block";
-                    } else {
-                        document.getElementById("complianceDetails").style.display = "none";
-                    }
+            // ✅ Fill compliance fields (if included)
+            if (includeCompliance) {
+                document.querySelector("[name='onboarded_date']").value = formatDate(data.Onboarded_date);
+                document.querySelector("[name='last_assessment']").value = formatDate(data.Last_periodic_risk_assessment);
+                document.querySelector("[name='next_assessment']").value = formatDate(data.Next_periodic_risk_assessment);
+                document.querySelector("[name='risk_rating']").value = data.Risk_rating || '';
+                document.querySelector("[name='relationship_manager']").value = data.Relationship_Manager || '';
+                document.querySelector("[name='service_type']").value = data.Service_type || '';
+                document.querySelector("[name='client_type']").value = data.Client_type || '';
+                document.querySelector("[name='pep']").value = data.Pep || '';
+            }
         })
         .catch(error => {
             console.error("Error fetching data: ", error);
