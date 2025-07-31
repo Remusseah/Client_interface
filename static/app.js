@@ -681,7 +681,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 function lookupByName() {
-    const name = document.getElementById("clientName").value.trim();
+    const name = document.getElementById("name").value.trim();
     if (!name) {
         alert("Please enter a client name.");
         return;
