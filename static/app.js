@@ -681,9 +681,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 document.addEventListener("DOMContentLoaded", function () {
-
-    function lookupByName() {
-        const name = document.getElementById("clientName").value.trim();
+    const btn = document.getElementById("lookupByNameBtn");
+    if (btn) {
+        btn.addEventListener("click", function () {
+            const name = document.getElementById("clientName").value.trim();
         if (!name) {
             alert("Please enter a client name.");
             return;
@@ -731,6 +732,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error("Error fetching data: ", error);
                 alert("Error fetching client data.");
             });
-    }
-})
+    })
+}})
 
