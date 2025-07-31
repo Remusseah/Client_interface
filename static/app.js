@@ -701,11 +701,13 @@ function lookupByName() {
 
     fetch(apiUrl)
         .then(response => response.json())
+        
         .then(data => {
             if (data.error) {
                 alert("Client not found");
                 return;
             }
+            console.log("Fetched client data:", data);
 
             // Utility to handle date formatting
             function formatDate(dateStr) {
