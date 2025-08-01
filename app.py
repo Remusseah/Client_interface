@@ -150,7 +150,7 @@ def get_client_by_name(name):
     client_data = dict(zip(columns, client))
 
     # Always try to fetch compliance
-    cur.execute("SELECT * FROM client_compliance WHERE client_id = %s", (client_data['Client_id'],))
+    cur.execute('SELECT * FROM client_compliance WHERE "Client_id" = %s', (client_data['Client_id'],))
     compliance = cur.fetchone()
     if compliance:
         comp_columns = [desc[0] for desc in cur.description]
