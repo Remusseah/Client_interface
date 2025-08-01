@@ -138,7 +138,6 @@ def get_client_data(client_id):
         return jsonify({"error": "Client not found"}), 404
 @app.route("/client_by_name/<name>")
 def get_client_by_name(name):
-    include_compliance = request.args.get("include_compliance") == "true"
     cur = conn.cursor()
 
     cur.execute('SELECT * FROM client_data WHERE "Name" ILIKE %s LIMIT 1', (name,))
@@ -150,12 +149,12 @@ def get_client_by_name(name):
     columns = [desc[0] for desc in cur.description]
     client_data = dict(zip(columns, client))
 
-    if include_compliance:
-        cur.execute("SELECT * FROM client_compliance WHERE client_id = %s", (client_data['client_id'],))
-        compliance = cur.fetchone()
-        if compliance:
-            comp_columns = [desc[0] for desc in cur.description]
-            client_data.update(dict(zip(comp_columns, compliance)))
+    # Always try to fetch compliance
+    cur.execute("SELECT * FROM client_compliance WHERE client_id = %s", (client_data['client_id'],))
+    compliance = cur.fetchone()
+    if compliance:
+        comp_columns = [desc[0] for desc in cur.description]
+        client_data.update(dict(zip(comp_columns, compliance)))
 
     cur.close()
     return jsonify(client_data)
