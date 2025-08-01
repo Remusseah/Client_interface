@@ -138,7 +138,7 @@ def get_client_data(client_id):
         return jsonify({"error": "Client not found"}), 404
 @app.route("/client_by_name/<name>")
 def get_client_by_name(name):
-    include_compliance = "true"
+    include_compliance = request.args.get("include_compliance") == "true"
     cur = conn.cursor()
 
     cur.execute('SELECT * FROM client_data WHERE "Name" ILIKE %s LIMIT 1', (name,))
