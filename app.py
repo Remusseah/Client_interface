@@ -192,8 +192,11 @@ def approve_pending_client(pending_id):
             pending_data["email_address"]
         ))
         client_id = cursor.fetchone()[0]
-        username = session.get("logged_in_user", "Unknown user")
-        client_name = pending_data.get("name", "Unknown client")
+        email = session.get("user_email", "")
+        username = email.split("@")[0]  # take part before @
+        username = re.sub(r'\W+', '', username)  # remove all non-alphanumeric characters
+        assigned_from = username 
+        client_name = pending_data.get("username", "Unknown client")
         log_action("APPROVE", client_id, details=f"{username} approved pending client: {client_name}")
 
         cursor.execute("""
