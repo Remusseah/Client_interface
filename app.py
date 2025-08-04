@@ -336,7 +336,12 @@ def submit_pending():
         ))
 
         pending_id = cursor.fetchone()[0]
+        email = session.get("user_email", "")
+        username = email.split("@")[0]  # take part before @
+        username = re.sub(r'\W+', '', username)  # remove non-alphanumeric
 
+        client_name = data.get("name", "Unknown client")
+        log_action("SUBMIT_PENDING", -1, details=f"{username} submitted pending client: {client_name}")
         # ✅ Save files
         for file in files:
             if file.filename:
