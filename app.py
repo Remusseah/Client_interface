@@ -196,7 +196,7 @@ def approve_pending_client(pending_id):
         username = email.split("@")[0]  # take part before @
         username = re.sub(r'\W+', '', username)  # remove all non-alphanumeric characters
         assigned_from = username 
-        client_name = pending_data.get("username", "Unknown client")
+        client_name = pending_data.get("name", "Unknown client")
         log_action("APPROVE", client_id, details=f"{username} approved pending client: {client_name}")
 
         cursor.execute("""
