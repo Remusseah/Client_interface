@@ -192,7 +192,7 @@ def approve_pending_client(pending_id):
             pending_data["email_address"]
         ))
         client_id = cursor.fetchone()[0]
-        username = session.get("user", "Unknown user")
+        username = session.get("logged_in_user", "Unknown user")
         client_name = pending_data.get("name", "Unknown client")
         log_action("APPROVE", client_id, details=f"{username} approved pending client: {client_name}")
 
