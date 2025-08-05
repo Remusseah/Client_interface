@@ -1387,6 +1387,29 @@ def get_available_months():
     months = [r[0] for r in cur.fetchall()]
     cur.close()
     return jsonify(months)
+@app.route("/get-users")
+def get_users():
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT id, email, is_verified, created_at
+        FROM users
+        ORDER BY created_at DESC
+    """)
+    users = cur.fetchall()
+    columns = [desc[0] for desc in cur.description]
+    cur.close()
+    return jsonify([dict(zip(columns, row)) for row in users])
+@app.route("/delete-user/<int:user_id>", methods=["POST"])
+def delete_user(user_id):
+    try:
+        cur = conn.cursor()
+        cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
+        conn.commit()
+        cur.close()
+        return jsonify({"message": "User deleted successfully."})
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == '__main__':

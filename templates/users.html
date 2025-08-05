@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>User Management</h2>
+    <button onclick="loadUsers()">🔄 Refresh</button>
+    <table id="users-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Verified</th>
+                <th>Created At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        function loadUsers() {
+            fetch('/get-users')
+                .then(response => response.json())
+                .then(users => {
+                    const tbody = document.querySelector('#users-table tbody');
+                    tbody.innerHTML = ''; // Clear previous rows
+
+                    users.forEach(user => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${user.id}</td>
+                            <td>${user.email}</td>
+                            <td>${user.is_verified ? '✅' : '❌'}</td>
+                            <td>${new Date(user.created_at).toLocaleString()}</td>
+                            <td>
+                                <button onclick="confirmDelete(${user.id}, '${user.email}')">🗑️ Delete</button>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                });
+        }
+
+        function confirmDelete(userId, email) {
+            if (confirm(`Are you sure you want to delete user: ${email}?`)) {
+                fetch(`/delete-user/${userId}`, {
+                    method: 'POST'
+                })
+                .then(res => res.json())
+                .then(response => {
+                    alert(response.message || response.error);
+                    loadUsers(); // Refresh after delete
+                })
+                .catch(error => {
+                    console.error("Delete error:", error);
+                    alert("Failed to delete user.");
+                });
+            }
+        }
+
+        // Load users on page load
+        window.onload = loadUsers;
+    </script>
+</body>
+</html>
