@@ -96,13 +96,16 @@ def main_page():
 
     cur.close()
 
+    email = session.get("user_email")  # <-- Define it here
+
     return render_template(
-    "index.html",
-    recent_pending=recent_pending,
-    user_pending=user_pending,
-    logged_in_user=user,       # This is your username
-    user_email=email           # This is the full email
-)
+        "index.html",
+        recent_pending=recent_pending,
+        user_pending=user_pending,
+        logged_in_user=user,
+        user_email=email  # <-- This now works
+    )
+
 
 
 def log_action(action, client_id, details=""):
