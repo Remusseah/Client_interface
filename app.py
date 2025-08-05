@@ -96,7 +96,13 @@ def main_page():
 
     cur.close()
 
-    return render_template("index.html", recent_pending=recent_pending, user_pending=user_pending)
+    return render_template(
+    "index.html",
+    recent_pending=recent_pending,
+    user_pending=user_pending,
+    logged_in_user=user,       # This is your username
+    user_email=email           # This is the full email
+)
 
 
 def log_action(action, client_id, details=""):
