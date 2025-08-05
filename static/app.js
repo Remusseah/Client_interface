@@ -646,6 +646,9 @@ function toggleSidebar() {
 document.addEventListener("DOMContentLoaded", function () {
     const sidebar = document.getElementById("sidebar");
     const currentPage = document.body.dataset.page;
+    const userEmail = document.body.dataset.user;
+
+    const adminEmails = ["admin1@example.com", "remuseah@gmail.com", "boss@example.com"];
 
     const links = [
         { href: "/main_page", label: "Dashboard", id: "main_page" },
@@ -660,6 +663,7 @@ document.addEventListener("DOMContentLoaded", function () {
         { href: "/log_page", label: "Logs", id: "log_page" },
         { href: "/statistics_page", label: "Statistics", id: "statistics_page" },
         { href: "/to_do", label: "To Do", id: "to_do" },
+        { href: "/users", label: "User Management", id: "users", restricted: true },
         { href: "/logout", label: "Logout", id: "logout" }
     ];
 
@@ -670,9 +674,12 @@ document.addEventListener("DOMContentLoaded", function () {
     toggleBtn.onclick = toggleSidebar;
     sidebar.appendChild(toggleBtn);
 
-    // Loop and add buttons, skip current page
+    // Add links
     links.forEach(link => {
         if (link.id !== currentPage) {
+            // Skip restricted links if user not in allowed list
+            if (link.restricted && !adminEmails.includes(userEmail)) return;
+
             const a = document.createElement("a");
             a.href = link.href;
             a.textContent = link.label;
@@ -680,6 +687,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
 function lookupByName() {
     const nameInput = document.getElementById("name");
     if (!nameInput) {
