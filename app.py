@@ -97,6 +97,7 @@ def main_page():
     cur.close()
 
     email = session.get("user_email")  # <-- Define it here
+    user = session.get("logged_in_user") or session.get("user_email", "").split("@")[0]
 
     return render_template(
         "index.html",
