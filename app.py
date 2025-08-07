@@ -496,8 +496,8 @@ def users_page():
 
     # Render page with the current page name (for sidebar highlighting)
     return render_template("users.html", current_page="users")
-@app.route("/get-users")
-def get_users():
+@app.route("/reload-users")
+def reload_users():
     email = session.get("user_email", "")
     admin_emails = ["remuseah@gmail.com", "admin1@example.com", "boss@example.com"]
 
