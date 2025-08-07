@@ -482,45 +482,7 @@ def login_page():
 def logout():
     session.clear()
     return redirect("/login")
-@app.route("/users")
-def users_page():
-    # Get current user's email from session
-    email = session.get("user_email", "")
-    
-    # List of admin emails allowed to view the page
-    admin_emails = ["remuseah@gmail.com", "admin1@example.com", "boss@example.com"]
 
-    # Block access if not in admin list
-    if email not in admin_emails:
-        return "Access denied", 403
-
-    # Render page with the current page name (for sidebar highlighting)
-    return render_template("users.html", current_page="users")
-@app.route("/reload-users")
-def reload_users():
-    email = session.get("user_email", "")
-    admin_emails = ["remuseah@gmail.com", "admin1@example.com", "boss@example.com"]
-
-    if email not in admin_emails:
-        return jsonify({"error": "Access denied"}), 403
-
-    cur = conn.cursor()
-    cur.execute("""
-        SELECT id, email, is_verified, created_at
-        FROM users
-        ORDER BY created_at DESC
-    """)
-    users = [
-        {
-            "id": row[0],
-            "email": row[1],
-            "is_verified": row[2],
-            "created_at": row[3].isoformat()
-        }
-        for row in cur.fetchall()
-    ]
-    cur.close()
-    return jsonify(users)
 
 @app.route("/download", methods=["GET", "POST"])
 def download_table():

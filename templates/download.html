@@ -9,6 +9,7 @@
     <div class="sidebar" id="sidebar">
 
     </div>
+    <div class="main-content">
     {% if logged_in_user %}
     <div class="user-greeting" style="position: absolute; top: 10px; right: 20px;">
         Logged in as <strong>{{ logged_in_user }}</strong>
@@ -45,6 +46,7 @@
         <br><br>
         <button type="submit">Download</button>
     </form>
+</div>
     <script src="{{ url_for('static', filename='app.js') }}"></script>
 
 </body>

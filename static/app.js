@@ -658,10 +658,10 @@ document.addEventListener("DOMContentLoaded", function () {
         { href: "/update_page", label: "Update", id: "update_page" },
         { href: "/test_update_page", label: "Test Update", id: "test_update_page" },
         { href: "/add_account_page", label: "Add Account", id: "add_account_page" },
-        { href: "/view_page", label: "View Table", id: "view_page" },
+        { href: "/view_page", label: "Client equiry", id: "view_page" },
         { href: "/redeemed_view_page", label: "Redeemed", id: "redeemed_view_page" },
-        { href: "/log_page", label: "Logs", id: "log_page" },
-        { href: "/statistics_page", label: "Statistics", id: "statistics_page" },
+        { href: "/log_page", label: "Audit logs", id: "log_page" },
+        { href: "/statistics_page", label: "Client statistics", id: "statistics_page" },
         { href: "/to_do", label: "To Do", id: "to_do" },
         { href: "/users", label: "User Management", id: "users", restricted: true },
         { href: "/logout", label: "Logout", id: "logout" }
