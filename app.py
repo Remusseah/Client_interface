@@ -482,6 +482,21 @@ def login_page():
 def logout():
     session.clear()
     return redirect("/login")
+@app.route("/users")
+def users_page():
+    # Get current user's email from session
+    email = session.get("user_email", "")
+    
+    # List of admin emails allowed to view the page
+    admin_emails = ["remuseah@gmail.com", "admin1@example.com", "boss@example.com"]
+
+    # Block access if not in admin list
+    if email not in admin_emails:
+        return "Access denied", 403
+
+    # Render page with the current page name (for sidebar highlighting)
+    return render_template("users.html", current_page="users")
+
 @app.route("/download", methods=["GET", "POST"])
 def download_table():
     try:
