@@ -496,6 +496,31 @@ def users_page():
 
     # Render page with the current page name (for sidebar highlighting)
     return render_template("users.html", current_page="users")
+@app.route("/get-users")
+def get_users():
+    email = session.get("user_email", "")
+    admin_emails = ["remuseah@gmail.com", "admin1@example.com", "boss@example.com"]
+
+    if email not in admin_emails:
+        return jsonify({"error": "Access denied"}), 403
+
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT id, email, is_verified, created_at
+        FROM users
+        ORDER BY created_at DESC
+    """)
+    users = [
+        {
+            "id": row[0],
+            "email": row[1],
+            "is_verified": row[2],
+            "created_at": row[3].isoformat()
+        }
+        for row in cur.fetchall()
+    ]
+    cur.close()
+    return jsonify(users)
 
 @app.route("/download", methods=["GET", "POST"])
 def download_table():
