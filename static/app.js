@@ -663,7 +663,7 @@ document.addEventListener("DOMContentLoaded", function () {
         { href: "/log_page", label: "Audit logs", id: "log_page" },
         { href: "/statistics_page", label: "Client statistics", id: "statistics_page" },
         { href: "/to_do", label: "To Do", id: "to_do" },
-        { href: "/users", label: "User Management", id: "users", restricted: true },
+        { href: "/users", label: "User Management", id: "users_page", restricted: true },
         { href: "/logout", label: "Logout", id: "logout" }
     ];
 

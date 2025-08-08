@@ -482,6 +482,15 @@ def login_page():
 def logout():
     session.clear()
     return redirect("/login")
+@app.route("/users")
+def users_page():
+    email = session.get("user_email", "")
+    admin_emails = ["remuseah@gmail.com", "admin1@example.com", "boss@example.com"]
+
+    if email not in admin_emails:
+        return "Access denied", 403
+
+    return render_template("users.html", current_page="users", user_email=email)
 
 
 @app.route("/download", methods=["GET", "POST"])
