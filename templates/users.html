@@ -4,10 +4,17 @@
     <meta charset="UTF-8">
     <title>User Management</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head><!DOCTYPE html>
->
+</head>
 <body data-page="{{ current_page }}" data-user="{{ session['user_email'] }}">
     <h2>User Management</h2>
+
+    <label for="filter">Filter:</label>
+    <select id="filter" onchange="loadUsers()">
+        <option value="all">All</option>
+        <option value="verified">Verified</option>
+        <option value="unverified">Unverified</option>
+    </select>
+
     <button onclick="loadUsers()">🔄 Refresh</button>
     <table id="users-table">
         <thead>
