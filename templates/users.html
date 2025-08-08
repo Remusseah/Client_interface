@@ -30,49 +30,65 @@
     </table>
 
     <script>
-        function loadUsers() {
-            fetch('/get-users')
-                .then(response => response.json())
-                .then(users => {
-                    const tbody = document.querySelector('#users-table tbody');
-                    tbody.innerHTML = ''; // Clear previous rows
+    function loadUsers() {
+        fetch('/get-users')
+            .then(response => response.json())
+            .then(users => {
+                const filterValue = document.getElementById("filter").value;
+                const tbody = document.querySelector('#users-table tbody');
+                tbody.innerHTML = ''; // Clear previous rows
 
-                    users.forEach(user => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${user.id}</td>
-                            <td>${user.email}</td>
-                            <td>${user.is_verified ? '✅' : '❌'}</td>
-                            <td>${new Date(user.created_at).toLocaleString()}</td>
-                            <td>
-                                <button onclick="confirmDelete(${user.id}, '${user.email}')">🗑️ Delete</button>
-                            </td>
-                        `;
-                        tbody.appendChild(row);
-                    });
+                users.forEach(user => {
+                    const isVerified = user.is_verified === true || user.is_verified === "true";
+
+                    // Filter logic
+                    if (
+                        (filterValue === "verified" && !isVerified) ||
+                        (filterValue === "unverified" && isVerified)
+                    ) {
+                        return; // Skip based on filter
+                    }
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${user.id}</td>
+                        <td>${user.email}</td>
+                        <td>${isVerified ? '✅' : '❌'}</td>
+                        <td>${new Date(user.created_at).toLocaleString()}</td>
+                        <td>
+                            <button onclick="confirmDelete(${user.id}, '${user.email}')">🗑️ Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
                 });
-        }
+            })
+            .catch(err => {
+                console.error("Failed to load users:", err);
+                alert("Could not load users.");
+            });
+    }
 
-        function confirmDelete(userId, email) {
-            if (confirm(`Are you sure you want to delete user: ${email}?`)) {
-                fetch(`/delete-user/${userId}`, {
-                    method: 'POST'
-                })
-                .then(res => res.json())
-                .then(response => {
-                    alert(response.message || response.error);
-                    loadUsers(); // Refresh after delete
-                })
-                .catch(error => {
-                    console.error("Delete error:", error);
-                    alert("Failed to delete user.");
-                });
-            }
+    function confirmDelete(userId, email) {
+        if (confirm(`Are you sure you want to delete user: ${email}?`)) {
+            fetch(`/delete-user/${userId}`, {
+                method: 'POST'
+            })
+            .then(res => res.json())
+            .then(response => {
+                alert(response.message || response.error);
+                loadUsers(); // Re-filter after delete
+            })
+            .catch(error => {
+                console.error("Delete error:", error);
+                alert("Failed to delete user.");
+            });
         }
+    }
 
-        // Load users on page load
-        window.onload = loadUsers;
-    </script>
+    // Load users on page load
+    window.onload = loadUsers;
+</script>
+
 
     <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
