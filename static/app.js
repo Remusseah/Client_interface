@@ -648,7 +648,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const currentPage = document.body.dataset.page;
     const loggedInUser = document.body.dataset.user; // now comes directly from HTML attribute
 
-    const adminEmails = ["admin1@example.com", "remuseah@gmail.com", "boss@example.com"];
+    const adminUsers = ["remusseah", "admin1", "boss"];
+
 
     const links = [
         { href: "/main_page", label: "Dashboard", id: "main_page" },
@@ -680,7 +681,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Generate links
     links.forEach(link => {
         if (link.id !== currentPage) {
-            if (link.restricted && !adminEmails.includes(loggedInUser)) return;
+            if (link.restricted && !adminUsers.includes(loggedInUser)) return;
 
             const a = document.createElement("a");
             a.href = link.href;
