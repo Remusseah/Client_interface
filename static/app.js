@@ -651,7 +651,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (loggedInUser) {
     let rawUsername = loggedInUser.split("@")[0];
     // Replace non-alphanumeric characters with spaces
-    const cleanedUsername = rawUsername.replace(/[^a-zA-Z0-9]/g, " ");
+    cleanedUsername = rawUsername.replace(/[^a-zA-Z0-9]/g, " ");
     console.log("Cleaned username:", cleanedUsername);
 }
 
