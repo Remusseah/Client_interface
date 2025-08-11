@@ -647,6 +647,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const sidebar = document.getElementById("sidebar");
     const currentPage = document.body.dataset.page;
     const loggedInUser = document.body.dataset.user; // now comes directly from HTML attribute
+    let cleanedUsername = ""; // declare outside so it's available everywhere
     if (loggedInUser) {
     let rawUsername = loggedInUser.split("@")[0];
     // Replace non-alphanumeric characters with spaces
