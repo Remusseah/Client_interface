@@ -646,7 +646,7 @@ function toggleSidebar() {
 document.addEventListener("DOMContentLoaded", function () {
     const sidebar = document.getElementById("sidebar");
     const currentPage = document.body.dataset.page;
-    const userEmail = document.body.dataset.user;
+    const loggedInUser = document.body.dataset.user; // now comes directly from HTML attribute
 
     const adminEmails = ["admin1@example.com", "remuseah@gmail.com", "boss@example.com"];
 
@@ -658,27 +658,29 @@ document.addEventListener("DOMContentLoaded", function () {
         { href: "/update_page", label: "Update", id: "update_page" },
         { href: "/test_update_page", label: "Test Update", id: "test_update_page" },
         { href: "/add_account_page", label: "Add Account", id: "add_account_page" },
-        { href: "/view_page", label: "Client equiry", id: "view_page" },
+        { href: "/view_page", label: "Client enquiry", id: "view_page" },
         { href: "/redeemed_view_page", label: "Redeemed", id: "redeemed_view_page" },
         { href: "/log_page", label: "Audit logs", id: "log_page" },
         { href: "/statistics_page", label: "Client statistics", id: "statistics_page" },
         { href: "/to_do", label: "To Do", id: "to_do" },
-        { href: "/users", label: "User Management", id: "users_page", restricted: true },
+        { href: "/users", label: "User Management", id: "users", restricted: true },
         { href: "/logout", label: "Logout", id: "logout" }
     ];
 
-    // Add toggle button to top
+    // Add toggle button
     const toggleBtn = document.createElement("button");
     toggleBtn.className = "sidebar-toggle";
     toggleBtn.innerText = "☰";
-    toggleBtn.onclick = toggleSidebar;
+    toggleBtn.onclick = function () {
+        sidebar.classList.toggle("collapsed");
+        document.querySelector(".main-content")?.classList.toggle("expanded");
+    };
     sidebar.appendChild(toggleBtn);
 
-    // Add links
+    // Generate links
     links.forEach(link => {
         if (link.id !== currentPage) {
-            // Skip restricted links if user not in allowed list
-            if (link.restricted && !adminEmails.includes(userEmail)) return;
+            if (link.restricted && !adminEmails.includes(loggedInUser)) return;
 
             const a = document.createElement("a");
             a.href = link.href;
@@ -687,6 +689,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
 
 function lookupByName() {
     const nameInput = document.getElementById("name");
