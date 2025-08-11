@@ -691,6 +691,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
+
 function lookupByName() {
     const nameInput = document.getElementById("name");
     if (!nameInput) {
