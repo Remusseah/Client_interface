@@ -648,7 +648,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const currentPage = document.body.dataset.page;
     const loggedInUser = document.body.dataset.user; // now comes directly from HTML attribute
 
-    const adminUsers = ["remusseah", "admin1", "boss"];
+    const adminUsers = ["remusseah", "remuseah", "boss"];
 
 
     const links = [
