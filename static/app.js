@@ -677,6 +677,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelector(".main-content")?.classList.toggle("expanded");
     };
     sidebar.appendChild(toggleBtn);
+    console.log("Logged in user from dataset:", loggedInUser);
 
     // Generate links
     links.forEach(link => {
