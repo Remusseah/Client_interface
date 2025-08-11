@@ -6,6 +6,15 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body data-page="{{ current_page }}" data-user="{{ session['user_email'] }}">
+    <div class="sidebar" id="sidebar">
+       
+    </div>
+    <div class="main-content">
+    {% if logged_in_user %}
+    <div class="user-greeting">
+      Logged in as <strong>{{ logged_in_user }}</strong>
+    </div>
+  {% endif %}
     <h2>User Management</h2>
 
     <label for="filter">Filter:</label>
