@@ -33,7 +33,7 @@
     }
   </style>
 </head>
-<body data-page="update_page">
+<body data-page="{{ current_page }}" data-user="{{ logged_in_user }}">
   <div class="main-content">
   {% if logged_in_user %}
     <div class="user-greeting" style="position: absolute; top: 10px; right: 20px;">
