@@ -650,9 +650,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (loggedInUser) {
     let rawUsername = loggedInUser.split("@")[0];
     // Replace non-alphanumeric characters with spaces
-    let cleanedUsername = rawUsername.replace(/[^a-zA-Z0-9]/g, " ");
+    const cleanedUsername = rawUsername.replace(/[^a-zA-Z0-9]/g, " ");
     console.log("Cleaned username:", cleanedUsername);
-    loggedInUser = cleanedUsername
 }
 
     const adminUsers = ["remusseah", "remuseah", "boss"];
@@ -689,7 +688,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Generate links
     links.forEach(link => {
         if (link.id !== currentPage) {
-            if (link.restricted && !adminUsers.includes(loggedInUser)) return;
+            if (link.restricted && !adminUsers.includes(cleanedUsername)) return;
 
             const a = document.createElement("a");
             a.href = link.href;
