@@ -179,7 +179,24 @@ tbody tr:hover {
     margin-bottom: 20px;
   }
 
+  .task-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 0 20px;
+    flex-wrap: nowrap; /* <-- Ensure side-by-side layout */
+  }
 
+  .task-column {
+    flex: 1;             /* <-- Replace fixed width */
+    min-width: 0;        /* <-- Prevent overflow */
+    box-sizing: border-box;
+  }
+
+  .task-column h3 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
 
   .pending-box {
     border: 1px solid #aaa;

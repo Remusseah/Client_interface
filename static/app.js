@@ -236,44 +236,66 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function loadTasks() {
-        fetch("/get_tasks")
-            .then(response => response.json())
-            .then(data => {
-                const todoColumn = document.getElementById("todo-column");
-                const doneColumn = document.getElementById("done-column");
-                todoColumn.innerHTML = "";
-                doneColumn.innerHTML = "";
+    fetch("/get_tasks")
+        .then(response => response.json())
+        .then(data => {
+            const todoColumn = document.getElementById("todo");
+            const doneColumn = document.getElementById("done");
+            todoColumn.innerHTML = "";
+            doneColumn.innerHTML = "";
 
-                data.forEach(task => {
-                    const taskBox = document.createElement("div");
-                    taskBox.className = "pending-box"; // reuse pending box styling
-                    taskBox.onclick = () => toggleDetails(`task-${task.id}`);
-                    taskBox.innerHTML = `
-                        <strong>${task.client_name}</strong> (RM: ${task.rm})
-                        <div id="task-${task.id}" class="pending-details">
-                            <p><strong>Documents:</strong> ${task.documents.join(", ")}</p>
-                            <p><strong>Doc Link:</strong> <a href="${task.doc_link}" target="_blank">${task.doc_link}</a></p>
-                            <p><strong>EMA/IMA:</strong> <a href="${task.ema_ima}" target="_blank">${task.ema_ima}</a></p>
-                            <p><strong>Assigned From:</strong> ${task.assigned_from}</p>
-                            <p><strong>Assigned To:</strong> ${task.assigned_to}</p>
-                            <p><strong>Status:</strong> ${task.completion_status}</p>
-                            <button class="delete-task" onclick="event.stopPropagation(); deleteTask(${task.id})">×</button>
-                        </div>
-                    `;
+            data.forEach(task => {
+                const taskBox = document.createElement("div");
+                taskBox.className = "task";
+                taskBox.id = `task-${task.id}`;
 
-                    if (task.completion_status === "Done") {
-                        doneColumn.appendChild(taskBox);
-                    } else {
-                        todoColumn.appendChild(taskBox);
-                    }
-                });
+                // Drag handle
+                const dragHandle = document.createElement("div");
+                dragHandle.className = "drag-handle";
+                dragHandle.innerHTML = "⋮⋮";
+                dragHandle.setAttribute("draggable", "true");
+                dragHandle.ondragstart = (ev) => {
+                    ev.dataTransfer.setData("text/plain", taskBox.id);
+                };
+
+                // Task header
+                const header = document.createElement("div");
+                header.className = "task-header";
+                header.innerHTML = `<strong>${task.client_name}</strong> (RM: ${task.rm})`;
+                header.onclick = () => toggleDetails(`details-${task.id}`);
+
+                // Task details
+                const details = document.createElement("div");
+                details.className = "task-details";
+                details.id = `details-${task.id}`;
+                details.style.display = "none";
+                details.innerHTML = `
+                    <p><strong>Documents:</strong> ${task.documents.join(", ")}</p>
+                    <p><strong>Doc Link:</strong> <a href="${task.doc_link}" target="_blank">${task.doc_link}</a></p>
+                    <p><strong>EMA/IMA:</strong> <a href="${task.ema_ima}" target="_blank">${task.ema_ima}</a></p>
+                    <p><strong>Assigned From:</strong> ${task.assigned_from}</p>
+                    <p><strong>Assigned To:</strong> ${task.assigned_to}</p>
+                    <p><strong>Status:</strong> ${task.completion_status}</p>
+                    <button class="delete-task" onclick="event.stopPropagation(); deleteTask(${task.id})">×</button>
+                `;
+
+                // Assemble task box
+                taskBox.appendChild(dragHandle);
+                taskBox.appendChild(header);
+                taskBox.appendChild(details);
+
+                if (task.completion_status === "Complete") {
+                    doneColumn.appendChild(taskBox);
+                } else {
+                    todoColumn.appendChild(taskBox);
+                }
+            });
         })
         .catch(err => {
             console.error("Failed to load tasks:", err);
         });
-        
-
 }
+
     const inputs = document.querySelectorAll(".pending-details input");
 
   inputs.forEach(input => {
