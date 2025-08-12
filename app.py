@@ -1239,6 +1239,23 @@ def update_task_status(task_id):
     except Exception as e:
         print("❌ Error updating task status:", e)
         return {"error": str(e)}, 500
+@app.route("/delete_task/<int:task_id>", methods=["DELETE"])
+def delete_task(task_id):
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # Delete the task
+        cur.execute("DELETE FROM tasks WHERE id = %s", (task_id,))
+        
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return jsonify({"success": True})
+    except Exception as e:
+        print(f"Error deleting task {task_id}: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/redeem_single', methods=['POST'])
 def redeem_single():
