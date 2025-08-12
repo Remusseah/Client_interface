@@ -179,24 +179,7 @@ tbody tr:hover {
     margin-bottom: 20px;
   }
 
-  .task-section {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 0 20px;
-    flex-wrap: nowrap; /* <-- Ensure side-by-side layout */
-  }
 
-  .task-column {
-    flex: 1;             /* <-- Replace fixed width */
-    min-width: 0;        /* <-- Prevent overflow */
-    box-sizing: border-box;
-  }
-
-  .task-column h3 {
-    text-align: center;
-    margin-bottom: 10px;
-  }
 
   .pending-box {
     border: 1px solid #aaa;
@@ -459,4 +442,70 @@ form label {
     font-size: 18px;
     cursor: pointer;
     z-index: 1;
+}
+.list {
+  flex: 1;
+  padding: 15px;
+  border-radius: 10px;
+  min-height: 300px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+}
+
+.todo-list {
+  background: #fff6f6;
+  border: 2px solid #ffcccc;
+}
+
+.done-list {
+  background: #f6fff6;
+  border: 2px solid #ccffcc;
+}
+
+.task {
+  background: white;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 10px 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.1s ease;
+}
+
+.task:hover {
+  transform: scale(1.02);
+}
+
+.drag-handle {
+  cursor: grab;
+  font-size: 18px;
+  color: #666;
+  float: left;
+  margin-right: 8px;
+}
+
+.task-header {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.task-details {
+  display: none;
+  margin-top: 8px;
+  font-size: 14px;
+  background: #f8f8f8;
+  border-radius: 5px;
+  padding: 8px;
+}
+
+.btn-new-task {
+  display: inline-block;
+  background: #ff9800;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 5px;
+  text-decoration: none;
+  margin-bottom: 15px;
+}
+
+.btn-new-task:hover {
+  background: #e68a00;
 }
