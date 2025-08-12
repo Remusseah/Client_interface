@@ -234,8 +234,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
         });
     }
+}
+)
+document.addEventListener("DOMContentLoaded", () => {
+    loadTasks();
+});
 
-    async function loadTasks() {
+async function loadTasks() {
     try {
         const res = await fetch("/get_tasks");
         if (!res.ok) throw new Error(`Server returned ${res.status}`);
@@ -302,29 +307,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 }
 
+function toggleDetails(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.display = (el.style.display === "none" || el.style.display === "") ? "block" : "none";
+}
 
-    const inputs = document.querySelectorAll(".pending-details input");
-
-  inputs.forEach(input => {
-    input.addEventListener("click", function (e) {
-      e.stopPropagation();
-    });
-  });
-
-  const buttons = document.querySelectorAll(".pending-details button");
-  buttons.forEach(button => {
-    button.addEventListener("click", function (e) {
-      e.stopPropagation();
-    });
-  });
-
-  const forms = document.querySelectorAll(".pending-details form");
-  forms.forEach(form => {
-    form.addEventListener("click", function (e) {
-      e.stopPropagation();
-    });
-  });
-});
 function deleteTask(id) {
     if (!confirm("Delete this task?")) return;
 
@@ -345,37 +333,44 @@ function deleteTask(id) {
 }
 
 function drop(ev, targetId) {
-  ev.preventDefault();
-  const data = ev.dataTransfer.getData("text");
-  const item = document.getElementById(data);
-  const taskId = data.replace("task-", "");
-  console.log(`📦 Dropped task ${taskId} into ${targetId}`); // 🔍 log
-  if (item && document.getElementById(targetId)) {
-    document.getElementById(targetId).appendChild(item);
+    ev.preventDefault();
+    const data = ev.dataTransfer.getData("text");
+    const item = document.getElementById(data);
+    const taskId = data.replace("task-", "");
+    console.log(`📦 Dropped task ${taskId} into ${targetId}`);
+    if (item && document.getElementById(targetId)) {
+        document.getElementById(targetId).appendChild(item);
+        const newStatus = (targetId === "done") ? "Complete" : "Incomplete";
 
-    // Determine the new status based on where it was dropped
-    const newStatus = (targetId === "done") ? "Complete" : "Incomplete";
-
-    // Send update to backend
-    fetch(`/update_task_status/${taskId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ status: newStatus })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (!data.success) {
-        alert("Failed to update task status.");
-        console.error(data.error);
-      }
-    })
-    .catch(err => {
-      console.error("Error updating task status:", err);
-    });
-  }
+        fetch(`/update_task_status/${taskId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: newStatus })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) {
+                alert("Failed to update task status.");
+                console.error(data.error);
+                loadTasks();
+            }
+        })
+        .catch(err => {
+            console.error("Error updating task status:", err);
+        });
+    }
 }
+
+function escapeHtml(s) {
+    if (!s) return "";
+    return String(s).replace(/[&<>"']/g, function(m) {
+        return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m];
+    });
+}
+function escapeAttr(s){
+    return s ? s.replace(/"/g, '%22') : '';
+}
+
 function lookupPostal() {
     const postal = document.getElementById("postal_code").value;
     const nationality = document.getElementById("nationality").value;
