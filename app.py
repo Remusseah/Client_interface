@@ -1008,6 +1008,34 @@ def submit_task():
         print("❌ Error inserting task:")
         traceback.print_exc()  # shows detailed error line
         return "Error inserting task", 500
+@app.route("/get_tasks")
+def get_tasks():
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT id, client_name, rm, documents, doc_link, ema_ima, assigned_to,
+               assigned_from, completion_status, comments
+        FROM tasks
+        ORDER BY id DESC
+    """)
+    rows = cur.fetchall()
+    cur.close()
+
+    tasks = []
+    for r in rows:
+        tasks.append({
+            "id": r[0],
+            "client_name": r[1],
+            "rm": r[2],
+            # documents might be stored as an array/text; handle None
+            "documents": r[3] if r[3] else [],
+            "doc_link": r[4] or "",
+            "ema_ima": r[5] or "",
+            "assigned_to": r[6] or "",
+            "assigned_from": r[7] or "",
+            "completion_status": r[8] or "Incomplete",
+            "comments": r[9] or ""
+        })
+    return jsonify(tasks)
 
 @app.route("/api/stats_by/<field>")
 def stats_by_field(field):

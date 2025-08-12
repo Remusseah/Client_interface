@@ -235,66 +235,73 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function loadTasks() {
-    fetch("/get_tasks")
-        .then(response => response.json())
-        .then(data => {
-            const todoColumn = document.getElementById("todo");
-            const doneColumn = document.getElementById("done");
-            todoColumn.innerHTML = "";
-            doneColumn.innerHTML = "";
+    async function loadTasks() {
+    try {
+        const res = await fetch("/get_tasks");
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
+        const data = await res.json();
 
-            data.forEach(task => {
-                const taskBox = document.createElement("div");
-                taskBox.className = "task";
-                taskBox.id = `task-${task.id}`;
+        const todoColumn = document.getElementById("todo");
+        const doneColumn = document.getElementById("done");
+        if (!todoColumn || !doneColumn) {
+            console.error("Columns not found (todo/done).");
+            return;
+        }
+        todoColumn.innerHTML = "<h3>To Do</h3>";
+        doneColumn.innerHTML = "<h3>Done</h3>";
 
-                // Drag handle
-                const dragHandle = document.createElement("div");
-                dragHandle.className = "drag-handle";
-                dragHandle.innerHTML = "⋮⋮";
-                dragHandle.setAttribute("draggable", "true");
-                dragHandle.ondragstart = (ev) => {
-                    ev.dataTransfer.setData("text/plain", taskBox.id);
-                };
+        data.forEach(task => {
+            const box = document.createElement("div");
+            box.className = "task";
+            box.id = `task-${task.id}`;
 
-                // Task header
-                const header = document.createElement("div");
-                header.className = "task-header";
-                header.innerHTML = `<strong>${task.client_name}</strong> (RM: ${task.rm})`;
-                header.onclick = () => toggleDetails(`details-${task.id}`);
+            // drag handle
+            const dragHandle = document.createElement("div");
+            dragHandle.className = "drag-handle";
+            dragHandle.textContent = "⋮⋮";
+            dragHandle.setAttribute("draggable", "true");
+            dragHandle.ondragstart = (ev) => ev.dataTransfer.setData("text/plain", box.id);
 
-                // Task details
-                const details = document.createElement("div");
-                details.className = "task-details";
-                details.id = `details-${task.id}`;
-                details.style.display = "none";
-                details.innerHTML = `
-                    <p><strong>Documents:</strong> ${task.documents.join(", ")}</p>
-                    <p><strong>Doc Link:</strong> <a href="${task.doc_link}" target="_blank">${task.doc_link}</a></p>
-                    <p><strong>EMA/IMA:</strong> <a href="${task.ema_ima}" target="_blank">${task.ema_ima}</a></p>
-                    <p><strong>Assigned From:</strong> ${task.assigned_from}</p>
-                    <p><strong>Assigned To:</strong> ${task.assigned_to}</p>
-                    <p><strong>Status:</strong> ${task.completion_status}</p>
-                    <button class="delete-task" onclick="event.stopPropagation(); deleteTask(${task.id})">×</button>
-                `;
+            // header
+            const header = document.createElement("div");
+            header.className = "task-header";
+            header.innerHTML = `<strong>${escapeHtml(task.client_name)}</strong> (RM: ${escapeHtml(task.rm)})`;
+            header.onclick = () => toggleDetails(`details-${task.id}`);
 
-                // Assemble task box
-                taskBox.appendChild(dragHandle);
-                taskBox.appendChild(header);
-                taskBox.appendChild(details);
+            // details
+            const details = document.createElement("div");
+            details.className = "task-details";
+            details.id = `details-${task.id}`;
+            details.style.display = "none";
 
-                if (task.completion_status === "Complete") {
-                    doneColumn.appendChild(taskBox);
-                } else {
-                    todoColumn.appendChild(taskBox);
-                }
-            });
-        })
-        .catch(err => {
-            console.error("Failed to load tasks:", err);
+            const docs = Array.isArray(task.documents) ? task.documents.join(", ") : task.documents || "";
+            details.innerHTML = `
+                <p><strong>Documents:</strong> ${escapeHtml(docs)}</p>
+                <p><strong>Doc Link:</strong> <a href="${escapeAttr(task.doc_link)}" target="_blank">${escapeHtml(task.doc_link)}</a></p>
+                <p><strong>EMA/IMA:</strong> <a href="${escapeAttr(task.ema_ima)}" target="_blank">${escapeHtml(task.ema_ima)}</a></p>
+                <p><strong>Assigned From:</strong> ${escapeHtml(task.assigned_from)}</p>
+                <p><strong>Assigned To:</strong> ${escapeHtml(task.assigned_to)}</p>
+                <p><strong>Status:</strong> ${escapeHtml(task.completion_status)}</p>
+                <p><strong>Comments:</strong> ${escapeHtml(task.comments)}</p>
+                <button class="delete-task" onclick="event.stopPropagation(); deleteTask(${task.id})">Delete</button>
+            `;
+
+            box.appendChild(dragHandle);
+            box.appendChild(header);
+            box.appendChild(details);
+
+            if (task.completion_status === "Complete" || task.completion_status === "Done") {
+                doneColumn.appendChild(box);
+            } else {
+                todoColumn.appendChild(box);
+            }
         });
+
+    } catch (err) {
+        console.error("Failed to load tasks:", err);
+    }
 }
+
 
     const inputs = document.querySelectorAll(".pending-details input");
 
