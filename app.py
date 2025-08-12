@@ -1242,7 +1242,6 @@ def update_task_status(task_id):
 @app.route("/delete_task/<int:task_id>", methods=["DELETE"])
 def delete_task(task_id):
     try:
-        conn = get_db_connection()
         cur = conn.cursor()
 
         # Delete the task
