@@ -669,18 +669,16 @@ function toggleSidebar() {
 }
 document.addEventListener("DOMContentLoaded", function () {
     const sidebar = document.getElementById("sidebar");
-    const currentPage = document.body.dataset.page;
-    const loggedInUser = document.body.dataset.user; // now comes directly from HTML attribute
-    let cleanedUsername = ""; // declare outside so it's available everywhere
+    const currentPage = (document.body.dataset.page || "").trim();
+    const loggedInUser = (document.body.dataset.user || "").trim();
+    let cleanedUsername = "";
+
     if (loggedInUser) {
-    let rawUsername = loggedInUser.split("@")[0];
-    // Replace non-alphanumeric characters with spaces
-    cleanedUsername = rawUsername.replace(/[^a-zA-Z0-9]/g, " ");
-    console.log("Cleaned username:", cleanedUsername);
-}
+        let rawUsername = loggedInUser.split("@")[0];
+        cleanedUsername = rawUsername.replace(/[^a-zA-Z0-9]/g, "");
+    }
 
     const adminUsers = ["remusseah", "remuseah", "boss"];
-
 
     const links = [
         { href: "/main_page", label: "Dashboard", id: "main_page" },
@@ -699,7 +697,7 @@ document.addEventListener("DOMContentLoaded", function () {
         { href: "/logout", label: "Logout", id: "logout" }
     ];
 
-    // Add toggle button
+    // Toggle button
     const toggleBtn = document.createElement("button");
     toggleBtn.className = "sidebar-toggle";
     toggleBtn.innerText = "☰";
@@ -708,21 +706,18 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelector(".main-content")?.classList.toggle("expanded");
     };
     sidebar.appendChild(toggleBtn);
-    console.log("Logged in user from dataset:", cleanedUsername);
 
-    // Generate links
+    // Build sidebar links
     links.forEach(link => {
-        if (link.id !== currentPage) {
-            if (link.restricted && !adminUsers.includes(cleanedUsername)) return;
+        if (link.id === currentPage) return; // skip current page
+        if (link.restricted && !adminUsers.includes(cleanedUsername)) return;
 
-            const a = document.createElement("a");
-            a.href = link.href;
-            a.textContent = link.label;
-            sidebar.appendChild(a);
-        }
+        const a = document.createElement("a");
+        a.href = link.href;
+        a.textContent = link.label;
+        sidebar.appendChild(a);
     });
 });
-
 
 
 function lookupByName() {
