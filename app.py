@@ -1242,20 +1242,13 @@ def update_task_status(task_id):
 @app.route("/delete_task/<int:task_id>", methods=["DELETE"])
 def delete_task(task_id):
     try:
-        # Open a fresh connection so we don't touch the global one
-        with psycopg2.connect(
-            host=DB_HOST,
-            dbname=DB_NAME,
-            user=DB_USER,
-            password=DB_PASS,
-            port=DB_PORT
-        ) as local_conn:
-            with local_conn.cursor() as cur:
-                cur.execute("DELETE FROM tasks WHERE id = %s", (task_id,))
-                local_conn.commit()
-
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("DELETE FROM tasks WHERE id = %s", (task_id,))
+        conn.commit()
+        cur.close()
+        conn.close()
         return jsonify({"success": True})
-
     except Exception as e:
         app.logger.error(f"Error deleting task {task_id}: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
