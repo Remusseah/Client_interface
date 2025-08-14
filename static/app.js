@@ -668,56 +668,61 @@ function toggleSidebar() {
     }
 }
 document.addEventListener("DOMContentLoaded", function () {
-    const sidebar = document.getElementById("sidebar");
-    const currentPage = (document.body.dataset.page || "").trim();
-    const loggedInUser = (document.body.dataset.user || "").trim();
-    let cleanedUsername = "";
+  const sidebar = document.getElementById("sidebar");
+  if (!sidebar) return;
 
-    if (loggedInUser) {
-        let rawUsername = loggedInUser.split("@")[0];
-        cleanedUsername = rawUsername.replace(/[^a-zA-Z0-9]/g, "");
-    }
+  // Normalize current path: remove trailing slash, default to /main_page
+  const currentPath = (location.pathname.replace(/\/+$/, "") || "/main_page");
 
-    const adminUsers = ["remusseah", "remuseah", "boss"];
+  // Username cleanup (works whether data-user is an email or already a username)
+  const rawUser = (document.body.dataset.user || "");
+  const cleanedUsername = rawUser.split("@")[0].replace(/[^a-zA-Z0-9]/g, "");
 
-    const links = [
-        { href: "/main_page", label: "Dashboard", id: "main_page" },
-        { href: "/pending_page", label: "Pending", id: "pending_page" },
-        { href: "/add", label: "Add New", id: "add" },
-        { href: "/download_page", label: "Download", id: "download_page" },
-        { href: "/update_page", label: "Update", id: "update_page" },
-        { href: "/test_update_page", label: "Test Update", id: "test_update_page" },
-        { href: "/add_account_page", label: "Add Account", id: "add_account_page" },
-        { href: "/view_page", label: "Client enquiry", id: "view_page" },
-        { href: "/redeemed_view_page", label: "Redeemed", id: "redeemed_view_page" },
-        { href: "/log_page", label: "Audit logs", id: "log_page" },
-        { href: "/statistics_page", label: "Client statistics", id: "statistics_page" },
-        { href: "/to_do", label: "To Do", id: "to_do" },
-        { href: "/users", label: "User Management", id: "users", restricted: true },
-        { href: "/logout", label: "Logout", id: "logout" }
-    ];
+  const adminUsers = ["remusseah", "remuseah", "boss"];
 
-    // Toggle button
-    const toggleBtn = document.createElement("button");
-    toggleBtn.className = "sidebar-toggle";
-    toggleBtn.innerText = "☰";
-    toggleBtn.onclick = function () {
-        sidebar.classList.toggle("collapsed");
-        document.querySelector(".main-content")?.classList.toggle("expanded");
-    };
-    sidebar.appendChild(toggleBtn);
+  const links = [
+    { href: "/main_page", label: "Dashboard" },
+    { href: "/pending_page", label: "Pending" },
+    { href: "/add", label: "Add New" },
+    { href: "/download_page", label: "Download" },
+    { href: "/update_page", label: "Update" },
+    { href: "/test_update_page", label: "Test Update" },
+    { href: "/add_account_page", label: "Add Account" },
+    { href: "/view_page", label: "Client enquiry" },
+    { href: "/redeemed_view_page", label: "Redeemed" },
+    { href: "/log_page", label: "Audit logs" },
+    { href: "/statistics_page", label: "Client statistics" },
+    { href: "/to_do", label: "To Do" },
+    { href: "/users", label: "User Management", restricted: true },
+    { href: "/logout", label: "Logout" }
+  ];
 
-    // Build sidebar links
-    links.forEach(link => {
-        if (link.id === currentPage) return; // skip current page
-        if (link.restricted && !adminUsers.includes(cleanedUsername)) return;
+  // Toggle button
+  const toggleBtn = document.createElement("button");
+  toggleBtn.className = "sidebar-toggle";
+  toggleBtn.innerText = "☰";
+  toggleBtn.onclick = function () {
+    sidebar.classList.toggle("collapsed");
+    document.querySelector(".main-content")?.classList.toggle("expanded");
+  };
+  sidebar.appendChild(toggleBtn);
 
-        const a = document.createElement("a");
-        a.href = link.href;
-        a.textContent = link.label;
-        sidebar.appendChild(a);
-    });
+  // Build links — skip current page by comparing PATHS
+  links.forEach(link => {
+    const linkPath = link.href.replace(/\/+$/, "");
+    if (linkPath === currentPath) return; // <- hide current page
+    if (link.restricted && !adminUsers.includes(cleanedUsername)) return;
+
+    const a = document.createElement("a");
+    a.href = link.href;
+    a.textContent = link.label;
+    sidebar.appendChild(a);
+  });
+
+  // Helpful debug
+  console.debug("Sidebar debug → currentPath:", currentPath, "cleanedUsername:", cleanedUsername);
 });
+
 
 
 function lookupByName() {
