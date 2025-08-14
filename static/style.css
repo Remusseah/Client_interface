@@ -287,28 +287,34 @@ tbody tr:hover {
     cursor: pointer;
 }
 .details-section td {
-    width: 100%;
-    padding: 20px;
+    padding: 10px; /* Keep some spacing */
+    vertical-align: top; /* Align labels and inputs neatly */
 }
 
 .details-section form {
     width: 100%;
+    display: flex;
+    flex-wrap: wrap; /* Allows wrapping into multiple rows */
+    gap: 15px; /* Space between columns */
 }
 
 .details-section form > div {
-    width: 100%;
+    width: 48%; /* Two columns */
 }
 
-.details-section input {
-    width: 100%;
+.details-section input,
+.details-section select {
+    width: 100%; /* Full width of their column */
     box-sizing: border-box;
 }
+
 .details-section {
     display: none;
     margin-top: 10px;
     border: 1px solid #ccc;
     padding: 10px;
 }
+
 .expand-button {
     color: blue;
     cursor: pointer;
