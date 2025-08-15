@@ -6,46 +6,87 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     <style>
+/* Scope all styles so they only apply when this page is loaded */
     .details-section {
         display: none;
         margin-top: 10px;
         border: 1px solid #ccc;
-        padding: 10px;
+        padding: 15px;
         width: 100%;
+        background-color: #fff;
     }
+
     .expand-button {
         color: blue;
         cursor: pointer;
         text-decoration: underline;
     }
+
     .form-container {
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
     }
+
     .form-columns {
         display: flex;
         gap: 30px;
         width: 100%;
+        flex-wrap: wrap;
     }
+
     .form-columns > div {
         flex: 1;
+        min-width: 250px;
     }
+
+    .form-columns label {
+        font-weight: bold;
+        display: block;
+        margin-top: 8px;
+    }
+
+    .form-columns input {
+        width: 100%;
+        padding: 6px;
+        box-sizing: border-box;
+    }
+
     .wide-container {
         max-width: 100% !important;
         width: 100% !important;
         margin: 0 !important;
         padding: 0 20px;
     }
+
     .month-buttons button {
         margin-right: 10px;
         margin-top: 20px;
         padding: 6px 12px;
         cursor: pointer;
     }
+
     .accounts-section {
         margin-top: 30px;
     }
+
+    .accounts-table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .accounts-table th,
+    .accounts-table td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+    }
+
+    .accounts-table th {
+        background-color: #f9f9f9;
+    }
+    </style>
     </style>
 </head>
 <body data-page="{{ current_page }}" data-user="{{ logged_in_user }}">
