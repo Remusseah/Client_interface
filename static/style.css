@@ -161,11 +161,14 @@ table,
     font-size: 14px;
     background-color: white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    table-layout: fixed;
+    table-layout: auto;
 }
 
 .table-wrapper {
     width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+    min-width: 800px;
 }
 
 th, 
@@ -177,6 +180,8 @@ td,
     text-align: left;
     vertical-align: top;
     word-wrap: break-word;
+    white-space: nowrap;
+    min-width: 80px;
 }
 
 th,
