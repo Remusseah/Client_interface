@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Website Workflow</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f8f9fa;
+    }
+    
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+    }
+    
+    .mermaid {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin: 0 auto;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h2>Website Process Flow</h2>
+
+  <div class="mermaid">
+    flowchart LR
+      A["🔑 Login / Signup"] --> B["📧 Verify Email"]
+      B --> C["📊 Dashboard"]
+
+      %% Dashboard paths
+      C --> D["➕ Add New Client"]
+      C --> E["📝 To-Do Board"]
+      C --> F["📈 Statistics Page"]
+      C --> G["👥 User Management"]
+
+      %% Add new client leads to pending
+      D --> H["⏳ Pending Review"]
+
+      %% Pending review decision
+      H --> I{"✅ Approve Client?"}
+
+      I -->|Approve| J[("💾 Client Data Tables<br/>client_data, client_compliance")]
+      J --> K[("💰 Client Accounts /<br/>Monthly Values")]
+      J --> L["✏️ Update Clients"]
+      J --> M["🔍 View Clients"]
+
+      L --> J
+      M --> N{"🎟️ Redeem?"}
+      N -->|Yes| O["🎁 Redeem Client"]
+      O --> P[("🗂️ Redeemed Tables<br/>redeemed, redeemed_files")]
+
+      %% Audit logging
+      J --> Q[("📜 Audit Logs")]
+      L --> Q
+      M --> Q
+      O --> Q
+      G --> Q
+      E --> Q
+
+      %% Styling
+      classDef decision fill:#fff3cd,stroke:#ff9800,stroke-width:2px
+      classDef datastore fill:#f1f8e9,stroke:#4caf50,stroke-width:2px
+
+      class I,N decision
+      class J,K,P,Q datastore
+  </div>
+
+  <script>
+    // Initialize Mermaid
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'default',
+      flowchart: {
+        useMaxWidth: true,
+        htmlLabels: true,
+        curve: 'basis'
+      }
+    });
+  </script>
+</body>
+</html>

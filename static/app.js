@@ -409,88 +409,140 @@ function lookupPostal() {
     });
 }
 document.addEventListener("DOMContentLoaded", function () {
+    // Replace this fetch with your actual API endpoint
     fetch("/get-all-clients")
         .then(response => response.json())
         .then(data => {
             const tbody = document.getElementById("clientTableBody");
             if (!tbody) return;
-            tbody.innerHTML = "";
+
+            tbody.innerHTML = "";  // Clear any existing rows
 
             data.forEach(client => {
                 const row = document.createElement("tr");
+
                 row.innerHTML = `
                     <td>${client.Client_id}</td>
-                    <td><span class="expand-button" onclick="toggleDetails('details-${client.Client_id}')">${client.Name}</span></td>
+                    <td>
+                        <span class="expand-button" onclick="toggleDetails('details-${client.Client_id}')">
+                            ${client.Name}
+                        </span>
+                    </td>
                     <td>${client.Nationality}</td>
                     <td>${client.Risk_rating || ""}</td>
-                    <td><button onclick="toggleDetails('details-${client.Client_id}')">Edit</button></td>
+                    <td><button class="edit-btn" onclick="toggleDetails('details-${client.Client_id}')">Edit</button></td>
                 `;
 
                 const detailRow = document.createElement("tr");
                 detailRow.id = `details-${client.Client_id}`;
                 detailRow.className = "details-section";
                 detailRow.innerHTML = `
-                    <td colspan="5">
-                        <div class="form-container">
-                            <form>
-                                <div class="form-columns">
-                                    <div>
-                                        <label>Name:</label><br>
-                                        <input type="text" name="Name" value="${client.Name || ""}"><br>
-                                        <label>Nationality:</label><br>
-                                        <input type="text" name="Nationality" value="${client.Nationality || ""}"><br>
-                                        <label>Residency Address:</label><br>
-                                        <input type="text" name="Residency_address" value="${client.Residency_address || ""}"><br>
-                                        <label>Contact Number:</label><br>
-                                        <input type="text" name="Contact_number" value="${client.Contact_number || ""}"><br>
-                                        <label>Email Address:</label><br>
-                                        <input type="email" name="Email_address" value="${client.Email_address || ""}"><br>
+                <td colspan="5" style="padding: 20px; border-left: 4px solid #007bff; background-color: #fafafa;">
+                    <div style="width: 100%; max-width: 1200px;">
+                        <form onsubmit="event.preventDefault(); submitClientUpdate(${client.Client_id}, this)" style="width: 100%;">
+                            <!-- Two Column Layout for Personal + Client Details -->
+                            <div style="display: flex; gap: 30px; margin-bottom: 30px; width: 100%;">
+                                <!-- Left Column - Personal Information -->
+                                <div style="flex: 1; min-width: 0;">
+                                    <h4 style="margin: 0 0 15px 0; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 5px;">Personal Information</h4>
+                                    <div style="margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Name:</label>
+                                        <input type="text" name="Name" value="${client.Name || ""}" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;">
                                     </div>
-                                    <div>
-                                        <label>Employment Status:</label><br>
-                                        <input type="text" name="Employment_status" value="${client.Employment_status || ""}"><br>
-                                        <label>IC Number:</label><br>
-                                        <input type="text" name="IC_number" value="${client.Ic_number || ""}"><br>
-                                        <label>Client Profile:</label><br>
-                                        <input type="text" name="Client_profile" value="${client.Client_profile || ""}"><br>
-                                        <label>Date of Birth:</label><br>
-                                        <input type="date" name="Date_of_birth" value="${formatDate(client.Date_of_birth)}"><br>
-                                        <label>Age:</label><br>
-                                        <input type="number" name="Age" value="${client.Age || ""}"><br>
+                                    <div style="margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Nationality:</label>
+                                        <input type="text" name="Nationality" value="${client.Nationality || ""}" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;">
                                     </div>
-                                    <div>
-                                        <label>Onboarded Date:</label><br>
-                                        <input type="date" name="Onboarded_date" value="${formatDate(client.Onboarded_date)}"><br>
-                                        <label>Last Risk Assessment:</label><br>
-                                        <input type="date" name="Last_periodic_risk_assessment" value="${formatDate(client.Last_periodic_risk_assessment)}"><br>
-                                        <label>Next Risk Assessment:</label><br>
-                                        <input type="date" name="Next_periodic_risk_assessment" value="${formatDate(client.Next_periodic_risk_assessment)}"><br>
-                                        <label>Risk Rating:</label><br>
-                                        <input type="text" name="Risk_rating" value="${client.Risk_rating || ""}"><br>
-                                        <label>Relationship Manager:</label><br>
-                                        <input type="text" name="Relationship_Manager" value="${client.Relationship_Manager || ""}"><br>
-                                        <label>Service Type:</label><br>
-                                        <input type="text" name="Service_type" value="${client.Service_type || ""}"><br>
-                                        <label>Client Type:</label><br>
-                                        <input type="text" name="Client_type" value="${client.Client_type || ""}"><br>
-                                        <label>PEP:</label><br>
-                                        <input type="text" name="Pep" value="${client.Pep || ""}"><br>
+                                    <div style="margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Residency Address:</label>
+                                        <input type="text" name="Residency_address" value="${client.Residency_address || ""}" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;">
+                                    </div>
+                                    <div style="margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Contact Number:</label>
+                                        <input type="text" name="Contact_number" value="${client.Contact_number || ""}" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;">
+                                    </div>
+                                    <div style="margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Email Address:</label>
+                                        <input type="email" name="Email_address" value="${client.Email_address || ""}" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;">
                                     </div>
                                 </div>
-                                <div style="margin-top: 10px;">
-                                    <button type="submit">Save</button>
+
+                                <!-- Right Column - Client Details -->
+                                <div style="flex: 1; min-width: 0;">
+                                    <h4 style="margin: 0 0 15px 0; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 5px;">Client Details</h4>
+                                    <div style="margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Employment Status:</label>
+                                        <input type="text" name="Employment_status" value="${client.Employment_status || ""}" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;">
+                                    </div>
+                                    <div style="margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">IC Number:</label>
+                                        <input type="text" name="IC_number" value="${client.Ic_number || ""}" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;">
+                                    </div>
+                                    <div style="margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Client Profile:</label>
+                                        <input type="text" name="Client_profile" value="${client.Client_profile || ""}" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;">
+                                    </div>
+                                    <div style="margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Date of Birth:</label>
+                                        <input type="date" name="Date_of_birth" value="${formatDate(client.Date_of_birth)}" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;">
+                                    </div>
+                                    <div style="margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Age:</label>
+                                        <input type="number" name="Age" value="${client.Age || ""}" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;">
+                                    </div>
                                 </div>
-                            </form>
-                            <div id="accounts-${client.Client_id}" style="margin-top: 20px;"></div>
-                        </div>
-                    </td>
+                            </div>
+
+                            <!-- Compliance Section - Full Width -->
+                            <div style="width: 100%; margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd;">
+                                <h4 style="margin: 0 0 15px 0; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 5px;">Compliance Details</h4>
+                                <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+                                    <div style="flex: 1; min-width: 200px; margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Onboarded Date:</label>
+                                        <input type="date" name="Onboarded_date" value="${formatDate(client.Onboarded_date)}" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;">
+                                    </div>
+                                    <div style="flex: 1; min-width: 200px; margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Last Periodic Risk Assessment:</label>
+                                        <input type="date" name="Last_periodic_risk_assessment" value="${formatDate(client.Last_periodic_risk_assessment)}" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;">
+                                    </div>
+                                    <div style="flex: 1; min-width: 200px; margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Next Periodic Risk Assessment:</label>
+                                        <input type="date" name="Next_periodic_risk_assessment" value="${formatDate(client.Next_periodic_risk_assessment)}" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;">
+                                    </div>
+                                    <div style="flex: 1; min-width: 200px; margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Risk Rating:</label>
+                                        <input type="text" name="Risk_rating" value="${client.Risk_rating || ""}" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;">
+                                    </div>
+                                    <div style="flex: 1; min-width: 200px; margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Relationship Manager:</label>
+                                        <input type="text" name="Relationship_Manager" value="${client.Relationship_Manager || ""}" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;">
+                                    </div>
+                                    <div style="flex: 1; min-width: 200px; margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Service Type:</label>
+                                        <input type="text" name="Service_type" value="${client.Service_type || ""}" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;">
+                                    </div>
+                                    <div style="flex: 1; min-width: 200px; margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Client Type:</label>
+                                        <input type="text" name="Client_type" value="${client.Client_type || ""}" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;">
+                                    </div>
+                                    <div style="flex: 1; min-width: 200px; margin-bottom: 15px;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">PEP:</label>
+                                        <input type="text" name="Pep" value="${client.Pep || ""}" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; gap: 10px; justify-content: flex-start; margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd;">
+                                <button type="submit" style="background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold;">Save Changes</button>
+                                <button type="button" onclick="toggleDetails('details-${client.Client_id}')" style="background-color: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold;">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </td>
                 `;
 
                 tbody.appendChild(row);
                 tbody.appendChild(detailRow);
-
-                const container = detailRow.querySelector(`#accounts-${client.Client_id}`);
-                loadClientAccountValues(client.Client_id, container);
             });
         })
         .catch(err => {
