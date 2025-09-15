@@ -1450,7 +1450,7 @@ def get_available_months():
     return jsonify(months)
 @app.route('/get-users')
 def get_users():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cur = conn.cursor()
     cur.execute("""
         SELECT 
             e.employee_id,
