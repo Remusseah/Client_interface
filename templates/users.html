@@ -22,73 +22,108 @@
     <button onclick="loadUsers()">🔄 Refresh</button>
 
     <table id="users-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Department</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Last Login</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Last Login</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
 
-    <script>
-    function loadUsers() {
-        fetch('/get-users')
-            .then(response => response.json())
-            .then(users => {
-                const tbody = document.querySelector('#users-table tbody');
-                tbody.innerHTML = ''; // Clear previous rows
+<script>
+let rolesList = [];
 
-                users.forEach(user => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${user.employee_id}</td>
-                        <td>${user.name}</td>
-                        <td>${user.email}</td>
-                        <td>${user.department}</td>
-                        <td>${user.role_name || user.role}</td>
-                        <td>${user.status}</td>
-                        <td>${user.last_login ? new Date(user.last_login).toLocaleString() : '-'}</td>
-                        <td>
-                            <button onclick="confirmDelete(${user.employee_id}, '${user.email}')">🗑️ Delete</button>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            })
-            .catch(err => {
-                console.error("Failed to load users:", err);
-                alert("Could not load users.");
+// Load roles once
+function loadRoles() {
+    return fetch('/get-roles')
+        .then(response => response.json())
+        .then(data => {
+            rolesList = data;
+        });
+}
+
+function loadUsers() {
+    fetch('/get-users')
+        .then(response => response.json())
+        .then(users => {
+            const tbody = document.querySelector('#users-table tbody');
+            tbody.innerHTML = '';
+
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                const roleOptions = rolesList.map(role => 
+                    `<option value="${role.role_id}" ${role.role_name === user.role_name ? 'selected' : ''}>
+                        ${role.role_name}
+                    </option>`
+                ).join('');
+
+                row.innerHTML = `
+                    <td>${user.employee_id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.department}</td>
+                    <td>${user.role_name}</td>
+                    <td>${user.status}</td>
+                    <td>${user.last_login ? new Date(user.last_login).toLocaleString() : '-'}</td>
+                    <td>
+                        <select id="role-select-${user.employee_id}">
+                            ${roleOptions}
+                        </select>
+                        <button onclick="updateRole(${user.employee_id})">✅ Update</button>
+                        <button onclick="toggleStatus(${user.employee_id}, '${user.status}')">
+                            ${user.status === 'active' ? '🔒 Deactivate' : '🔓 Activate'}
+                        </button>
+                        <button onclick="confirmDelete(${user.employee_id}, '${user.email}')">🗑️ Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
             });
-    }
+        })
+        .catch(err => {
+            console.error("Failed to load users:", err);
+            alert("Could not load users.");
+        });
+}
 
-    function confirmDelete(userId, email) {
-        if (confirm(`Are you sure you want to delete user: ${email}?`)) {
-            fetch(`/delete-user/${userId}`, {
-                method: 'POST'
-            })
-            .then(res => res.json())
-            .then(response => {
-                alert(response.message || response.error);
-                loadUsers(); // Refresh after delete
-            })
-            .catch(error => {
-                console.error("Delete error:", error);
-                alert("Failed to delete user.");
-            });
-        }
-    }
+function updateRole(userId) {
+    const newRoleId = document.getElementById(`role-select-${userId}`).value;
+    fetch(`/update-role/${userId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role_id: newRoleId })
+    })
+    .then(res => res.json())
+    .then(response => {
+        alert(response.message || response.error);
+        loadUsers();
+    })
+    .catch(err => console.error("Update role error:", err));
+}
 
-    // Load users on page load
-    window.onload = loadUsers;
-    </script>
+function toggleStatus(userId, currentStatus) {
+    const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+    fetch(`/toggle-status/${userId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+    })
+    .then(res => res.json())
+    .then(response => {
+        alert(response.message || response.error);
+        loadUsers();
+    })
+    .catch(err => console.error("Toggle status error:", err));
+}
 
-    <script src="{{ url_for('static', filename='app.js') }}"></script>
-</body>
-</html>
+// Run both on page load
+window.onload = () => {
+    loadRoles().then(loadUsers);
+};
+</script>
