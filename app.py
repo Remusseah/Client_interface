@@ -1448,18 +1448,25 @@ def get_available_months():
     months = [r[0] for r in cur.fetchall()]
     cur.close()
     return jsonify(months)
-@app.route("/get-users")
+@app.route('/get-users')
 def get_users():
-    cur = conn.cursor()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cur.execute("""
-        SELECT id, email, is_verified, created_at
-        FROM users
-        ORDER BY created_at DESC
+        SELECT 
+            e.employee_id,
+            e.name,
+            e.email,
+            e.department,
+            r.role_name,
+            e.status,
+            e.last_login
+        FROM employee_table e
+        JOIN roles r ON e.role_id = r.role_id
+        ORDER BY e.employee_id
     """)
     users = cur.fetchall()
-    columns = [desc[0] for desc in cur.description]
     cur.close()
-    return jsonify([dict(zip(columns, row)) for row in users])
+    return jsonify(users)
 @app.route("/delete-user/<int:user_id>", methods=["POST"])
 def delete_user(user_id):
     try:
