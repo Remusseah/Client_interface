@@ -5,7 +5,7 @@ from fpdf import FPDF
 import io
 import os
 app = Flask(__name__)
-app.secret_key = os.environ.get("FLASK_SECRET_KEY","dev-key")  # ✅ Set it immediately after app = Flask(__name__)
+app.secret_key = os.environ.get("FLASK_SECRET_KEY","dev-key") 
 import requests
 from flask import request, redirect, render_template, flash
 from werkzeug.security import generate_password_hash

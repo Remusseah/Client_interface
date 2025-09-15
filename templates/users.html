@@ -7,31 +7,30 @@
 </head>
 <body data-page="{{ current_page }}" data-user="{{ logged_in_user }}">
     <div class="sidebar" id="sidebar">
-       
+        <!-- Sidebar content -->
     </div>
+
     <div class="main-content">
     {% if logged_in_user %}
-    <div class="user-greeting">
-      Logged in as <strong>{{ logged_in_user }}</strong>
-    </div>
-  {% endif %}
+      <div class="user-greeting">
+        Logged in as <strong>{{ logged_in_user }}</strong>
+      </div>
+    {% endif %}
+    
     <h2>User Management</h2>
 
-    <label for="filter">Filter:</label>
-    <select id="filter" onchange="loadUsers()">
-        <option value="all">All</option>
-        <option value="verified">Verified</option>
-        <option value="unverified">Unverified</option>
-    </select>
-
     <button onclick="loadUsers()">🔄 Refresh</button>
+
     <table id="users-table">
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Name</th>
                 <th>Email</th>
-                <th>Verified</th>
-                <th>Created At</th>
+                <th>Department</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Last Login</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -43,29 +42,21 @@
         fetch('/get-users')
             .then(response => response.json())
             .then(users => {
-                const filterValue = document.getElementById("filter").value;
                 const tbody = document.querySelector('#users-table tbody');
                 tbody.innerHTML = ''; // Clear previous rows
 
                 users.forEach(user => {
-                    const isVerified = user.is_verified === true || user.is_verified === "true";
-
-                    // Filter logic
-                    if (
-                        (filterValue === "verified" && !isVerified) ||
-                        (filterValue === "unverified" && isVerified)
-                    ) {
-                        return; // Skip based on filter
-                    }
-
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${user.id}</td>
+                        <td>${user.employee_id}</td>
+                        <td>${user.name}</td>
                         <td>${user.email}</td>
-                        <td>${isVerified ? '✅' : '❌'}</td>
-                        <td>${new Date(user.created_at).toLocaleString()}</td>
+                        <td>${user.department}</td>
+                        <td>${user.role_name || user.role}</td>
+                        <td>${user.status}</td>
+                        <td>${user.last_login ? new Date(user.last_login).toLocaleString() : '-'}</td>
                         <td>
-                            <button onclick="confirmDelete(${user.id}, '${user.email}')">🗑️ Delete</button>
+                            <button onclick="confirmDelete(${user.employee_id}, '${user.email}')">🗑️ Delete</button>
                         </td>
                     `;
                     tbody.appendChild(row);
@@ -85,7 +76,7 @@
             .then(res => res.json())
             .then(response => {
                 alert(response.message || response.error);
-                loadUsers(); // Re-filter after delete
+                loadUsers(); // Refresh after delete
             })
             .catch(error => {
                 console.error("Delete error:", error);
@@ -96,8 +87,7 @@
 
     // Load users on page load
     window.onload = loadUsers;
-</script>
-
+    </script>
 
     <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
